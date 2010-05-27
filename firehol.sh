@@ -152,6 +152,7 @@ which_cmd GREP_CMD grep
 which_cmd HEAD_CMD head
 which_cmd IPTABLES_CMD iptables
 which_cmd IPTABLES_SAVE_CMD iptables-save
+which_cmd IPTABLES_RESTORE_CMD iptables-restore
 which_cmd LSMOD_CMD lsmod
 which_cmd MKDIR_CMD mkdir
 which_cmd MV_CMD mv
@@ -258,6 +259,33 @@ renice_cmd() {
 	"${RENICE_CMD}" "${@}"
 }
 
+iptables_cmd() {
+	if [ -z "${IPTABLES_CMD}" ]
+	then
+		require_cmd iptables
+	fi
+	
+	"${IPTABLES_CMD}" "${@}"
+}
+
+iptables_save_cmd() {
+	if [ -z "${IPTABLES_SAVE_CMD}" ]
+	then
+		require_cmd iptables-save
+	fi
+	
+	"${IPTABLES_SAVE_CMD}" "${@}"
+}
+
+iptables_restore_cmd() {
+	if [ -z "${IPTABLES_RESTORE_CMD}" ]
+	then
+		require_cmd iptables-restore
+	fi
+	
+	"${IPTABLES_RESTORE_CMD}" "${@}"
+}
+
 # Concurrent run control
 FIREHOL_LOCK_FILE="/var/run/firehol.lck"
 
@@ -311,9 +339,19 @@ then
 	FIREHOL_MINOR_VERSION=257
 fi
 
+for check in IPTABLES_CMD IPTABLES_SAVE_CMD IPTABLES_RESTORE_CMD
+do
+        checkname=`echo $check | ${SED_CMD} -e 's/_CMD$//' | ${TR_CMD} A-Z_ a-z-`
+	eval checkenv=\$$check
+	if [ -z "${checkenv}" -o ! -x "${checkenv}" ]; then
+		echo >&2 "Cannot find an executable ${checkname} command."
+		exit 0
+	fi
+done
+
 
 # Initialize iptables
-${IPTABLES_CMD} -nxvL >/dev/null 2>&1
+iptables_cmd -nxvL >/dev/null 2>&1
 
 
 # ------------------------------------------------------------------------------
@@ -379,7 +417,7 @@ firehol_exit() {
 	then
 		echo
 		echo -n $"FireHOL: Restoring old firewall:"
-		iptables-restore <"${FIREHOL_SAVED}"
+		iptables_restore_cmd <"${FIREHOL_SAVED}"
 		if [ $? -eq 0 ]
 		then
 			local restored="OK"
@@ -2928,7 +2966,7 @@ FIREHOL_COMMAND_COUNTER=0
 iptables() {
 #       work_realcmd_helper ${FUNCNAME} "$@"
 	
-	postprocess "${IPTABLES_CMD}" "$@"
+	postprocess iptables_cmd "$@"
 	FIREHOL_COMMAND_COUNTER=$[FIREHOL_COMMAND_COUNTER + 1]
 	
 	return 0
@@ -5788,11 +5826,6 @@ failure() {
 # On RedHat systems this will define success() and failure()
 test -f /etc/init.d/functions && . /etc/init.d/functions
 
-if [ -z "${IPTABLES_CMD}" -o ! -x "${IPTABLES_CMD}" ]; then
-	echo >&2 "Cannot find an executable iptables command."
-	exit 0
-fi
-
 KERNELMAJ=`${UNAME_CMD} -r | ${SED_CMD}                   -e 's,\..*,,'`
 KERNELMIN=`${UNAME_CMD} -r | ${SED_CMD} -e 's,[^\.]*\.,,' -e 's,\..*,,'`
 
@@ -5861,15 +5894,15 @@ case "${arg}" in
 		tables=`${CAT_CMD} /proc/net/ip_tables_names`
 		for t in ${tables}
 		do
-			${IPTABLES_CMD} -t "${t}" -F
-			${IPTABLES_CMD} -t "${t}" -X
-			${IPTABLES_CMD} -t "${t}" -Z
+			iptables_cmd -t "${t}" -F
+			iptables_cmd -t "${t}" -X
+			iptables_cmd -t "${t}" -Z
 			
 			# Find all default chains in this table.
-			chains=`${IPTABLES_CMD} -t "${t}" -nL | ${GREP_CMD} "^Chain " | ${CUT_CMD} -d ' ' -f 2`
+			chains=`iptables_cmd -t "${t}" -nL | ${GREP_CMD} "^Chain " | ${CUT_CMD} -d ' ' -f 2`
 			for c in ${chains}
 			do
-				${IPTABLES_CMD} -t "${t}" -P "${c}" ACCEPT
+				iptables_cmd -t "${t}" -P "${c}" ACCEPT
 			done
 		done
 		success $"FireHOL: Clearing Firewall:"
@@ -5895,19 +5928,19 @@ case "${arg}" in
 			echo 
 			echo "--- MANGLE ---------------------------------------------------------------------"
 			echo 
-			${IPTABLES_CMD} -t mangle -nxvL
+			iptables_cmd -t mangle -nxvL
 			
 			echo 
 			echo 
 			echo "--- NAT ------------------------------------------------------------------------"
 			echo 
-			${IPTABLES_CMD} -t nat -nxvL
+			iptables_cmd -t nat -nxvL
 			
 			echo 
 			echo 
 			echo "--- FILTER ---------------------------------------------------------------------"
 			echo 
-			${IPTABLES_CMD} -nxvL
+			iptables_cmd -nxvL
 		) | pager_cmd
 		exit $?
 		;;
@@ -5934,22 +5967,22 @@ case "${arg}" in
 		tables=`${CAT_CMD} /proc/net/ip_tables_names`
 		for t in ${tables}
 		do
-			${IPTABLES_CMD} -t "${t}" -F
-			${IPTABLES_CMD} -t "${t}" -X
-			${IPTABLES_CMD} -t "${t}" -Z
+			iptables_cmd -t "${t}" -F
+			iptables_cmd -t "${t}" -X
+			iptables_cmd -t "${t}" -Z
 			
 			# Find all default chains in this table.
-			chains=`${IPTABLES_CMD} -t "${t}" -nL | ${GREP_CMD} "^Chain " | ${CUT_CMD} -d ' ' -f 2`
+			chains=`iptables_cmd -t "${t}" -nL | ${GREP_CMD} "^Chain " | ${CUT_CMD} -d ' ' -f 2`
 			for c in ${chains}
 			do
-				${IPTABLES_CMD} -t "${t}" -P "${c}" ACCEPT
+				iptables_cmd -t "${t}" -P "${c}" ACCEPT
 				
 				if [ ! -z "${ssh_src}" ]
 				then
-					${IPTABLES_CMD} -t "${t}" -A "${c}" -p tcp -s "${ssh_src}" --sport "${ssh_sport}" --dport "${ssh_dport}" -m state --state ESTABLISHED -j ACCEPT
-					${IPTABLES_CMD} -t "${t}" -A "${c}" -p tcp -d "${ssh_src}" --dport "${ssh_sport}" --sport "${ssh_dport}" -m state --state ESTABLISHED -j ACCEPT
+					iptables_cmd -t "${t}" -A "${c}" -p tcp -s "${ssh_src}" --sport "${ssh_sport}" --dport "${ssh_dport}" -m state --state ESTABLISHED -j ACCEPT
+					iptables_cmd -t "${t}" -A "${c}" -p tcp -d "${ssh_src}" --dport "${ssh_sport}" --sport "${ssh_dport}" -m state --state ESTABLISHED -j ACCEPT
 				fi
-				${IPTABLES_CMD} -t "${t}" -A "${c}" -j DROP
+				iptables_cmd -t "${t}" -A "${c}" -j DROP
 			done
 		done
 		success $"FireHOL: Blocking all communications:"
@@ -6981,7 +7014,7 @@ fixed_iptables_save() {
 	local err=
 	
 	load_kernel_module ip_tables
-	${IPTABLES_SAVE_CMD} -c >$tmp
+	iptables_save_cmd -c >$tmp
 	err=$?
 	if [ ! $err -eq 0 ]
 	then
@@ -7030,17 +7063,17 @@ tables=\`${CAT_CMD} /proc/net/ip_tables_names\`
 for t in \${tables}
 do
 	# Reset/empty this table.
-	${IPTABLES_CMD} -t "\${t}" -F >${FIREHOL_OUTPUT}.log 2>&1
-	r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT ${IPTABLES_CMD} -t "\${t}" -F
+	iptables_cmd -t "\${t}" -F >${FIREHOL_OUTPUT}.log 2>&1
+	r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t "\${t}" -F
 	
-	${IPTABLES_CMD} -t "\${t}" -X >${FIREHOL_OUTPUT}.log 2>&1
-	r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT ${IPTABLES_CMD} -t "\${t}" -X
+	iptables_cmd -t "\${t}" -X >${FIREHOL_OUTPUT}.log 2>&1
+	r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t "\${t}" -X
 	
-	${IPTABLES_CMD} -t "\${t}" -Z >${FIREHOL_OUTPUT}.log 2>&1
-	r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT ${IPTABLES_CMD} -t "\${t}" -Z
+	iptables_cmd -t "\${t}" -Z >${FIREHOL_OUTPUT}.log 2>&1
+	r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t "\${t}" -Z
 	
 	# Find all default chains in this table.
-	chains=\`${IPTABLES_CMD} -t "\${t}" -nL | ${GREP_CMD} "^Chain " | ${CUT_CMD} -d ' ' -f 2\`
+	chains=\`iptables_cmd -t "\${t}" -nL | ${GREP_CMD} "^Chain " | ${CUT_CMD} -d ' ' -f 2\`
 	
 	# If this is the 'filter' table, remember the default chains.
 	# This will be used at the end to make it DROP all packets.
@@ -7049,34 +7082,34 @@ do
 	# Set the policy to ACCEPT on all default chains.
 	for c in \${chains}
 	do
-		${IPTABLES_CMD} -t "\${t}" -P "\${c}" ACCEPT >${FIREHOL_OUTPUT}.log 2>&1
-		r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT ${IPTABLES_CMD} -t "\${t}" -P "\${c}" ACCEPT
+		iptables_cmd -t "\${t}" -P "\${c}" ACCEPT >${FIREHOL_OUTPUT}.log 2>&1
+		r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t "\${t}" -P "\${c}" ACCEPT
 	done
 done
 
-${IPTABLES_CMD} -t filter -P INPUT "\${FIREHOL_INPUT_ACTIVATION_POLICY}" >${FIREHOL_OUTPUT}.log 2>&1
-r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT ${IPTABLES_CMD} -t filter -P INPUT "\${FIREHOL_INPUT_ACTIVATION_POLICY}"
+iptables_cmd -t filter -P INPUT "\${FIREHOL_INPUT_ACTIVATION_POLICY}" >${FIREHOL_OUTPUT}.log 2>&1
+r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t filter -P INPUT "\${FIREHOL_INPUT_ACTIVATION_POLICY}"
 
-${IPTABLES_CMD} -t filter -P OUTPUT "\${FIREHOL_OUTPUT_ACTIVATION_POLICY}" >${FIREHOL_OUTPUT}.log 2>&1
-r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT ${IPTABLES_CMD} -t filter -P OUTPUT "\${FIREHOL_OUTPUT_ACTIVATION_POLICY}"
+iptables_cmd -t filter -P OUTPUT "\${FIREHOL_OUTPUT_ACTIVATION_POLICY}" >${FIREHOL_OUTPUT}.log 2>&1
+r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t filter -P OUTPUT "\${FIREHOL_OUTPUT_ACTIVATION_POLICY}"
 
-${IPTABLES_CMD} -t filter -P FORWARD "\${FIREHOL_FORWARD_ACTIVATION_POLICY}" >${FIREHOL_OUTPUT}.log 2>&1
-r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT ${IPTABLES_CMD} -t filter -P FORWARD "\${FIREHOL_FORWARD_ACTIVATION_POLICY}"
+iptables_cmd -t filter -P FORWARD "\${FIREHOL_FORWARD_ACTIVATION_POLICY}" >${FIREHOL_OUTPUT}.log 2>&1
+r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t filter -P FORWARD "\${FIREHOL_FORWARD_ACTIVATION_POLICY}"
 
 # Accept everything in/out the loopback device.
 if [ "\${FIREHOL_TRUST_LOOPBACK}" = "1" ]
 then
-	${IPTABLES_CMD} -A INPUT -i lo -j ACCEPT
-	${IPTABLES_CMD} -A OUTPUT -o lo -j ACCEPT
+	iptables_cmd -A INPUT -i lo -j ACCEPT
+	iptables_cmd -A OUTPUT -o lo -j ACCEPT
 fi
 
 # Drop all invalid packets.
 # Netfilter HOWTO suggests to DROP all INVALID packets.
 if [ "\${FIREHOL_DROP_INVALID}" = "1" ]
 then
-	${IPTABLES_CMD} -A INPUT -m state --state INVALID -j DROP
-	${IPTABLES_CMD} -A OUTPUT -m state --state INVALID -j DROP
-	${IPTABLES_CMD} -A FORWARD -m state --state INVALID -j DROP
+	iptables_cmd -A INPUT -m state --state INVALID -j DROP
+	iptables_cmd -A OUTPUT -m state --state INVALID -j DROP
+	iptables_cmd -A FORWARD -m state --state INVALID -j DROP
 fi
 
 EOF
@@ -7124,9 +7157,9 @@ ${CAT_CMD} >"${FIREHOL_TMP}.awk" <<"EOF"
 { print }
 EOF
 
-# at the same time, replace all ${IPTABLES_CMD} references with just
+# at the same time, replace all iptables_cmd references with just
 # the word 'iptables' to protect the currently running firewall
-${CAT_CMD} ${FIREHOL_CONFIG} | ${SED_CMD} "s|${IPTABLES_CMD}|iptables|g" | gawk_cmd -f "${FIREHOL_TMP}.awk" >${FIREHOL_TMP}
+${CAT_CMD} ${FIREHOL_CONFIG} | ${SED_CMD} "s|iptables_cmd|iptables|g" | gawk_cmd -f "${FIREHOL_TMP}.awk" >${FIREHOL_TMP}
 ${RM_CMD} -f "${FIREHOL_TMP}.awk"
 
 # ------------------------------------------------------------------------------
@@ -7150,8 +7183,8 @@ ${CAT_CMD} >>"${FIREHOL_OUTPUT}" <<EOF
 # Make it drop everything on table 'filter'.
 for c in \${firehol_filter_chains}
 do
-	${IPTABLES_CMD} -t filter -P "\${c}" DROP >${FIREHOL_OUTPUT}.log 2>&1
-	r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT ${IPTABLES_CMD} -t filter -P "\${c}" DROP
+	iptables_cmd -t filter -P "\${c}" DROP >${FIREHOL_OUTPUT}.log 2>&1
+	r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t filter -P "\${c}" DROP
 done
 
 EOF
