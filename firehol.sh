@@ -26,6 +26,58 @@ fi
 FIREHOL_FILE="${0}"
 FIREHOL_DEFAULT_WORKING_DIRECTORY="${PWD}"
 
+# Commands will be applied to ipv4 / ipv6 iptables as appropriate
+if [ "$1" = "-6" ]
+then
+	IPVER="ipv6"
+	shift
+elif [ "$1" = "-4" ]
+then
+	IPVER="ipv4"
+	shift
+else
+	IPVER="both"
+fi
+
+# Commands to switch into one ip version or the other
+ipver_command() {
+	local save_ipver=${IPVER}
+	local newver="$1"
+	shift
+
+	if [ "$newver" != "ipv4" -a "$newver" != "ipv6" -a "$newver" != "both" ]
+	then
+		error "ipver '$*' invalid. use ipv4/ipv6/both"
+		return 1
+	fi
+	IPVER="$newver"
+
+	st=0
+	if [ "$*" != "" ]
+	then
+		"$@"
+		st=$?
+	fi
+
+	IPVER="${save_ipver}"
+	return $st
+}
+
+ipv4() {
+	ipver_command ipv4 "$@"
+	return $?
+}
+
+ipv6() {
+	ipver_command ipv6 "$@"
+	return $?
+}
+
+both() {
+	ipver_command both "$@"
+	return $?
+}
+
 # ------------------------------------------------------------------------------
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 # ------------------------------------------------------------------------------
@@ -150,9 +202,6 @@ which_cmd FIND_CMD find
 which_cmd FOLD_CMD fold
 which_cmd GREP_CMD grep
 which_cmd HEAD_CMD head
-which_cmd IPTABLES_CMD iptables
-which_cmd IPTABLES_SAVE_CMD iptables-save
-which_cmd IPTABLES_RESTORE_CMD iptables-restore
 which_cmd LSMOD_CMD lsmod
 which_cmd MKDIR_CMD mkdir
 which_cmd MV_CMD mv
@@ -165,6 +214,20 @@ which_cmd TR_CMD tr
 which_cmd UNAME_CMD uname
 which_cmd UNIQ_CMD uniq
 which_cmd LOGGER_CMD logger
+
+if [ "${IPVER}" = "both" -o  "${IPVER}" = "ipv4" ]
+then
+	which_cmd IPTABLES_CMD iptables
+	which_cmd IPTABLES_SAVE_CMD iptables-save
+	which_cmd IPTABLES_RESTORE_CMD iptables-restore
+fi
+
+if [ "${IPVER}" = "both" -o  "${IPVER}" = "ipv6" ]
+then
+	which_cmd IP6TABLES_CMD ip6tables
+	which_cmd IP6TABLES_SAVE_CMD ip6tables-save
+	which_cmd IP6TABLES_RESTORE_CMD ip6tables-restore
+fi
 
 # Special commands
 pager_cmd() {
@@ -260,30 +323,172 @@ renice_cmd() {
 }
 
 iptables_cmd() {
-	if [ -z "${IPTABLES_CMD}" ]
+	local status=0
+	local ignore_missing_tables=0
+	if [ "${1}" = "--ignore-missing" ]
 	then
-		require_cmd iptables
+		shift
+		ignore_missing_tables=1
 	fi
-	
-	"${IPTABLES_CMD}" "${@}"
+
+	if [ "$IPVER" = "ipv4" ]
+	then
+		"${IPTABLES_CMD}" "$@"
+		status=$?
+	elif [ "$IPVER" = "ipv6" ]
+	then
+		"${IP6TABLES_CMD}" "$@"
+		status=$?
+	else
+		local status4=0
+		local status6=0
+		local ipv4_ok=1
+		local ipv6_ok=1
+
+		# Remove port range and log prefix which can contain : and .
+		# which would confuse ipv4 and ipv6 address detection
+		local skip_next=0
+		local frag_param=0
+		local table_next=0
+		local search=""
+		for i in "$@"
+		do
+		if [ $skip_next -eq 1 ]
+		then
+			skip_next=0
+		elif [ $frag_param -eq 1 ]
+		then
+			case "$i" in
+			-*)
+				# ip6 tables needs an argument to -f
+				ipv6_ok=0
+			;;
+			*)
+				# ip4 tables should not have an argument to -f
+				ipv4_ok=0
+			;;
+			esac
+		elif [ $table_next -eq 1 ]
+		then
+			table_next=0
+			if [ ${ignore_missing_tables} -eq 1 ]
+                        then
+			  grep -q "$i" /proc/net/ip6_tables_names || ipv6_ok=0
+			  grep -q "$i" /proc/net/ip_tables_names || ipv4_ok=0
+                        fi
+		else
+			case "$i" in
+			-f)
+				frag_param=1
+			;;
+			-t)
+				table_next=1
+			;;
+			-*port)
+				skip_next=1
+				search="$search $i"
+			;;
+			-*prefix=*)
+			;;
+			*)
+				search="$search $i"
+			;;
+			esac
+		fi
+		done
+
+		case "$search" in
+			*"proto icmpv6"*|*"icmpv6-type"*)
+				ipv4_ok=0
+			;;
+			*"proto icmp"*|*"icmp-type"*)
+				ipv6_ok=0
+			;;
+			*":"*)
+				ipv4_ok=0
+			;;
+			*"."*)
+				ipv6_ok=0
+			;;
+		esac
+
+		if [ $ipv6_ok -eq 1 ]
+		then
+			"${IP6TABLES_CMD}" "$@"
+			status6=$?
+		fi
+		if [ $ipv4_ok -eq 1 ]
+		then
+			"${IPTABLES_CMD}" "$@"
+			status4=$?
+		fi
+		if [ ${status6} -ne 0 ]
+		then
+			status=$status6
+		else
+			status=$status4
+		fi
+	fi
+	return $status
 }
 
 iptables_save_cmd() {
-	if [ -z "${IPTABLES_SAVE_CMD}" ]
+	local status=0
+	local status4=0
+	local status6=0
+
+	if [ "$IPVER" = "ipv4" -o  "$IPVER" = "both" ]
 	then
-		require_cmd iptables-save
+		echo "#IPV4-START"
+		"${IPTABLES_SAVE_CMD}" "${@}"
+		status4=$?
+		echo "#IPV4-END"
 	fi
-	
-	"${IPTABLES_SAVE_CMD}" "${@}"
+
+	if [ "$IPVER" = "ipv6" -o  "$IPVER" = "both" ]
+	then
+		echo "#IPV6-START"
+		"${IP6TABLES_SAVE_CMD}" "$@"
+		status6=$?
+		echo "#IPV6-END"
+	fi
+	if [ ${status6} -ne 0 ]
+	then
+		status=$status6
+	else
+		status=$status4
+	fi
+	return $status
 }
 
 iptables_restore_cmd() {
-	if [ -z "${IPTABLES_RESTORE_CMD}" ]
+	local status=0
+	local status4=0
+	local status6=0
+	local file="$1"
+	shift
+
+	if [ "$IPVER" = "ipv4" -o  "$IPVER" = "both" ]
 	then
-		require_cmd iptables-restore
+		sed -ne '/^#IPV4-START/,/^#IPV4-END/p' ${file} | \
+			"${IPTABLES_RESTORE_CMD}" "$@"
+		status4=$?
 	fi
-	
-	"${IPTABLES_RESTORE_CMD}" "${@}"
+
+	if [ "$IPVER" = "ipv6" -o  "$IPVER" = "both" ]
+	then
+		sed -ne '/^#IPV6-START/,/^#IPV6-END/p' ${file} | \
+			"${IP6TABLES_RESTORE_CMD}" "$@"
+		status6=$?
+	fi
+
+	if [ ${status6} -ne 0 ]
+	then
+		status=$status6
+	else
+		status=$status4
+	fi
+	return $status
 }
 
 # Concurrent run control
@@ -339,7 +544,20 @@ then
 	FIREHOL_MINOR_VERSION=257
 fi
 
-for check in IPTABLES_CMD IPTABLES_SAVE_CMD IPTABLES_RESTORE_CMD
+if [ "${IPVER}" = "ipv6" ]
+then
+  list="IP6TABLES_CMD IP6TABLES_SAVE_CMD IP6TABLES_RESTORE_CMD"
+  TABLES="/proc/net/ip6_tables_names"
+elif [ "${IPVER}" = "ipv4" ]
+then
+  list="IPTABLES_CMD IPTABLES_SAVE_CMD IPTABLES_RESTORE_CMD"
+  TABLES="/proc/net/ip_tables_names"
+else
+  list="IPTABLES_CMD IPTABLES_SAVE_CMD IPTABLES_RESTORE_CMD IP6TABLES_CMD IP6TABLES_SAVE_CMD IP6TABLES_RESTORE_CMD"
+  TABLES="/proc/net/ip_tables_names /proc/net/ip6_tables_names"
+fi
+
+for check in $list
 do
         checkname=`echo $check | ${SED_CMD} -e 's/_CMD$//' | ${TR_CMD} A-Z_ a-z-`
 	eval checkenv=\$$check
@@ -417,7 +635,7 @@ firehol_exit() {
 	then
 		echo
 		echo -n $"FireHOL: Restoring old firewall:"
-		iptables_restore_cmd <"${FIREHOL_SAVED}"
+		iptables_restore_cmd "${FIREHOL_SAVED}"
 		if [ $? -eq 0 ]
 		then
 			local restored="OK"
@@ -644,8 +862,8 @@ load_ips() {
 # Optimized (CIDR) by Marc 'HE' Brockschmidt <marc@marcbrockschmidt.de>
 # Further optimized and reduced by http://www.vergenet.net/linux/aggregate/
 # The supplied get-iana.sh uses 'aggregate-flim' if it finds it in the path.
-RESERVED_IPS="0.0.0.0/7 2.0.0.0/8 5.0.0.0/8 10.0.0.0/8 14.0.0.0/8 23.0.0.0/8 27.0.0.0/8 31.0.0.0/8 36.0.0.0/7 39.0.0.0/8 42.0.0.0/8 46.0.0.0/8 49.0.0.0/8 50.0.0.0/8 100.0.0.0/6 104.0.0.0/6 127.0.0.0/8 175.0.0.0/8 176.0.0.0/7 179.0.0.0/8 180.0.0.0/6 185.0.0.0/8 223.0.0.0/8 240.0.0.0/4 "
-load_ips RESERVED_IPS "${RESERVED_IPS}" 90 "Run the supplied get-iana.sh script to generate this file." require-file
+RESERVED4_IPS="0.0.0.0/7 2.0.0.0/8 5.0.0.0/8 10.0.0.0/8 14.0.0.0/8 23.0.0.0/8 27.0.0.0/8 31.0.0.0/8 36.0.0.0/7 39.0.0.0/8 42.0.0.0/8 46.0.0.0/8 49.0.0.0/8 50.0.0.0/8 100.0.0.0/6 104.0.0.0/6 127.0.0.0/8 175.0.0.0/8 176.0.0.0/7 179.0.0.0/8 180.0.0.0/6 185.0.0.0/8 223.0.0.0/8 240.0.0.0/4"
+RESERVED6_IPS="::/8"
 
 # Private IPv4 address space
 # Suggested by Fco.Felix Belmonte <ffelix@gescosoft.com>
@@ -655,11 +873,33 @@ load_ips RESERVED_IPS "${RESERVED_IPS}" 90 "Run the supplied get-iana.sh script 
 # 192.0.2.0/24     => Test Net
 # 192.88.99.0/24   => RFC 3068: 6to4 anycast & RFC 2544: Benchmarking addresses
 # 192.168.0.0/16   => RFC 1918: Private use
-PRIVATE_IPS="10.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.0.2.0/24 192.88.99.0/24 192.168.0.0/16"
-load_ips PRIVATE_IPS "${PRIVATE_IPS}" 0
+PRIVATE4_IPS="10.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.0.2.0/24 192.88.99.0/24 192.168.0.0/16"
+# Private IPv6 address space
+# fe80::/16        => Link Local
+PRIVATE6_IPS="fe80::/16"
 
 # The multicast address space
-MULTICAST_IPS="224.0.0.0/4"
+MULTICAST4_IPS="224.0.0.0/4"
+MULTICAST6_IPS="ff00::/16"
+
+if [ ${IPVER} = "ipv4" ]
+then
+	RESERVED_IPS="${RESERVED4_IPS}"
+	PRIVATE_IPS="${PRIVATE4_IPS}"
+	MULTICAST_IPS="${MULTICAST4_IPS}"
+elif [ ${IPVER} = "ipv6" ]
+then
+	RESERVED_IPS="${RESERVED6_IPS}"
+	PRIVATE_IPS="${PRIVATE6_IPS}"
+	MULTICAST_IPS="${MULTICAST6_IPS}"
+else
+	RESERVED_IPS="${RESERVED4_IPS} ${RESERVED6_IPS}"
+	PRIVATE_IPS="${PRIVATE4_IPS} ${RESERVED6_IPS}"
+	MULTICAST_IPS="${MULTICAST4_IPS} ${MULTICAST6_IPS}"
+fi
+
+load_ips RESERVED_IPS "${RESERVED_IPS}" 90 "Run the supplied get-iana.sh script to generate this file." require-file
+load_ips PRIVATE_IPS "${PRIVATE_IPS}" 0
 load_ips MULTICAST_IPS "${MULTICAST_IPS}" 0
 
 # A shortcut to have all the Internet unroutable addresses in one
@@ -713,11 +953,16 @@ FIREHOL_DROP_ORPHAN_TCP_ACK_FIN=0
 # use this range.
 # Note that FireHOL will ask the kernel for default client ports of
 # the local host. This only applies to client ports of remote hosts.
+
 DEFAULT_CLIENT_PORTS="1024:65535"
 
 # Get the default client ports from the kernel configuration.
 # This is formed to a range of ports to be used for all "default"
 # client ports when the client specified is the localhost.
+#
+# According to http://tldp.org/HOWTO/Linux+IPv6-HOWTO/proc-sys-net-ipv4..html
+# the ipv4 values are also used for ipv6, so no needed change here
+
 LOCAL_CLIENT_PORTS_LOW=`${SYSCTL_CMD} net.ipv4.ip_local_port_range | ${CUT_CMD} -d '=' -f 2 | ${CUT_CMD} -f 1`
 LOCAL_CLIENT_PORTS_HIGH=`${SYSCTL_CMD} net.ipv4.ip_local_port_range | ${CUT_CMD} -d '=' -f 2 | ${CUT_CMD} -f 2`
 LOCAL_CLIENT_PORTS="${LOCAL_CLIENT_PORTS_LOW}:${LOCAL_CLIENT_PORTS_HIGH}"
@@ -955,6 +1200,12 @@ client_ICMP_ports="any"
 server_icmp_ports="icmp/any"
 client_icmp_ports="any"
 # ALL_SHOULD_ALSO_RUN="${ALL_SHOULD_ALSO_RUN} icmp"
+
+server_ICMPV6_ports="icmpv6/any"
+client_ICMPV6_ports="any"
+
+server_icmpv6_ports="icmpv6/any"
+client_icmpv6_ports="any"
 
 # Squid' ICP port
 server_icp_ports="udp/3130"
@@ -1889,10 +2140,24 @@ rules_ping() {
 	# ----------------------------------------------------------------------
 	
 	# allow incoming new and established PING packets
-	rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type echo-request" state NEW,ESTABLISHED || return 1
+	if [ ${IPVER} = "ipv4" -o  ${IPVER} = "both" ]
+	then
+		rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type echo-request" state NEW,ESTABLISHED || return 1
+	fi
+	if [ ${IPVER} = "ipv6" -o  ${IPVER} = "both" ]
+	then
+		rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type echo-request" state NEW,ESTABLISHED || return 1
+	fi
 	
 	# allow outgoing established packets
-	rule ${out} reverse action "$@" chain "${out}_${mychain}" proto icmp custom "--icmp-type echo-reply" state ESTABLISHED || return 1
+	if [ ${IPVER} = "ipv4" -o  ${IPVER} = "both" ]
+	then
+		rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type echo-reply" state NEW,ESTABLISHED || return 1
+	fi
+	if [ ${IPVER} = "ipv6" -o  ${IPVER} = "both" ]
+	then
+		rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type echo-reply" state NEW,ESTABLISHED || return 1
+	fi
 	
 	return 0
 }
@@ -1919,11 +2184,25 @@ rules_timestamp() {
 	
 	# ----------------------------------------------------------------------
 	
-	# allow incoming new and established PING packets
-	rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type timestamp-request" state NEW,ESTABLISHED || return 1
+	# allow incoming new and established TIMESTAMP packets
+	if [ ${IPVER} = "ipv4" -o  ${IPVER} = "both" ]
+	then
+		rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type timestamp-request" state NEW,ESTABLISHED || return 1
+	fi
+	if [ ${IPVER} = "ipv6" -o  ${IPVER} = "both" ]
+	then
+		rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type timestamp-request" state NEW,ESTABLISHED || return 1
+	fi
 	
 	# allow outgoing established packets
-	rule ${out} reverse action "$@" chain "${out}_${mychain}" proto icmp custom "--icmp-type timestamp-reply" state ESTABLISHED || return 1
+	if [ ${IPVER} = "ipv4" -o  ${IPVER} = "both" ]
+	then
+		rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type timestamp-reply" state NEW,ESTABLISHED || return 1
+	fi
+	if [ ${IPVER} = "ipv6" -o  ${IPVER} = "both" ]
+	then
+		rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type timestamp-reply" state NEW,ESTABLISHED || return 1
+	fi
 	
 	return 0
 }
@@ -2056,11 +2335,11 @@ rules_multicast() {
 	# ----------------------------------------------------------------------
 	
 	# match multicast packets in both directions
-	rule ${out} action "$@" chain "${out}_${mychain}" dst "224.0.0.0/4" proto 2 || return 1
-	rule ${in} reverse action "$@" chain "${in}_${mychain}" src "224.0.0.0/4" proto 2 || return 1
+	rule ${out} action "$@" chain "${out}_${mychain}" dst "${MULTICAST_IPS}" proto 2 || return 1
+	rule ${in} reverse action "$@" chain "${in}_${mychain}" src "${MULTICAST_IPS}" proto 2 || return 1
 	
-	rule ${out} action "$@" chain "${out}_${mychain}" dst "224.0.0.0/4" proto udp || return 1
-	rule ${in} reverse action "$@" chain "${in}_${mychain}" src "224.0.0.0/4" proto udp || return 1
+	rule ${out} action "$@" chain "${out}_${mychain}" dst "${MULTICAST_IPS}" proto udp || return 1
+	rule ${in} reverse action "$@" chain "${in}_${mychain}" src "${MULTICAST_IPS}" proto udp || return 1
 	
 	return 0
 }
@@ -2938,6 +3217,7 @@ postprocess() {
 		printf "runcmd '${check}' '${FIREHOL_LINEID}' " >>${FIREHOL_OUTPUT}
 	fi
 	
+	printf "${IPVER} " >>${FIREHOL_OUTPUT}
 	printf "%q " "$@" >>${FIREHOL_OUTPUT}
 	printf "\n" >>${FIREHOL_OUTPUT}
 	
@@ -3085,11 +3365,17 @@ protection() {
 				
 			fragments|FRAGMENTS)
 				local mychain="${pre}_${work_name}_fragments"
-				create_chain filter "${mychain}" "${in}_${work_name}" in custom "-f"				|| return 1
-				
-				set_work_function "Generating rules to be protected from packet fragments on '${prface}' for ${work_cmd} '${work_name}'"
-				
-				rule in chain "${mychain}" loglimit "PACKET FRAGMENTS" action drop 				|| return 1
+				if [ "${IPVER}" = "both" -o "${IPVER}" = "ipv4" ]
+				then
+					create_chain filter "${mychain}" "${in}_${work_name}" in custom "-f"				|| return 1
+					set_work_function "Generating rules to be protected from packet fragments on '${prface}' for ${work_cmd} '${work_name}'"
+					rule in chain "${mychain}" loglimit "PACKET FRAGMENTS" action drop 				|| return 1
+				fi
+				if [ "${IPVER}" = "both" -o "${IPVER}" = "ipv6" ]
+				then
+					mychain="${mychain}_ipv6"
+					# TODO - is there an equivalent to -f for ipv6?
+				fi
 				;;
 				
 			new-tcp-w/o-syn|NEW-TCP-W/O-SYN)
@@ -3097,18 +3383,26 @@ protection() {
 				create_chain filter "${mychain}" "${in}_${work_name}" in proto tcp state NEW custom "! --syn"	|| return 1
 				
 				set_work_function "Generating rules to be protected from new TCP connections without the SYN flag set on '${prface}' for ${work_cmd} '${work_name}'"
-				
 				rule in chain "${mychain}" loglimit "NEW TCP w/o SYN" action drop				|| return 1
 				;;
 				
 			icmp-floods|ICMP-FLOODS)
 				local mychain="${pre}_${work_name}_icmpflood"
-				create_chain filter "${mychain}" "${in}_${work_name}" in proto icmp custom "--icmp-type echo-request"	|| return 1
-				
-				set_work_function "Generating rules to be protected from ICMP floods on '${prface}' for ${work_cmd} '${work_name}'"
-				
-				rule in chain "${mychain}" limit "${rate}" "${burst}" action return				|| return 1
-				rule in chain "${mychain}" loglimit "ICMP FLOOD" action drop					|| return 1
+				if [ "${IPVER}" = "both" -o  "${IPVER}" = "ipv4" ]
+				then
+					create_chain filter "${mychain}" "${in}_${work_name}" in proto icmp custom "--icmp-type echo-request"	|| return 1
+					set_work_function "Generating rules to be protected from ICMP floods on '${prface}' for ${work_cmd} '${work_name}'"
+					rule in chain "${mychain}" limit "${rate}" "${burst}" action return				|| return 1
+					rule in chain "${mychain}" loglimit "ICMP FLOOD" action drop					|| return 1
+				fi
+				if [ "${IPVER}" = "both" -o  "${IPVER}" = "ipv6" ]
+				then
+					mychain="${mychain}_ipv6"
+					create_chain filter "${mychain}" "${in}_${work_name}" in proto icmpv6 custom "--icmpv6-type echo-request"	|| return 1
+					set_work_function "Generating rules to be protected from ICMP floods on '${prface}' for ${work_cmd} '${work_name}'"
+					rule in chain "${mychain}" limit "${rate}" "${burst}" action return				|| return 1
+					rule in chain "${mychain}" loglimit "ICMP FLOOD" action drop					|| return 1
+				fi
 				;;
 				
 			syn-floods|SYN-FLOODS)
@@ -3313,6 +3607,12 @@ check_kernel_module() {
 		ip_tables)
 			test -f /proc/net/ip_tables_names && return 0
 			check_kernel_config CONFIG_IP_NF_IPTABLES
+			return $?
+			;;
+		
+		ip6_tables)
+			test -f /proc/net/ip6_tables_names && return 0
+			check_kernel_config CONFIG_IP6_NF_IPTABLES
 			return $?
 			;;
 		
@@ -5890,19 +6190,26 @@ case "${arg}" in
 		test -f "${FIREHOL_LOCK_DIR}/iptables" && ${RM_CMD} -f "${FIREHOL_LOCK_DIR}/iptables"
 		
 		echo -n $"FireHOL: Clearing Firewall:"
-		load_kernel_module ip_tables
-		tables=`${CAT_CMD} /proc/net/ip_tables_names`
+		if [ "${IPVER}" = "both" -o  "${IPVER}" = "ipv4" ]
+		then
+			load_kernel_module ip_tables
+		fi
+		if [ "${IPVER}" = "both" -o  "${IPVER}" = "ipv6" ]
+		then
+			load_kernel_module ip6_tables
+		fi
+		tables=`${CAT_CMD} ${TABLES} | ${SORT_CMD} -u`
 		for t in ${tables}
 		do
-			iptables_cmd -t "${t}" -F
-			iptables_cmd -t "${t}" -X
-			iptables_cmd -t "${t}" -Z
+			iptables_cmd --ignore-missing -t "${t}" -F
+			iptables_cmd --ignore-missing -t "${t}" -X
+			iptables_cmd --ignore-missing -t "${t}" -Z
 			
 			# Find all default chains in this table.
-			chains=`iptables_cmd -t "${t}" -nL | ${GREP_CMD} "^Chain " | ${CUT_CMD} -d ' ' -f 2`
+			chains=`iptables_cmd --ignore-missing -t "${t}" -nL | ${GREP_CMD} "^Chain " | ${CUT_CMD} -d ' ' -f 2`
 			for c in ${chains}
 			do
-				iptables_cmd -t "${t}" -P "${c}" ACCEPT
+				iptables_cmd --ignore-missing -t "${t}" -P "${c}" ACCEPT
 			done
 		done
 		success $"FireHOL: Clearing Firewall:"
@@ -5963,26 +6270,33 @@ case "${arg}" in
 		
 		syslog info "Starting PANIC mode (SSH SOURCE_IP=${ssh_src} SOURCE_PORTS=${ssh_sport} DESTINATION_PORTS=${ssh_dport})"
 		echo -n $"FireHOL: Blocking all communications:"
-		load_kernel_module ip_tables
-		tables=`${CAT_CMD} /proc/net/ip_tables_names`
+		if [ "${IPVER}" = "both" -o  "${IPVER}" = "ipv4" ]
+		then
+			load_kernel_module ip_tables
+		fi
+		if [ "${IPVER}" = "both" -o  "${IPVER}" = "ipv6" ]
+		then
+			load_kernel_module ip6_tables
+		fi
+		tables=`${CAT_CMD} ${TABLES} | ${SORT_CMD} -u`
 		for t in ${tables}
 		do
-			iptables_cmd -t "${t}" -F
-			iptables_cmd -t "${t}" -X
-			iptables_cmd -t "${t}" -Z
+			iptables_cmd --ignore-missing -t "${t}" -F
+			iptables_cmd --ignore-missing -t "${t}" -X
+			iptables_cmd --ignore-missing -t "${t}" -Z
 			
 			# Find all default chains in this table.
-			chains=`iptables_cmd -t "${t}" -nL | ${GREP_CMD} "^Chain " | ${CUT_CMD} -d ' ' -f 2`
+			chains=`iptables_cmd --ignore-missing -t "${t}" -nL | ${GREP_CMD} "^Chain " | ${CUT_CMD} -d ' ' -f 2`
 			for c in ${chains}
 			do
-				iptables_cmd -t "${t}" -P "${c}" ACCEPT
+				iptables_cmd --ignore-missing -t "${t}" -P "${c}" ACCEPT
 				
 				if [ ! -z "${ssh_src}" ]
 				then
-					iptables_cmd -t "${t}" -A "${c}" -p tcp -s "${ssh_src}" --sport "${ssh_sport}" --dport "${ssh_dport}" -m state --state ESTABLISHED -j ACCEPT
-					iptables_cmd -t "${t}" -A "${c}" -p tcp -d "${ssh_src}" --dport "${ssh_sport}" --sport "${ssh_dport}" -m state --state ESTABLISHED -j ACCEPT
+					iptables_cmd --ignore-missing -t "${t}" -A "${c}" -p tcp -s "${ssh_src}" --sport "${ssh_sport}" --dport "${ssh_dport}" -m state --state ESTABLISHED -j ACCEPT
+					iptables_cmd --ignore-missing -t "${t}" -A "${c}" -p tcp -d "${ssh_src}" --dport "${ssh_sport}" --sport "${ssh_dport}" -m state --state ESTABLISHED -j ACCEPT
 				fi
-				iptables_cmd -t "${t}" -A "${c}" -j DROP
+				iptables_cmd --ignore-missing -t "${t}" -A "${c}" -j DROP
 			done
 		done
 		success $"FireHOL: Blocking all communications:"
@@ -7013,7 +7327,14 @@ fixed_iptables_save() {
 	local tmp="${FIREHOL_DIR}/iptables-save-$$"
 	local err=
 	
-	load_kernel_module ip_tables
+	if [ "${IPVER}" = "both" -o  "${IPVER}" = "ipv4" ]
+	then
+		load_kernel_module ip_tables
+	fi
+	if [ "${IPVER}" = "both" -o  "${IPVER}" = "ipv6" ]
+	then
+		load_kernel_module ip6_tables
+	fi
 	iptables_save_cmd -c >$tmp
 	err=$?
 	if [ ! $err -eq 0 ]
@@ -7055,25 +7376,32 @@ fi
 ${CAT_CMD} >"${FIREHOL_OUTPUT}" <<EOF
 #!/bin/sh
 
-load_kernel_module ip_tables
+if [ "${IPVER}" = "both" -o  "${IPVER}" = "ipv4" ]
+then
+	load_kernel_module ip_tables
+fi
+if [ "${IPVER}" = "both" -o  "${IPVER}" = "ipv6" ]
+then
+	load_kernel_module ip6_tables
+fi
 load_kernel_module nf_conntrack
 
 # Find all tables supported
-tables=\`${CAT_CMD} /proc/net/ip_tables_names\`
+tables=\`${CAT_CMD} ${TABLES} | ${SORT_CMD} -u\`
 for t in \${tables}
 do
 	# Reset/empty this table.
-	iptables_cmd -t "\${t}" -F >${FIREHOL_OUTPUT}.log 2>&1
+	iptables_cmd --ignore-missing -t "\${t}" -F >${FIREHOL_OUTPUT}.log 2>&1
 	r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t "\${t}" -F
 	
-	iptables_cmd -t "\${t}" -X >${FIREHOL_OUTPUT}.log 2>&1
+	iptables_cmd --ignore-missing -t "\${t}" -X >${FIREHOL_OUTPUT}.log 2>&1
 	r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t "\${t}" -X
 	
-	iptables_cmd -t "\${t}" -Z >${FIREHOL_OUTPUT}.log 2>&1
+	iptables_cmd --ignore-missing -t "\${t}" -Z >${FIREHOL_OUTPUT}.log 2>&1
 	r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t "\${t}" -Z
 	
 	# Find all default chains in this table.
-	chains=\`iptables_cmd -t "\${t}" -nL | ${GREP_CMD} "^Chain " | ${CUT_CMD} -d ' ' -f 2\`
+	chains=\`iptables_cmd --ignore-missing -t "\${t}" -nL | ${GREP_CMD} "^Chain " | ${CUT_CMD} -d ' ' -f 2\`
 	
 	# If this is the 'filter' table, remember the default chains.
 	# This will be used at the end to make it DROP all packets.
@@ -7082,8 +7410,8 @@ do
 	# Set the policy to ACCEPT on all default chains.
 	for c in \${chains}
 	do
-		iptables_cmd -t "\${t}" -P "\${c}" ACCEPT >${FIREHOL_OUTPUT}.log 2>&1
-		r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t "\${t}" -P "\${c}" ACCEPT
+		iptables_cmd --ignore-missing -t "\${t}" -P "\${c}" ACCEPT >${FIREHOL_OUTPUT}.log 2>&1
+		r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd --ignore-missing -t "\${t}" -P "\${c}" ACCEPT
 	done
 done
 
@@ -7216,6 +7544,7 @@ done
 if [ $FIREHOL_ROUTING -eq 1 ]
 then
 	postprocess ${SYSCTL_CMD} -w "net.ipv4.ip_forward=1"
+	postprocess ${SYSCTL_CMD} -w "net.ipv6.conf.all.forwarding=1"
 fi
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX

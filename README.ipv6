@@ -1,0 +1,89 @@
+                    FireHOL IPv6 SUPPORT
+                    ********************
+
+Introduction
+============
+This version of FireHOL has experimental IPv6 support. It will attempt
+to load both iptables and ip6tables entries for all rules, with the
+following exceptions:
+
+1. Explicitly stated version e.g.:
+
+   interface wlan0 internet
+      ipv4 masquerade
+      ipv6 server ssh allow
+
+   Will only enable masquerading on IPv4 and ssh access vi IPv6.
+
+2. Implicit by protocol or address e.g.:
+
+   interface eth0 lan
+      telnet server accept src "192.168.0.0/24"
+      ftp server accept src "fe80::/64"
+      ssh server accept src "fe80::/64 192.168.0.0/24"
+
+   All should do the "right thing" and allow mix and match of addresses.
+
+
+Known Issues
+============
+1. There is no ARP in IPv6. To be able to find other nodes without
+   setting the interface policy to accept you will need to manually
+   create rules to allow through neighbour-solicitation and
+   neighbour-advertisement packets. There are similar requirements
+   for discovery of routers.
+
+   To globally enable icmpv6 in order to get around the majority of
+   these problems until a thorough resolution is in place, the following
+   can be added to the top of your configuration:
+
+   ipv6_fix() {
+      for iface in "$@"
+      do
+         iptables -j ACCEPT -I INPUT 1 -i "$iface" -p icmpv6
+         iptables -j ACCEPT -I OUTPUT 1 -o "$iface" -p icmpv6
+      done
+   }
+
+   And for the various interfaces call e.g.:
+      interface "$wanif" wan
+         protection strong
+         policy deny
+         ipv6_fix $wanif
+
+   Note that iptables is called: this is a function provided by
+   firehol, not the external command so it gets correctly turned into
+   an ip6tables command due to the use of protocol icmpv6.
+
+2. There is no Linux kernel NAT support for IPv6, you will get errors
+   if you try to use it (e.g. by including the masquerade command without
+   explicitly marking it as ipv4).
+
+   A kernel module may be available from somewhere in which case you might
+   be able to get it to work. You probably don't want to NAT for nearly as
+   much as with ipv4 though.
+
+3. No way to mark a block of commands as ipv4 or ipv6 only
+
+   Allowing a mode switch leads the possibility of accidentally not
+   switching back and possible security implications.
+
+   There hopefully aren't too many situations where one would want
+   to issue many rules for just one or the other which can't be
+   dealt with by the automatic address detection routines.
+
+4. Private / Unroutable IPv6 lists are woefully incomplete.
+
+5. IPv4/IPv6 detection in iptables() could probably be improved
+
+6. Commands other than start, stop and /path/to/a.conf haven't
+   received any testing.
+
+7. Creating a rule which applies only to one ip type will lead to
+   empty chains e.g.:
+      server ssh accept src "10.0.0.0/8"
+
+   will create two chains, one using iptables and the other using
+   ip6tables; only the iptables chain has any rules added to it. This
+   should not cause any problems, but can look odd when inspecting
+   the tables directly.
