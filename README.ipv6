@@ -32,11 +32,15 @@ Known Issues
    neighbour-advertisement packets. There are similar requirements
    for discovery of routers.
 
-   To globally enable icmpv6 in order to get around the majority of
-   these problems until a thorough resolution is in place, the following
-   can be added to the top of your configuration:
+   A full set of recommendations that ought to be implemented are
+   here:
+     http://tools.ietf.org/html/rfc4890
 
-   ipv6_fix() {
+   Until a thorough resolution is in place, the following can be added
+   to the top of your configuration to enable all icmpv6, at some
+   additional risk:
+
+   ipv6_allow() {
       for iface in "$@"
       do
          iptables -j ACCEPT -I INPUT 1 -i "$iface" -p icmpv6
@@ -44,11 +48,11 @@ Known Issues
       done
    }
 
-   And for the various interfaces call e.g.:
+   For the various interfaces you call the function e.g.:
       interface "$wanif" wan
          protection strong
          policy deny
-         ipv6_fix $wanif
+         ipv6_allow $wanif
 
    Note that iptables is called: this is a function provided by
    sanewall, not the external command so it gets correctly turned into
