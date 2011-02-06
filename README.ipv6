@@ -24,6 +24,19 @@ following exceptions:
 
    All should do the "right thing" and allow mix and match of addresses.
 
+   Note that "src" can confuse complex rules at present and "src not" can
+   confuse even simple rules so to avoid errors, rather than:
+      server ping accept src "${ip_mix}"
+
+      server ssh accept src not "${ip_mix}"
+
+   write intead:
+      ivp4 server ping accept src "${ip_v4}"
+      ivp6 server ping accept src "${ip_v6}"
+
+      ipv4 server ssh accept src not "${ip_v4}"
+      ipv6 server ssh accept src not "${ip_v6}"
+
 3. ICMP and ICMPv6 are not identical. You will get warnings and/or errors
    if you try to include rules for an ICMP packet type for ICMPv6 and
    vice-versa e.g.:

@@ -44,10 +44,10 @@ e.g.
 
 Drop echo replies which have a multicast address as a destination
 -----------------------------------------------------------------
-TODO
-RFC suggests:
-ip6tables -A icmpv6-filter -p icmpv6 -d ff00::/8 \
-        --icmpv6-type echo-reply -j DROP
+The "ping" complex rule can be used with an appropriate "src" modifier e.g.
+  ipv6 route ping src not "${MULTICAST6_IPS}"
+
+will prevent incoming echo-requests from multicast IPs and replies to them.
 
 
 Allow incoming destination unreachable messages only for existing sessions
