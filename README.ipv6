@@ -75,6 +75,10 @@ Known Issues
    here:
      http://tools.ietf.org/html/rfc4890
 
+   The recommendations, and how to achieve them (and where there is
+   still work to do) are listed in:
+     doc/rfc4890-noted.txt
+
    Until a thorough resolution is in place, the following can be added
    to the top of your configuration to enable all icmpv6 to the firewall
    interfaces, although the basics may work without it.

@@ -1,0 +1,315 @@
+                     Implementing with Firehol
+                     *************************
+        Recommendations for Filtering ICMPv6 Messages in Firewalls
+        **********************************************************
+
+The recommendations can be found here:
+   http://tools.ietf.org/html/rfc4890
+
+These recommendations pertain to firewalling at router level, not necessarily
+hosts or bridges (which may need to treat some packets differently, e.g.
+NA/NS and RA/RC).
+
+The headings were extracted from the example implementation; each one
+describes how the recommendation can be achieved with firehol.
+
+It is assumed that a policy other than accept is in place (such as
+reject or deny); if that is not the case then the user will need to
+drop some packet types explicitly to meet the recommendations.
+
+
+Allow outbound echo requests from prefixes which belong to the site
+-------------------------------------------------------------------
+The "router" command should be used with an appropriate "src" modifier
+
+
+Allow inbound echo requests towards only predetermined hosts
+------------------------------------------------------------
+The "ping" complex rule should be used in combination with an
+appropriate "dst" modifier.
+
+
+Allow incoming and outgoing echo reply messages only for existing sessions
+--------------------------------------------------------------------------
+This is handled automatically by the "ping" complex rule
+
+
+Deny icmps to/from link local addresses
+---------------------------------------
+The "router" command should be used with an appropriate "src" and
+"dst" modifier
+e.g.
+  src not "${UNROUTABLE_IPS}" dst not "${UNROUTABLE_IPS}"
+
+
+Drop echo replies which have a multicast address as a destination
+-----------------------------------------------------------------
+TODO
+RFC suggests:
+ip6tables -A icmpv6-filter -p icmpv6 -d ff00::/8 \
+        --icmpv6-type echo-reply -j DROP
+
+
+Allow incoming destination unreachable messages only for existing sessions
+--------------------------------------------------------------------------
+TODO
+RFC suggests:
+ip6tables -A icmpv6-filter -m state -p icmpv6 \
+     -d $inner_prefix \
+     --state ESTABLISHED,RELATED --icmpv6-type \
+     destination-unreachable -j ACCEPT
+
+The approriate "todo" complex rule with "src"/"dst" modifier ensures only
+valid $inner_prefix values work.
+
+
+Allow outgoing destination unreachable messages
+-----------------------------------------------
+TODO
+RFC suggests:
+ip6tables -A icmpv6-filter -p icmpv6 -s $inner_prefix \
+       --icmpv6-type destination-unreachable -j ACCEPT
+
+The approriate "todo" complex rule with "src"/"dst" modifier ensures only
+valid $inner_prefix values work.
+
+
+Allow incoming Packet Too Big messages only for existing sessions
+-----------------------------------------------------------------
+TODO
+RFC suggests:
+  ip6tables -A icmpv6-filter -m state -p icmpv6 \
+       -d $inner_prefix \
+       --state ESTABLISHED,RELATED \
+       --icmpv6-type packet-too-big \
+       -j ACCEPT
+
+The approriate "todo" complex rule with "src"/"dst" modifier ensures only
+valid $inner_prefix values work.
+
+
+Allow outgoing Packet Too Big messages
+---------------------------------------
+TODO
+RFC suggests:
+ip6tables -A icmpv6-filter -p icmpv6 -s $inner_prefix \
+       --icmpv6-type packet-too-big -j ACCEPT
+
+The approriate "todo" complex rule with "src"/"dst" modifier ensures only
+valid $inner_prefix values work.
+
+
+Allow incoming time exceeded code 0 messages only for existing sessions
+-----------------------------------------------------------------------
+TODO
+RFC incorrectly suggests:
+ip6tables -A icmpv6-filter -m state -p icmpv6 \
+     -d $inner_prefix \
+     --state ESTABLISHED,RELATED --icmpv6-type packet-too-big \
+     -j ACCEPT
+Should be:
+ip6tables -A icmpv6-filter -m state -p icmpv6 \
+     -d $inner_prefix \
+     --state ESTABLISHED,RELATED --icmpv6-type ttl-zero-during-transit \
+     -j ACCEPT
+
+The approriate "todo" complex rule with "src"/"dst" modifier ensures only
+valid $inner_prefix values work.
+
+
+Allow incoming time exceeded code 1 messages
+--------------------------------------------
+TODO
+RFC suggests:
+ip6tables -A icmpv6-filter -p icmpv6 -d $inner_prefix \
+         --icmpv6-type ttl-zero-during-reassembly -j ACCEPT
+
+The approriate "todo" complex rule with "src"/"dst" modifier ensures only
+valid $inner_prefix values work.
+
+
+Allow outgoing time exceeded code 0 messages
+--------------------------------------------
+TODO
+RFC suggests:
+ip6tables -A icmpv6-filter -p icmpv6 -s $inner_prefix \
+         --icmpv6-type ttl-zero-during-transit -j ACCEPT
+
+The approriate "todo" complex rule with "src"/"dst" modifier ensures only
+valid $inner_prefix values work.
+
+
+Allow outgoing time exceeded code 1 messages
+--------------------------------------------
+TODO
+RFC suggests:
+ip6tables -A icmpv6-filter -p icmpv6 -s $inner_prefix \
+         --icmpv6-type ttl-zero-during-reassembly -j ACCEPT
+
+The approriate "todo" complex rule with "src"/"dst" modifier ensures only
+valid $inner_prefix values work.
+
+
+Allow incoming parameter problem code 1 and 2 messages for an existing session
+------------------------------------------------------------------------------
+TODO
+RFC suggests:
+ip6tables -A icmpv6-filter -m state -p icmpv6 \
+     -d $inner_prefix \
+     --state ESTABLISHED,RELATED --icmpv6-type \
+     unknown-header-type \
+     -j ACCEPT
+ip6tables -A icmpv6-filter -m state -p icmpv6 \
+     -d $inner_prefix \
+     --state ESTABLISHED,RELATED \
+     --icmpv6-type unknown-option \
+     -j ACCEPT
+
+The approriate "todo" complex rule with "src"/"dst" modifier ensures only
+valid $inner_prefix values work.
+
+
+Allow outgoing parameter problem code 1 and code 2 messages
+-----------------------------------------------------------
+TODO
+RFC suggests:
+ip6tables -A icmpv6-filter -p icmpv6 -s $inner_prefix \
+       --icmpv6-type unknown-header-type -j ACCEPT
+ip6tables -A icmpv6-filter -p icmpv6 -s $inner_prefix \
+       --icmpv6-type unknown-option -j ACCEPT
+
+The approriate "todo" complex rule with "src"/"dst" modifier ensures only
+valid $inner_prefix values work.
+
+
+Allow incoming and outgoing parameter problem code 0 messages
+-------------------------------------------------------------
+TODO
+RFC suggests:
+ip6tables -A icmpv6-filter -p icmpv6 \
+       --icmpv6-type bad-header \
+       -j ACCEPT
+
+
+Drop NS/NA messages both incoming and outgoing
+-----------------------------------------------
+Firehol handles this automaticaly unless you set up an explicit route
+for the packets.
+
+
+Drop NS/NA messages both incoming and outgoing
+-----------------------------------------------
+Firehol handles this automaticaly unless you set up an explicit route
+for the packets.
+
+
+Drop Redirect messages both incoming and outgoing
+-----------------------------------------------
+Firehol handles this automaticaly unless you set up an explicit route
+for the packets.
+
+TODO: capability to allow these types of message on a host/bridge?
+ip6tables -A icmpv6-filter -p icmpv6 --icmpv6-type redirect -j DROP
+
+
+Drop incoming and outgoing Multicast Listener queries (MLDv1 and MLDv2)
+-----------------------------------------------
+Firehol handles this automaticaly unless you set up an explicit route
+for the packets.
+
+TODO: capability to allow these types of message on a host/bridge?
+ip6tables -A icmpv6-filter -p icmpv6 --icmpv6-type 130 -j DROP
+
+
+Drop incoming and outgoing Multicast Listener reports (MLDv1)
+-----------------------------------------------
+Firehol handles this automaticaly unless you set up an explicit route
+for the packets.
+
+TODO: capability to allow these types of message on a host/bridge?
+ip6tables -A icmpv6-filter -p icmpv6 --icmpv6-type 131 -j DROP
+
+
+Drop incoming and outgoing Multicast Listener Done messages (MLDv1)
+-----------------------------------------------
+Firehol handles this automaticaly unless you set up an explicit route
+for the packets.
+
+TODO: capability to allow these types of message on a host/bridge?
+ip6tables -A icmpv6-filter -p icmpv6 --icmpv6-type 132 -j DROP
+
+
+Drop incoming and outgoing Multicast Listener reports (MLDv2)
+-----------------------------------------------
+Firehol handles this automaticaly unless you set up an explicit route
+for the packets.
+
+TODO: capability to allow these types of message on a host/bridge?
+ip6tables -A icmpv6-filter -p icmpv6 --icmpv6-type 143 -j DROP
+
+
+Drop router renumbering messages
+-----------------------------------------------
+Firehol handles this automaticaly unless you set up an explicit route
+for the packets.
+
+TODO: capability to allow these types of message on a host/bridge?
+ip6tables -A icmpv6-filter -p icmpv6 --icmpv6-type 138 -j DROP
+
+
+Drop node information queries (139) and replies (140)
+-----------------------------------------------
+Firehol handles this automaticaly unless you set up an explicit route
+for the packets.
+
+TODO: capability to allow these types of message on a host/bridge?
+ip6tables -A icmpv6-filter -p icmpv6 --icmpv6-type 139 -j DROP
+ip6tables -A icmpv6-filter -p icmpv6 --icmpv6-type 140 -j DROP
+
+
+If there are mobile ipv6 home agents present on the trusted side allow
+----------------------------------------------------------------------
+TODO
+RFC suggests:
+#incoming Home Agent address discovery request
+ip6tables -A icmpv6-filter -p icmpv6 -d $inner_prefix \
+     --icmpv6-type 144 -j ACCEPT
+#outgoing Home Agent address discovery reply
+ip6tables -A icmpv6-filter -p icmpv6 -s $inner_prefix \
+     --icmpv6-type 145 -j ACCEPT
+#incoming Mobile prefix solicitation
+ip6tables -A icmpv6-filter -p icmpv6 -d $inner_prefix \
+     --icmpv6-type 146 -j ACCEPT
+#outgoing Mobile prefix advertisement
+ip6tables -A icmpv6-filter -p icmpv6 -s $inner_prefix \
+     --icmpv6-type 147 -j ACCEPT
+
+The approriate "todo" complex rule with "src"/"dst" modifier ensures only
+valid $inner_prefix values work.
+
+
+If there are roaming mobile nodes present on the trusted side allow
+--------------------------------------------------------------------
+TODO
+RFC suggests:
+#outgoing Home Agent address discovery request
+ip6tables -A icmpv6-filter -p icmpv6 -s $inner_prefix \
+     --icmpv6-type 144 -j ACCEPT
+#incoming Home Agent address discovery reply
+ip6tables -A icmpv6-filter -p icmpv6 -d $inner_prefix \
+     --icmpv6-type 145 -j ACCEPT
+#outgoing Mobile prefix solicitation
+ip6tables -A icmpv6-filter -p icmpv6 -s $inner_prefix \
+     --icmpv6-type 146 -j ACCEPT
+#incoming Mobile prefix advertisement
+ip6tables -A icmpv6-filter -p icmpv6 -d $inner_prefix \
+     --icmpv6-type 147 -j ACCEPT
+
+The approriate "todo" complex rule with "src"/"dst" modifier ensures only
+valid $inner_prefix values work.
+
+
+Drop everything else
+--------------------
+Firehol handles this automaticaly unless you set up an explicit route
+for the packets.
