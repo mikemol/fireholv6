@@ -2150,11 +2150,11 @@ rules_ping() {
 	# allow outgoing established packets
 	if [ ${IPVER} = "ipv4" -o  ${IPVER} = "both" ]
 	then
-		rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type echo-reply" state NEW,ESTABLISHED || return 1
+		rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type echo-reply" state ESTABLISHED || return 1
 	fi
 	if [ ${IPVER} = "ipv6" -o  ${IPVER} = "both" ]
 	then
-		rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type echo-reply" state NEW,ESTABLISHED || return 1
+		rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type echo-reply" state ESTABLISHED || return 1
 	fi
 
 	return 0
@@ -2195,11 +2195,11 @@ rules_timestamp() {
 	# allow outgoing established packets
 	if [ ${IPVER} = "ipv4" -o  ${IPVER} = "both" ]
 	then
-		rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type timestamp-reply" state NEW,ESTABLISHED || return 1
+		rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type timestamp-reply" state ESTABLISHED || return 1
 	fi
 	if [ ${IPVER} = "ipv6" -o  ${IPVER} = "both" ]
 	then
-		rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type timestamp-reply" state NEW,ESTABLISHED || return 1
+		rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type timestamp-reply" state ESTABLISHED || return 1
 	fi
 
 	return 0
