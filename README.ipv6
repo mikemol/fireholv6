@@ -18,9 +18,9 @@ following exceptions:
 2. Implicit by protocol or address e.g.:
 
    interface eth0 lan
-      telnet server accept src "192.168.0.0/24"
-      ftp server accept src "fe80::/64"
-      ssh server accept src "fe80::/64 192.168.0.0/24"
+      server telnet accept src "192.168.0.0/24"
+      server ftp accept src "fe80::/64"
+      server ssh accept src "fe80::/64 192.168.0.0/24"
 
    All should do the "right thing" and allow mix and match of addresses.
 
@@ -29,12 +29,12 @@ following exceptions:
    vice-versa e.g.:
 
    interface eth0 lan
-      timestamp client accept
+      client timestamp accept
 
    will issue a warning, but:
 
    interface eth0 lan
-      ipv4 timestamp client accept
+      ipv4 client timestamp accept
 
    will not, the reason being that the icmp packets timestamp-request and
    timestamp-reply have no equivalent in icmpv6.
