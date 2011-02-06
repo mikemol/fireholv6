@@ -2143,7 +2143,7 @@ add_icmp_rule_pair() {
 	rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type $request" state NEW,ESTABLISHED || return 1
 	
 	# allow outgoing established packets
-	rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type $response" state ESTABLISHED || return 1
+	rule ${out} action "$@" chain "${out}_${mychain}" proto icmp custom "--icmp-type $response" state ESTABLISHED || return 1
 	
 	return 0
 }
@@ -2172,7 +2172,7 @@ add_icmpv6_rule_pair() {
 	rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type $request" state NEW,ESTABLISHED || return 1
 	
 	# allow outgoing established packets
-	rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type $response" state ESTABLISHED || return 1
+	rule ${out} action "$@" chain "${out}_${mychain}" proto icmpv6 custom "--icmpv6-type $response" state ESTABLISHED || return 1
 	
 	return 0
 }
