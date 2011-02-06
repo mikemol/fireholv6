@@ -125,7 +125,7 @@ Known Issues
 1. There are a variety of icmpv6 packet types without helpers and
    not described here yet which are needed for full handling of IPv6.
 
-   The ipv6error packets have not been thoroughly tested.
+   The ipv6error packet rules have not been thoroughly tested.
 
    A full set of icmpv6 recommendations that ought to be implemented are
    here:
@@ -134,35 +134,6 @@ Known Issues
    The recommendations, and how to achieve them (and where there is
    still work to do) are listed in:
      doc/rfc4890-noted.txt
-
-   If you experience problems the following can be added to the top of
-   your configuration to enable all icmpv6 to the firewall interfaces
-   until there is a proper resolution.
-
-   There is some additional risk and there are also recommendations
-   relating to the forwarding of icmpv6 packets through a firewall
-   which are not dealt with by this workaround:
-
-   icmpv6_allow() {
-      for iface in "$@"
-      do
-         iptables -j ACCEPT -I INPUT 1 -i "$iface" -p icmpv6
-         iptables -j ACCEPT -I OUTPUT 1 -o "$iface" -p icmpv6
-      done
-   }
-
-   You call the function for the various interfaces before setting
-   them up e.g.:
-
-   icmpv6_allow $wanif $lanif
-
-   interface "$wanif" wan
-      protection strong
-      policy deny
-
-   Note that iptables is called: this is a function provided by
-   sanewall, not the external command so it gets correctly turned into
-   an ip6tables command due to the use of protocol icmpv6.
 
 2. There is no Linux kernel NAT support for IPv6, you will get errors
    if you try to use it (e.g. by including the masquerade command without
@@ -203,3 +174,37 @@ Known Issues
    ip6tables; only the iptables chain has any rules added to it. This
    should not cause any problems, but can look odd when inspecting
    the tables directly.
+
+Troubleshooting Autoconfiguration
+=================================
+I believe that with correct setup of interfaces (i.e. allowing NA/NS, RA/RS
+as appropriate) there will no longer be problems with autoconfigutation of
+ipv6.
+
+If you do experience problems though, the following can be added to the top of
+your configuration to enable all icmpv6 to the firewall interfaces which
+may help until there is a proper resolution.
+
+There is some additional risk and any problems related to the forwarding
+of packets through a firewall will not be addressed by the workaround:
+
+   icmpv6_allow() {
+      for iface in "$@"
+      do
+         iptables -j ACCEPT -I INPUT 1 -i "$iface" -p icmpv6
+         iptables -j ACCEPT -I OUTPUT 1 -o "$iface" -p icmpv6
+      done
+   }
+
+You call the function for the various interfaces before setting
+them up e.g.:
+
+   icmpv6_allow $wanif $lanif
+
+   interface "$wanif" wan
+      protection strong
+      policy deny
+
+Note that iptables is called: this is a function provided by firehol, not
+the external command so it gets correctly turned into an ip6tables command
+due to the use of protocol icmpv6.
