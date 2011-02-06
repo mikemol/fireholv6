@@ -2177,6 +2177,33 @@ add_icmpv6_rule_pair() {
 	return 0
 }
 
+add_icmpv6_rule_pair_stateless() {
+        local mychain="${1}"; shift
+	local type="${1}"; shift
+	local icmpv6in="${1}"; shift
+	local icmpv6out="${1}"; shift
+	
+	local in=in
+	local out=out
+	if [ "${type}" = "client" ]
+	then
+		in=out
+		out=in
+	fi
+	
+	local client_ports="${DEFAULT_CLIENT_PORTS}"
+	if [ "${type}" = "client" -a "${work_cmd}" = "interface" ]
+	then
+		client_ports="${LOCAL_CLIENT_PORTS}"
+	fi
+	
+	rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type $icmpv6in" || return 1
+
+	rule ${out} action "$@" chain "${out}_${mychain}" proto icmpv6 custom "--icmpv6-type $icmpv6out" || return 1
+	
+	return 0
+}
+
 rules_ping() {
         local mychain="${1}"; shift
 	local type="${1}"; shift
@@ -2212,6 +2239,39 @@ rules_timestamp() {
 	return 0
 }
 
+# --- IVP6NEIGH ----------------------------------------------------------------
+rules_ipv6neigh() {
+        local mychain="${1}"; shift
+	local type="${1}"; shift
+	
+	if [ ${IPVER} = "ipv4" ]
+	then
+		softwarning "Ignoring neighbour-solicitation/advertisement for ipv4: no such type"
+	fi
+	if [ ${IPVER} = "ipv6" -o  ${IPVER} = "both" ]
+	then
+		add_icmpv6_rule_pair_stateless $mychain $type neighbour-solicitation neighbour-advertisement "$@"|| return 1
+	fi
+	
+	return 0
+}
+
+# --- IVP6ROUTER ---------------------------------------------------------------
+rules_ipv6router() {
+        local mychain="${1}"; shift
+	local type="${1}"; shift
+	
+	if [ ${IPVER} = "ipv4" ]
+	then
+		softwarning "Ignoring router-solicitation/advertisement for ipv4: no such type"
+	fi
+	if [ ${IPVER} = "ipv6" -o  ${IPVER} = "both" ]
+	then
+		add_icmpv6_rule_pair_stateless $mychain $type router-solicitation router-advertisement "$@"|| return 1
+	fi
+	
+	return 0
+}
 
 # --- ALL ----------------------------------------------------------------------
 
