@@ -39,13 +39,37 @@ following exceptions:
    will not, the reason being that the icmp packets timestamp-request and
    timestamp-reply have no equivalent in icmpv6.
 
+   New ipv6-only marked protocols (ipv6router, ipv6neigh) will
+   not warn in "both" mode, only in "ipv4" mode.
+
+4. Automaic configuration is used via icmpv6. There is no ARP and no
+   need to manually configure routers. To enable this functionality
+   the network neighbour and router solicitation/advertisement messages
+   should be enabled on each interface. These rules are stateless
+   since advertisement can happen automatically as well as on solicitation.
+
+   Neigbour discovery (incoming) should always be enabled:
+      client ipv6neigh accept
+
+   Neigbour advertisement (outgoing) should always be enabled:
+      client ipv6neigh accept
+
+   Router discovery (incoming) should always be enabled:
+      client ipv6router accept
+
+   Router advertisement (outgoing) should be enabled on a host that routes:
+      server ipv6router accept
+
+   The rules should not be used to pass packets accross a firewall
+   unless it is a bridge.
+
+There is a really basic example in examples/ipv6.conf.
+
 Known Issues
 ============
-1. There is no ARP in IPv6. To be able to find other nodes without
-   setting the interface policy to accept you will need to manually
-   create rules to allow through neighbour-solicitation and
-   neighbour-advertisement packets. There are similar requirements
-   for discovery of routers.
+1. There are a variety of icmpv6 packet types without helpers and
+   not described here yet which are needed for correct handling of
+   IPv6.
 
    A full set of icmpv6 recommendations that ought to be implemented are
    here:
@@ -53,9 +77,13 @@ Known Issues
 
    Until a thorough resolution is in place, the following can be added
    to the top of your configuration to enable all icmpv6 to the firewall
-   interfaces, at some additional risk:
+   interfaces, although the basics may work without it.
 
-   ipv6_allow() {
+   There is some additional risk and there are also recommendations
+   relating to the forwarding of icmpv6 packets through a firewall
+   which are not dealt with by this fix:
+
+   icmpv6_allow() {
       for iface in "$@"
       do
          iptables -j ACCEPT -I INPUT 1 -i "$iface" -p icmpv6
@@ -63,19 +91,18 @@ Known Issues
       done
    }
 
-   For the various interfaces you call the function e.g.:
-      interface "$wanif" wan
-         protection strong
-         policy deny
-         ipv6_allow $wanif
+   You call the function for the various interfaces before setting
+   them up e.g.:
+
+   icmpv6_allow $wanif $lanif
+
+   interface "$wanif" wan
+      protection strong
+      policy deny
 
    Note that iptables is called: this is a function provided by
    sanewall, not the external command so it gets correctly turned into
    an ip6tables command due to the use of protocol icmpv6.
-
-   Further, there are recommendations relating to the forwarding of
-   icmpv6 packets through a firewall which are not dealt with by
-   this fix.
 
 2. There is no Linux kernel NAT support for IPv6, you will get errors
    if you try to use it (e.g. by including the masquerade command without
