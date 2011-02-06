@@ -82,6 +82,7 @@ following exceptions:
    These following are handled by the ipv6error complex rule:
        destination-unreachable
        packet-too-big
+       ttl-zero-during-transit
 
    Which should be adequate for most purposes. See "The ipv6error Complex Rule"
    below for usage information.
@@ -121,6 +122,8 @@ Known Issues
 1. There are a variety of icmpv6 packet types without helpers and
    not described here yet which are needed for full handling of IPv6.
 
+   The ipv6error packets have not been thoroughly tested.
+
    A full set of icmpv6 recommendations that ought to be implemented are
    here:
      http://tools.ietf.org/html/rfc4890
@@ -129,13 +132,13 @@ Known Issues
    still work to do) are listed in:
      doc/rfc4890-noted.txt
 
-   Until a thorough resolution is in place, the following can be added
-   to the top of your configuration to enable all icmpv6 to the firewall
-   interfaces, although the basics may work without it.
+   If you experience problems the following can be added to the top of
+   your configuration to enable all icmpv6 to the firewall interfaces
+   until there is a proper resolution.
 
    There is some additional risk and there are also recommendations
    relating to the forwarding of icmpv6 packets through a firewall
-   which are not dealt with by this fix:
+   which are not dealt with by this workaround:
 
    icmpv6_allow() {
       for iface in "$@"
