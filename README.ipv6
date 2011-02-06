@@ -83,6 +83,7 @@ following exceptions:
        destination-unreachable
        packet-too-big
        ttl-zero-during-transit
+       ttl-zero-during-reassembly
 
    Which should be adequate for most purposes. See "The ipv6error Complex Rule"
    below for usage information.
