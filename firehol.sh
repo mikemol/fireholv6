@@ -2295,6 +2295,7 @@ rules_ipv6error() {
 	then
 		add_icmpv6_rule_error $mychain $type destination-unreachable "$@"|| return 1
 		add_icmpv6_rule_error $mychain $type packet-too-big "$@"|| return 1
+		add_icmpv6_rule_error $mychain $type ttl-zero-during-transit "$@"|| return 1
 	fi
 	
 	return 0

@@ -83,20 +83,9 @@ recommendation.
 
 Allow incoming time exceeded code 0 messages only for existing sessions
 -----------------------------------------------------------------------
-TODO
-RFC incorrectly suggests:
-ip6tables -A icmpv6-filter -m state -p icmpv6 \
-     -d $inner_prefix \
-     --state ESTABLISHED,RELATED --icmpv6-type packet-too-big \
-     -j ACCEPT
-Should be:
-ip6tables -A icmpv6-filter -m state -p icmpv6 \
-     -d $inner_prefix \
-     --state ESTABLISHED,RELATED --icmpv6-type ttl-zero-during-transit \
-     -j ACCEPT
-
-The approriate "todo" complex rule with "src"/"dst" modifier ensures only
-valid $inner_prefix values work.
+The "server ipv6error accept" rule suggested by "Allow incoming destination
+unreachable messages only for existing sessions" will also meet this
+recommendation.
 
 
 Allow incoming time exceeded code 1 messages
@@ -112,13 +101,9 @@ valid $inner_prefix values work.
 
 Allow outgoing time exceeded code 0 messages
 --------------------------------------------
-TODO
-RFC suggests:
-ip6tables -A icmpv6-filter -p icmpv6 -s $inner_prefix \
-         --icmpv6-type ttl-zero-during-transit -j ACCEPT
-
-The approriate "todo" complex rule with "src"/"dst" modifier ensures only
-valid $inner_prefix values work.
+The "server ipv6error accept" rule suggested by "Allow incoming destination
+unreachable messages only for existing sessions" will also meet this
+recommendation.
 
 
 Allow outgoing time exceeded code 1 messages
