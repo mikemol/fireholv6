@@ -90,13 +90,20 @@ recommendation.
 
 Allow incoming time exceeded code 1 messages
 --------------------------------------------
-TODO
-RFC suggests:
-ip6tables -A icmpv6-filter -p icmpv6 -d $inner_prefix \
-         --icmpv6-type ttl-zero-during-reassembly -j ACCEPT
+The "server ipv6error accept" rule suggested by "Allow incoming destination
+unreachable messages only for existing sessions" will also meet this
+recommendation.
 
-The approriate "todo" complex rule with "src"/"dst" modifier ensures only
-valid $inner_prefix values work.
+Note: in the example RFC script, non-established/related messages are
+allowed through for this type.
+
+It is not clear why since code 0 and not code 1 messages are listed as
+part of the establishment of communications. Code 1 messages are listed
+as less essential for propogation over the network.
+
+The behaviour implemented here is as per destination unreachable
+messages, so the same as the incoming time exceeded code 0 messages
+example.
 
 
 Allow outgoing time exceeded code 0 messages
@@ -108,13 +115,9 @@ recommendation.
 
 Allow outgoing time exceeded code 1 messages
 --------------------------------------------
-TODO
-RFC suggests:
-ip6tables -A icmpv6-filter -p icmpv6 -s $inner_prefix \
-         --icmpv6-type ttl-zero-during-reassembly -j ACCEPT
-
-The approriate "todo" complex rule with "src"/"dst" modifier ensures only
-valid $inner_prefix values work.
+The "server ipv6error accept" rule suggested by "Allow incoming destination
+unreachable messages only for existing sessions" will also meet this
+recommendation.
 
 
 Allow incoming parameter problem code 1 and 2 messages for an existing session
