@@ -2117,8 +2117,6 @@ rules_nis() {
 #}
 
 
-# --- PING ---------------------------------------------------------------------
-
 add_icmp_rule_pair() {
         local mychain="${1}"; shift
 	local type="${1}"; shift
@@ -2203,6 +2201,8 @@ add_icmpv6_rule_pair_stateless() {
 	
 	return 0
 }
+
+# --- PING ---------------------------------------------------------------------
 
 rules_ping() {
         local mychain="${1}"; shift
