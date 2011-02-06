@@ -81,6 +81,7 @@ following exceptions:
 
    These following are handled by the ipv6error complex rule:
        destination-unreachable
+       packet-too-big
 
    See "The ipv6error Complex Rule" below for usage information.
 
