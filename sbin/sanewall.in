@@ -2295,6 +2295,8 @@ rules_ipv6error() {
 		add_icmpv6_rule_error $mychain $type packet-too-big "$@"|| return 1
 		add_icmpv6_rule_error $mychain $type ttl-zero-during-transit "$@"|| return 1
 		add_icmpv6_rule_error $mychain $type ttl-zero-during-reassembly "$@"|| return 1
+		add_icmpv6_rule_error $mychain $type unknown-header-type "$@"|| return 1
+		add_icmpv6_rule_error $mychain $type unknown-option "$@"|| return 1
 	fi
 
 	return 0

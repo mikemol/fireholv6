@@ -122,34 +122,16 @@ recommendation.
 
 Allow incoming parameter problem code 1 and 2 messages for an existing session
 ------------------------------------------------------------------------------
-TODO
-RFC suggests:
-ip6tables -A icmpv6-filter -m state -p icmpv6 \
-     -d $inner_prefix \
-     --state ESTABLISHED,RELATED --icmpv6-type \
-     unknown-header-type \
-     -j ACCEPT
-ip6tables -A icmpv6-filter -m state -p icmpv6 \
-     -d $inner_prefix \
-     --state ESTABLISHED,RELATED \
-     --icmpv6-type unknown-option \
-     -j ACCEPT
-
-The approriate "todo" complex rule with "src"/"dst" modifier ensures only
-valid $inner_prefix values work.
+The "server ipv6error accept" rule suggested by "Allow incoming destination
+unreachable messages only for existing sessions" will also meet this
+recommendation.
 
 
 Allow outgoing parameter problem code 1 and code 2 messages
 -----------------------------------------------------------
-TODO
-RFC suggests:
-ip6tables -A icmpv6-filter -p icmpv6 -s $inner_prefix \
-       --icmpv6-type unknown-header-type -j ACCEPT
-ip6tables -A icmpv6-filter -p icmpv6 -s $inner_prefix \
-       --icmpv6-type unknown-option -j ACCEPT
-
-The approriate "todo" complex rule with "src"/"dst" modifier ensures only
-valid $inner_prefix values work.
+The "server ipv6error accept" rule suggested by "Allow incoming destination
+unreachable messages only for existing sessions" will also meet this
+recommendation.
 
 
 Allow incoming and outgoing parameter problem code 0 messages
