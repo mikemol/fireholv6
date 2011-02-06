@@ -136,11 +136,9 @@ recommendation.
 
 Allow incoming and outgoing parameter problem code 0 messages
 -------------------------------------------------------------
-TODO
-RFC suggests:
-ip6tables -A icmpv6-filter -p icmpv6 \
-       --icmpv6-type bad-header \
-       -j ACCEPT
+From the RFC it is not really necessary to allow these messages.
+Firehol handles this automaticaly (by dropping them) unless you set up
+an explicit route for the packets using the icmpv6 type bad-header.
 
 
 Drop NS/NA messages both incoming and outgoing
@@ -156,7 +154,7 @@ for the packets.
 
 
 Drop Redirect messages both incoming and outgoing
------------------------------------------------
+-------------------------------------------------
 Firehol handles this automaticaly unless you set up an explicit route
 for the packets.
 
@@ -165,7 +163,7 @@ ip6tables -A icmpv6-filter -p icmpv6 --icmpv6-type redirect -j DROP
 
 
 Drop incoming and outgoing Multicast Listener queries (MLDv1 and MLDv2)
------------------------------------------------
+-----------------------------------------------------------------------
 Firehol handles this automaticaly unless you set up an explicit route
 for the packets.
 
@@ -174,7 +172,7 @@ ip6tables -A icmpv6-filter -p icmpv6 --icmpv6-type 130 -j DROP
 
 
 Drop incoming and outgoing Multicast Listener reports (MLDv1)
------------------------------------------------
+-------------------------------------------------------------
 Firehol handles this automaticaly unless you set up an explicit route
 for the packets.
 
@@ -183,7 +181,7 @@ ip6tables -A icmpv6-filter -p icmpv6 --icmpv6-type 131 -j DROP
 
 
 Drop incoming and outgoing Multicast Listener Done messages (MLDv1)
------------------------------------------------
+-------------------------------------------------------------------
 Firehol handles this automaticaly unless you set up an explicit route
 for the packets.
 
@@ -192,7 +190,7 @@ ip6tables -A icmpv6-filter -p icmpv6 --icmpv6-type 132 -j DROP
 
 
 Drop incoming and outgoing Multicast Listener reports (MLDv2)
------------------------------------------------
+-------------------------------------------------------------
 Firehol handles this automaticaly unless you set up an explicit route
 for the packets.
 
@@ -201,7 +199,7 @@ ip6tables -A icmpv6-filter -p icmpv6 --icmpv6-type 143 -j DROP
 
 
 Drop router renumbering messages
------------------------------------------------
+--------------------------------
 Firehol handles this automaticaly unless you set up an explicit route
 for the packets.
 
@@ -210,7 +208,7 @@ ip6tables -A icmpv6-filter -p icmpv6 --icmpv6-type 138 -j DROP
 
 
 Drop node information queries (139) and replies (140)
------------------------------------------------
+-----------------------------------------------------
 Firehol handles this automaticaly unless you set up an explicit route
 for the packets.
 
