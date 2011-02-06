@@ -2119,9 +2119,11 @@ rules_nis() {
 
 # --- PING ---------------------------------------------------------------------
 
-rules_ping() {
+add_icmp_rule_pair() {
         local mychain="${1}"; shift
 	local type="${1}"; shift
+	local request="${1}"; shift
+	local response="${1}"; shift
 	
 	local in=in
 	local out=out
@@ -2137,26 +2139,56 @@ rules_ping() {
 		client_ports="${LOCAL_CLIENT_PORTS}"
 	fi
 	
-	# ----------------------------------------------------------------------
+	# allow incoming new and established packets
+	rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type $request" state NEW,ESTABLISHED || return 1
+	
+	# allow outgoing established packets
+	rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type $response" state ESTABLISHED || return 1
+	
+	return 0
+}
+
+add_icmpv6_rule_pair() {
+        local mychain="${1}"; shift
+	local type="${1}"; shift
+	local request="${1}"; shift
+	local response="${1}"; shift
+	
+	local in=in
+	local out=out
+	if [ "${type}" = "client" ]
+	then
+		in=out
+		out=in
+	fi
+	
+	local client_ports="${DEFAULT_CLIENT_PORTS}"
+	if [ "${type}" = "client" -a "${work_cmd}" = "interface" ]
+	then
+		client_ports="${LOCAL_CLIENT_PORTS}"
+	fi
+	
+	# allow incoming new and established packets
+	rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type $request" state NEW,ESTABLISHED || return 1
+	
+	# allow outgoing established packets
+	rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type $response" state ESTABLISHED || return 1
+	
+	return 0
+}
+
+rules_ping() {
+        local mychain="${1}"; shift
+	local type="${1}"; shift
 	
 	# allow incoming new and established PING packets
 	if [ ${IPVER} = "ipv4" -o  ${IPVER} = "both" ]
 	then
-		rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type echo-request" state NEW,ESTABLISHED || return 1
+		add_icmp_rule_pair $mychain $type echo-request echo-reply "$@"|| return 1
 	fi
 	if [ ${IPVER} = "ipv6" -o  ${IPVER} = "both" ]
 	then
-		rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type echo-request" state NEW,ESTABLISHED || return 1
-	fi
-	
-	# allow outgoing established packets
-	if [ ${IPVER} = "ipv4" -o  ${IPVER} = "both" ]
-	then
-		rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type echo-reply" state ESTABLISHED || return 1
-	fi
-	if [ ${IPVER} = "ipv6" -o  ${IPVER} = "both" ]
-	then
-		rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type echo-reply" state ESTABLISHED || return 1
+		add_icmpv6_rule_pair $mychain $type echo-request echo-reply "$@" || return 1
 	fi
 	
 	return 0
@@ -2168,40 +2200,13 @@ rules_timestamp() {
         local mychain="${1}"; shift
 	local type="${1}"; shift
 	
-	local in=in
-	local out=out
-	if [ "${type}" = "client" ]
-	then
-		in=out
-		out=in
-	fi
-	
-	local client_ports="${DEFAULT_CLIENT_PORTS}"
-	if [ "${type}" = "client" -a "${work_cmd}" = "interface" ]
-	then
-		client_ports="${LOCAL_CLIENT_PORTS}"
-	fi
-	
-	# ----------------------------------------------------------------------
-	
-	# allow incoming new and established TIMESTAMP packets
 	if [ ${IPVER} = "ipv4" -o  ${IPVER} = "both" ]
 	then
-		rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type timestamp-request" state NEW,ESTABLISHED || return 1
+		add_icmp_rule_pair $mychain $type timestamp-request timestamp-reply "$@"|| return 1
 	fi
 	if [ ${IPVER} = "ipv6" -o  ${IPVER} = "both" ]
 	then
-		rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type timestamp-request" state NEW,ESTABLISHED || return 1
-	fi
-	
-	# allow outgoing established packets
-	if [ ${IPVER} = "ipv4" -o  ${IPVER} = "both" ]
-	then
-		rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type timestamp-reply" state ESTABLISHED || return 1
-	fi
-	if [ ${IPVER} = "ipv6" -o  ${IPVER} = "both" ]
-	then
-		rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type timestamp-reply" state ESTABLISHED || return 1
+		softwarning "Ignoring timestamp-request/reply for ipv6: no such type"
 	fi
 	
 	return 0

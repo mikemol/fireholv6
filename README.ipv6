@@ -24,6 +24,20 @@ following exceptions:
 
    All should do the "right thing" and allow mix and match of addresses.
 
+3. ICMP and ICMPv6 are not identical. You will get warnings and/or errors
+   if you try to include rules for an ICMP packet type for ICMPv6 and
+   vice-versa e.g.:
+
+   interface eth0 lan
+      timestamp client accept
+
+   will issue a warning, but:
+
+   interface eth0 lan
+      ipv4 timestamp client accept
+
+   will not, the reason being that the icmp packets timestamp-request and
+   timestamp-reply have no equivalent in icmpv6.
 
 Known Issues
 ============
@@ -33,13 +47,13 @@ Known Issues
    neighbour-advertisement packets. There are similar requirements
    for discovery of routers.
 
-   A full set of recommendations that ought to be implemented are
+   A full set of icmpv6 recommendations that ought to be implemented are
    here:
      http://tools.ietf.org/html/rfc4890
 
    Until a thorough resolution is in place, the following can be added
-   to the top of your configuration to enable all icmpv6, at some
-   additional risk:
+   to the top of your configuration to enable all icmpv6 to the firewall
+   interfaces, at some additional risk:
 
    ipv6_allow() {
       for iface in "$@"
@@ -58,6 +72,10 @@ Known Issues
    Note that iptables is called: this is a function provided by
    firehol, not the external command so it gets correctly turned into
    an ip6tables command due to the use of protocol icmpv6.
+
+   Further, there are recommendations relating to the forwarding of
+   icmpv6 packets through a firewall which are not dealt with by
+   this fix.
 
 2. There is no Linux kernel NAT support for IPv6, you will get errors
    if you try to use it (e.g. by including the masquerade command without
@@ -80,8 +98,15 @@ Known Issues
 
 5. IPv4/IPv6 detection in iptables() could probably be improved
 
-6. Commands other than start, stop and /path/to/a.conf haven't
-   received any testing.
+6. The following commands have not received any testing and may not
+   work as expected:
+	restart
+	condrestart
+	status
+	panic
+	save
+	explain
+	helpme/wizard
 
 7. Creating a rule which applies only to one ip type will lead to
    empty chains e.g.:
