@@ -2131,12 +2131,6 @@ add_icmp_rule_pair() {
 		out=in
 	fi
 	
-	local client_ports="${DEFAULT_CLIENT_PORTS}"
-	if [ "${type}" = "client" -a "${work_cmd}" = "interface" ]
-	then
-		client_ports="${LOCAL_CLIENT_PORTS}"
-	fi
-	
 	# allow incoming new and established packets
 	rule ${in} action "$@" chain "${in}_${mychain}" proto icmp custom "--icmp-type $request" state NEW,ESTABLISHED || return 1
 	
@@ -2158,12 +2152,6 @@ add_icmpv6_rule_pair() {
 	then
 		in=out
 		out=in
-	fi
-	
-	local client_ports="${DEFAULT_CLIENT_PORTS}"
-	if [ "${type}" = "client" -a "${work_cmd}" = "interface" ]
-	then
-		client_ports="${LOCAL_CLIENT_PORTS}"
 	fi
 	
 	# allow incoming new and established packets
@@ -2189,16 +2177,34 @@ add_icmpv6_rule_pair_stateless() {
 		out=in
 	fi
 	
-	local client_ports="${DEFAULT_CLIENT_PORTS}"
-	if [ "${type}" = "client" -a "${work_cmd}" = "interface" ]
-	then
-		client_ports="${LOCAL_CLIENT_PORTS}"
-	fi
-	
 	rule ${in} action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type $icmpv6in" || return 1
 
 	rule ${out} reverse action "$@" chain "${out}_${mychain}" proto icmpv6 custom "--icmpv6-type $icmpv6out" || return 1
 	
+	return 0
+}
+
+add_icmpv6_rule_error() {
+	# Unlike stateful and stateless icmpv6 packets, for a server
+        # or client we do the same thing:
+	#   ingress error packets allowed if we think we have a connection
+	#   egress error packets allowed whatever
+        #  Possibly we could restrict the whatever to be related also?
+        local mychain="${1}"; shift
+	local type="${1}"; shift
+	local icmpv6error="${1}"; shift
+	
+	local in=in
+	local out=out
+	if [ "${type}" = "client" ]
+	then
+		in=out
+		out=in
+	fi
+
+	rule ${in} reverse action "$@" chain "${in}_${mychain}" proto icmpv6 custom "--icmpv6-type $icmpv6error" state ESTABLISHED,RELATED || return 1
+	rule ${out} action "$@" chain "${out}_${mychain}" proto icmpv6 custom "--icmpv6-type $icmpv6error" || return 1
+
 	return 0
 }
 
@@ -2240,6 +2246,7 @@ rules_timestamp() {
 }
 
 # --- IVP6NEIGH ----------------------------------------------------------------
+
 rules_ipv6neigh() {
         local mychain="${1}"; shift
 	local type="${1}"; shift
@@ -2257,6 +2264,7 @@ rules_ipv6neigh() {
 }
 
 # --- IVP6ROUTER ---------------------------------------------------------------
+
 rules_ipv6router() {
         local mychain="${1}"; shift
 	local type="${1}"; shift
@@ -2268,6 +2276,24 @@ rules_ipv6router() {
 	if [ ${IPVER} = "ipv6" -o  ${IPVER} = "both" ]
 	then
 		add_icmpv6_rule_pair_stateless $mychain $type router-solicitation router-advertisement "$@"|| return 1
+	fi
+	
+	return 0
+}
+
+# --- IVP6ERROR ----------------------------------------------------------------
+
+rules_ipv6error() {
+        local mychain="${1}"; shift
+	local type="${1}"; shift
+	
+	if [ ${IPVER} = "ipv4" ]
+	then
+		softwarning "Ignoring icmpv6 error types for ipv4: not applicable"
+	fi
+	if [ ${IPVER} = "ipv6" -o  ${IPVER} = "both" ]
+	then
+		add_icmpv6_rule_error $mychain $type destination-unreachable "$@"|| return 1
 	fi
 	
 	return 0

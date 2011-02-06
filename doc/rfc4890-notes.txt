@@ -52,26 +52,19 @@ will prevent incoming echo-requests from multicast IPs and replies to them.
 
 Allow incoming destination unreachable messages only for existing sessions
 --------------------------------------------------------------------------
-TODO
-RFC suggests:
-ip6tables -A icmpv6-filter -m state -p icmpv6 \
-     -d $inner_prefix \
-     --state ESTABLISHED,RELATED --icmpv6-type \
-     destination-unreachable -j ACCEPT
+Ensure any routers have:
+	server ipv6error accept
 
-The approriate "todo" complex rule with "src"/"dst" modifier ensures only
-valid $inner_prefix values work.
+Adding dst "$inner_prefix" ensures only public hosts receive the messages.
+
+See "The ipv6error complex rule" in README.ipv6 for some notes.
 
 
 Allow outgoing destination unreachable messages
 -----------------------------------------------
-TODO
-RFC suggests:
-ip6tables -A icmpv6-filter -p icmpv6 -s $inner_prefix \
-       --icmpv6-type destination-unreachable -j ACCEPT
-
-The approriate "todo" complex rule with "src"/"dst" modifier ensures only
-valid $inner_prefix values work.
+The "server ipv6error accept" rule suggested by "Allow incoming destination
+unreachable messages only for existing sessions" will also meet this
+recommendation.
 
 
 Allow incoming Packet Too Big messages only for existing sessions
