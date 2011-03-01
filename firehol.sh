@@ -862,7 +862,7 @@ load_ips() {
 # Optimized (CIDR) by Marc 'HE' Brockschmidt <marc@marcbrockschmidt.de>
 # Further optimized and reduced by http://www.vergenet.net/linux/aggregate/
 # The supplied get-iana.sh uses 'aggregate-flim' if it finds it in the path.
-RESERVED4_IPS="0.0.0.0/8 5.0.0.0/8 10.0.0.0/8 23.0.0.0/8 36.0.0.0/7 39.0.0.0/8 42.0.0.0/8 100.0.0.0/8 102.0.0.0/7 104.0.0.0/7 106.0.0.0/8 127.0.0.0/8 179.0.0.0/8 185.0.0.0/8 240.0.0.0/4 "
+RESERVED4_IPS="0.0.0.0/8 5.0.0.0/8 23.0.0.0/8 36.0.0.0/7 39.0.0.0/8 42.0.0.0/8 100.0.0.0/8 102.0.0.0/7 104.0.0.0/7 106.0.0.0/8 127.0.0.0/8 179.0.0.0/8 185.0.0.0/8 240.0.0.0/4 "
 RESERVED6_IPS="::/8 0100::/8 0200::/7 0400::/6 0800::/5 1000::/4 4000::/3 6000::/3 8000::/3 A000::/3 C000::/3 E000::/4 F000::/5 F800::/6 FE00::/9 FEC0::/10"
 
 # Private IPv4 address space
@@ -895,7 +895,7 @@ then
 	MULTICAST_IPS="${MULTICAST6_IPS}"
 else
 	RESERVED_IPS="${RESERVED4_IPS} ${RESERVED6_IPS}"
-	PRIVATE_IPS="${PRIVATE4_IPS} ${RESERVED6_IPS}"
+	PRIVATE_IPS="${PRIVATE4_IPS} ${PRIVATE6_IPS}"
 	MULTICAST_IPS="${MULTICAST4_IPS} ${MULTICAST6_IPS}"
 fi
 
