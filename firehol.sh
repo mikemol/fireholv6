@@ -863,7 +863,7 @@ load_ips() {
 # Further optimized and reduced by http://www.vergenet.net/linux/aggregate/
 # The supplied get-iana.sh uses 'aggregate-flim' if it finds it in the path.
 RESERVED4_IPS="0.0.0.0/8 5.0.0.0/8 10.0.0.0/8 23.0.0.0/8 36.0.0.0/7 39.0.0.0/8 42.0.0.0/8 100.0.0.0/8 102.0.0.0/7 104.0.0.0/7 106.0.0.0/8 127.0.0.0/8 179.0.0.0/8 185.0.0.0/8 240.0.0.0/4 "
-RESERVED6_IPS="::/8"
+RESERVED6_IPS="::/8 0100::/8 0200::/7 0400::/6 0800::/5 1000::/4 4000::/3 6000::/3 8000::/3 A000::/3 C000::/3 E000::/4 F000::/5 F800::/6 FE00::/9 FEC0::/10"
 
 # Private IPv4 address space
 # Suggested by Fco.Felix Belmonte <ffelix@gescosoft.com>
@@ -875,12 +875,13 @@ RESERVED6_IPS="::/8"
 # 192.168.0.0/16   => RFC 1918: Private use
 PRIVATE4_IPS="10.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.0.2.0/24 192.88.99.0/24 192.168.0.0/16"
 # Private IPv6 address space
-# fe80::/16        => Link Local
-PRIVATE6_IPS="fe80::/16"
+# FC00::/7         => Unique Local Unicast
+# FE80::/10        => Link Local Unicast
+PRIVATE6_IPS="FC00::/7 FE80::/10"
 
 # The multicast address space
 MULTICAST4_IPS="224.0.0.0/4"
-MULTICAST6_IPS="ff00::/16"
+MULTICAST6_IPS="FF00::/16"
 
 if [ ${IPVER} = "ipv4" ]
 then
