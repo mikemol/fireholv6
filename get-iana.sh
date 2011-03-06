@@ -1,5 +1,11 @@
 #!/bin/bash
 
+#
+# Phil Whineray 2011/03/06
+#   Updated to work with latest iana file format, remove a couple of bash-isms
+#   and use the file RESERVED_IPV4 so that we can be used with the IPv6 capable
+#   firehol.
+#
 # $Id$
 #
 # $Log$
@@ -71,7 +77,7 @@ IPV4_ADDRESS_SPACE_URL="http://www.iana.org/assignments/ipv4-address-space/ipv4-
 IANA_RESERVED="(RESERVED|UNALLOCATED)"
 
 # which rows that are matched by the above, to ignore
-# (i.e. not include them in RESERVED_IPS)?
+# (i.e. not include them in RESERVED_IPV4)?
 #IANA_IGNORE="(Multicast|Private use|Loopback|Local Identification)"
 IANA_IGNORE="Multicast"
 
@@ -88,7 +94,7 @@ then
 	echo >&2
 	echo >&2
 	echo >&2 "WARNING"
-	echo >&2 "Please install 'aggregate-flim' to shrink the list of IPs."
+	echo >&2 "Please install 'aggregate-flim' or 'aggregate' to shrink the list of IPs."
 	echo >&2
 	echo >&2
 fi
@@ -101,8 +107,7 @@ echo >&2
 wget -O - "${IPV4_ADDRESS_SPACE_URL}"	|\
 	egrep "^ *[0-9]+/[0-9]+.*${IANA_RESERVED}"	|\
 	egrep -vi "${IANA_IGNORE}"			|\
-	sed "s/^ \+//g"					|\
-	cut -d ' ' -f 1					|\
+	sed -e 's:^ *\([0-9]*/[0-9]*\).*:\1:'           |\
 (
 	while IFS="/" read range net
 	do
@@ -113,18 +118,21 @@ wget -O - "${IPV4_ADDRESS_SPACE_URL}"	|\
 			echo >&2 "Cannot handle network masks of $net bits ($range/$net)"
 			continue
 		fi
-		 
+
 		first=`echo $range | cut -d '-' -f 1`
 		first=`expr $first + 0`
 		last=`echo $range | cut -d '-' -f 2`
+		if [ "$last" = "" ]
+		then
+			last=$first
+		fi
 		last=`expr $last + 0`
-		
+
 		x=$first
 		while [ ! $x -gt $last ]
 		do
-			# test $x -ne 127 && echo "$x.0.0.0/$net"
-			echo "$x.0.0.0/$net"
-			x=$[x + 1]
+			test $x -ne 10 && echo "$x.0.0.0/$net"
+			x=`expr $x + 1`
 		done
 	done
 ) | \
@@ -140,11 +148,11 @@ wget -O - "${IPV4_ADDRESS_SPACE_URL}"	|\
 echo >&2 
 echo >&2 
 echo >&2 "FOUND THE FOLLOWING RESERVED IP RANGES:"
-printf "RESERVED_IPS=\""
+printf "RESERVED_IPV4=\""
 i=0
 for x in `cat ${tempfile}`
 do
-	i=$[i + 1]
+	i=`expr $i + 1`
 	printf "${x} "
 done
 printf "\"\n"
@@ -163,10 +171,10 @@ fi
 echo >&2
 echo >&2
 echo >&2 "Differences between the fetched list and the list installed in"
-echo >&2 "/etc/firehol/RESERVED_IPS:"
+echo >&2 "/etc/firehol/RESERVED_IPV4:"
 
-echo >&2 "# diff /etc/firehol/RESERVED_IPS ${tempfile}"
-diff /etc/firehol/RESERVED_IPS ${tempfile}
+echo >&2 "# diff /etc/firehol/RESERVED_IPV4 ${tempfile}"
+diff /etc/firehol/RESERVED_IPV4 ${tempfile}
 
 if [ $? -eq 0 ]
 then
@@ -180,7 +188,7 @@ fi
 
 echo >&2 
 echo >&2 
-echo >&2 "Would you like to save this list to /etc/firehol/RESERVED_IPS"
+echo >&2 "Would you like to save this list to /etc/firehol/RESERVED_IPV4"
 echo >&2 "so that FireHOL will automatically use it from now on?"
 echo >&2
 while [ 1 = 1 ]
@@ -189,9 +197,9 @@ do
 	read x
 	
 	case "${x}" in
-		yes)	cp -f /etc/firehol/RESERVED_IPS /etc/firehol/RESERVED_IPS.old 2>/dev/null
-			cat "${tempfile}" >/etc/firehol/RESERVED_IPS || exit 1
-			echo >&2 "New RESERVED_IPS written to '/etc/firehol/RESERVED_IPS'."
+		yes)	cp -f /etc/firehol/RESERVED_IPV4 /etc/firehol/RESERVED_IPV4.old 2>/dev/null
+			cat "${tempfile}" >/etc/firehol/RESERVED_IPV4 || exit 1
+			echo >&2 "New RESERVED_IPV4 written to '/etc/firehol/RESERVED_IPV4'."
 			break
 			;;
 			

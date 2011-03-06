@@ -862,8 +862,8 @@ load_ips() {
 # Optimized (CIDR) by Marc 'HE' Brockschmidt <marc@marcbrockschmidt.de>
 # Further optimized and reduced by http://www.vergenet.net/linux/aggregate/
 # The supplied get-iana.sh uses 'aggregate-flim' if it finds it in the path.
-RESERVED4_IPS="0.0.0.0/8 5.0.0.0/8 23.0.0.0/8 36.0.0.0/7 39.0.0.0/8 42.0.0.0/8 100.0.0.0/8 102.0.0.0/7 104.0.0.0/7 106.0.0.0/8 127.0.0.0/8 179.0.0.0/8 185.0.0.0/8 240.0.0.0/4 "
-RESERVED6_IPS="::/8 0100::/8 0200::/7 0400::/6 0800::/5 1000::/4 4000::/3 6000::/3 8000::/3 A000::/3 C000::/3 E000::/4 F000::/5 F800::/6 FE00::/9 FEC0::/10"
+RESERVED_IPV4="0.0.0.0/8 127.0.0.0/8 240.0.0.0/4 "
+RESERVED_IPV6="::/8 0100::/8 0200::/7 0400::/6 0800::/5 1000::/4 4000::/3 6000::/3 8000::/3 A000::/3 C000::/3 E000::/4 F000::/5 F800::/6 FE00::/9 FEC0::/10"
 
 # Private IPv4 address space
 # Suggested by Fco.Felix Belmonte <ffelix@gescosoft.com>
@@ -873,35 +873,39 @@ RESERVED6_IPS="::/8 0100::/8 0200::/7 0400::/6 0800::/5 1000::/4 4000::/3 6000::
 # 192.0.2.0/24     => Test Net
 # 192.88.99.0/24   => RFC 3068: 6to4 anycast & RFC 2544: Benchmarking addresses
 # 192.168.0.0/16   => RFC 1918: Private use
-PRIVATE4_IPS="10.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.0.2.0/24 192.88.99.0/24 192.168.0.0/16"
+PRIVATE_IPV4="10.0.0.0/8 169.254.0.0/16 172.16.0.0/12 192.0.2.0/24 192.88.99.0/24 192.168.0.0/16"
 # Private IPv6 address space
 # FC00::/7         => Unique Local Unicast
 # FE80::/10        => Link Local Unicast
-PRIVATE6_IPS="FC00::/7 FE80::/10"
+PRIVATE_IPV6="FC00::/7 FE80::/10"
 
 # The multicast address space
-MULTICAST4_IPS="224.0.0.0/4"
-MULTICAST6_IPS="FF00::/16"
+MULTICAST_IPV4="224.0.0.0/4"
+MULTICAST_IPV6="FF00::/16"
+
+load_ips RESERVED_IPV4 "${RESERVED_IPV4}" 90 "Run the supplied get-iana.sh script to generate this file." require-file
+load_ips PRIVATE_IPV4 "${PRIVATE_IPV4}" 0
+load_ips MULTICAST_IPV4 "${MULTICAST_IPV4}" 0
+
+load_ips RESERVED_IPV6 "${RESERVED_IPV6}" 0
+load_ips PRIVATE_IPV6 "${PRIVATE_IPV6}" 0
+load_ips MULTICAST_IPV6 "${MULTICAST_IPV6}" 0
 
 if [ ${IPVER} = "ipv4" ]
 then
-	RESERVED_IPS="${RESERVED4_IPS}"
-	PRIVATE_IPS="${PRIVATE4_IPS}"
-	MULTICAST_IPS="${MULTICAST4_IPS}"
+	RESERVED_IPS="${RESERVED_IPV4}"
+	PRIVATE_IPS="${PRIVATE_IPV4}"
+	MULTICAST_IPS="${MULTICAST_IPV4}"
 elif [ ${IPVER} = "ipv6" ]
 then
-	RESERVED_IPS="${RESERVED6_IPS}"
-	PRIVATE_IPS="${PRIVATE6_IPS}"
-	MULTICAST_IPS="${MULTICAST6_IPS}"
+	RESERVED_IPS="${RESERVED_IPV6}"
+	PRIVATE_IPS="${PRIVATE_IPV6}"
+	MULTICAST_IPS="${MULTICAST_IPV6}"
 else
-	RESERVED_IPS="${RESERVED4_IPS} ${RESERVED6_IPS}"
-	PRIVATE_IPS="${PRIVATE4_IPS} ${PRIVATE6_IPS}"
-	MULTICAST_IPS="${MULTICAST4_IPS} ${MULTICAST6_IPS}"
+	RESERVED_IPS="${RESERVED_IPV4} ${RESERVED_IPV6}"
+	PRIVATE_IPS="${PRIVATE_IPV4} ${PRIVATE_IPV6}"
+	MULTICAST_IPS="${MULTICAST_IPV4} ${MULTICAST_IPV6}"
 fi
-
-load_ips RESERVED_IPS "${RESERVED_IPS}" 90 "Run the supplied get-iana.sh script to generate this file." require-file
-load_ips PRIVATE_IPS "${PRIVATE_IPS}" 0
-load_ips MULTICAST_IPS "${MULTICAST_IPS}" 0
 
 # A shortcut to have all the Internet unroutable addresses in one
 # variable

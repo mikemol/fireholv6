@@ -87,7 +87,16 @@ following exceptions:
        unknown-header-type
        unknown-option
 
-   See "The ipv6error Complex Rule" below for usage information.
+   Which should be adequate for most purposes. See "The ipv6error Complex Rule"
+   below for usage information.
+
+6. The RESERVED_IPS, PRIVATE_IPS and MULTICAST_IPS files have been replaced
+   with:
+      RESERVED_IPV4, PRIVATE_IPV4 and MULTICAST_IPV4 for IPv4
+      RESERVED_IPV6, PRIVATE_IPV6 and MULTICAST_IPV6 for IPv6
+
+   The get-iana.sh script has been updated to produce RESERVED_IPV4. Currently
+   there is no equivalent for RESERVED_IPV6.
 
 There is a really basic example in examples/ipv6.conf.
 
