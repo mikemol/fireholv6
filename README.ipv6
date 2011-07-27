@@ -13,7 +13,7 @@ following exceptions:
       ipv4 masquerade
       ipv6 server ssh allow
 
-   Will only enable masquerading on IPv4 and ssh access vi IPv6.
+   Will only enable masquerading on IPv4 and ssh access via IPv6.
 
 2. Implicit by protocol or address e.g.:
 
@@ -55,14 +55,14 @@ following exceptions:
    New ipv6-only marked protocols (e.g. ipv6router, ipv6neigh) will not
    warn in "both" mode, only in "ipv4" mode.
 
-4. Automaic configuration is used via icmpv6. There is no ARP and no
+4. Automatic configuration is used via icmpv6. There is no ARP and no
    need to manually configure routers. To enable this functionality
    the network neighbour and router solicitation/advertisement messages
    should be enabled on each interface. These rules are stateless
    since advertisement can happen automatically as well as on solicitation.
 
    Neigbour discovery (incoming) should always be enabled:
-      client ipv6neigh accept
+      server ipv6neigh accept
 
    Neigbour advertisement (outgoing) should always be enabled:
       client ipv6neigh accept
