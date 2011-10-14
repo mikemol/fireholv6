@@ -6228,7 +6228,7 @@ failure() {
 test -f /etc/init.d/functions && . /etc/init.d/functions
 
 KERNELMAJ=`${UNAME_CMD} -r | ${SED_CMD}                   -e 's,\..*,,'`
-KERNELMIN=`${UNAME_CMD} -r | ${SED_CMD} -e 's,[^\.]*\.,,' -e 's,\..*,,'`
+KERNELMIN=`${UNAME_CMD} -r | ${SED_CMD} -e 's,[^\.]*\.,,' -e 's,[.-].*,,'`
 
 if [ "$KERNELMAJ" -lt 2 ] ; then
 	echo >&2 "FireHOL requires a kernel version higher than 2.3."
