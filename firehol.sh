@@ -2723,7 +2723,13 @@ masquerade() {
 	
 	set_work_function "Initializing masquerade on interface '${f}'"
 	
+	local ipver_save="${IPVER}"
+	if [ "${IPVER}" = "both" ]
+	then
+		IPVER=ipv4
+	fi
 	rule noowner table nat chain POSTROUTING "$@" inface any outface "${f}" action MASQUERADE || return 1
+	IPVER="${ipver_save}"
 	
 	FIREHOL_NAT=1
 	FIREHOL_ROUTING=1

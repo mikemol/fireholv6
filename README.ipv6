@@ -139,8 +139,9 @@ Known Issues
      doc/rfc4890-noted.txt
 
 2. There is no Linux kernel NAT support for IPv6, you will get errors
-   if you try to use it (e.g. by including the masquerade command without
-   explicitly marking it as ipv4).
+   if you try to use it.
+
+   The masquerade command automatically defaults to ipv4 only.
 
    A kernel module may be available from somewhere in which case you might
    be able to get it to work. You probably don't want to NAT for nearly as
