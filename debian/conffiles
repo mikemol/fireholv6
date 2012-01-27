@@ -1,0 +1,5 @@
+/etc/init.d/firehol
+/etc/firehol/firehol.conf
+/etc/default/firehol
+/etc/firehol/RESERVED_IPV4
+/etc/firehol/RESERVED_IPV6

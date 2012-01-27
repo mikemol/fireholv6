@@ -1,0 +1,30 @@
+.\"     Title: get-iana
+.\"    Author: 
+.\" Generator: DocBook XSL Stylesheets v1.73.1 <http://docbook.sf.net/>
+.\"      Date: 08/30/2007
+.\"    Manual: 
+.\"    Source: 
+.\"
+.TH "GET\-IANA" "1" "08/30/2007" "" ""
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+get-iana - updates the list of reserved ips from the IANA for usage from firehol
+.SH "SYNOPSIS"
+\fBget\-iana\fR
+.sp
+.SH "DESCRIPTION"
+This manual page documents briefly the \fBget\-iana\fR command\.
+.sp
+\fBget\-iana\fR fetches the list of reserver networks from the iana website (http://www\.iana\.org/assignments/ipv4\-address\-space)\. And formats the for inclusion in the firehol(1) firewall script\. If available it uses aggregate(1) for optimisation of the ip list\.
+.sp
+.SH "SEE ALSO"
+firehol(1), aggregate(1)
+.sp
+.SH "AUTHOR"
+get\-iana was written by Costa Tsaousis <costa@tsaousis\.gr>\.
+.sp
+This manual page was written by Alexander Wirt <formorer@debian\.org>\.
+.sp

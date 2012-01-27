@@ -1,0 +1,22 @@
+#!/bin/sh -e
+
+if [ -f /etc/firehol.conf ]
+then
+	mv -f /etc/firehol.conf /etc/firehol/firehol.conf
+	echo
+	echo
+	echo "FireHOL has now its configuration in /etc/firehol/firehol.conf"
+	echo "Your existing configuration has been moved to its new place."
+	echo
+fi
+
+case "$1" in
+	configure)
+		if [ -x "/etc/init.d/firehol" ]; then
+			update-rc.d firehol defaults >/dev/null
+		fi
+		;;
+
+	abort-upgrade|abort-remove|abort-deconfigure)
+		;;
+esac
