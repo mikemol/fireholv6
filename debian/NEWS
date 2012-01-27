@@ -1,0 +1,9 @@
+firehol (1.256-1) unstable; urgency=low
+
+  This release reverts the split from firehol into firehol-wizard,firehol and
+  the lib. That will make updates much easier in the future.
+  get-iana (a script for updating the list of reserved ips) is now available
+  you can run it regulary to update your ip list. Its recommended to install
+  the aggregate package to aggregate the ip ranges from the iana. 
+
+ -- Alexander Wirt <formorer@debian.org>  Thu, 30 Aug 2007 17:18:22 +0200

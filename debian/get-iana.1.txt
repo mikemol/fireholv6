@@ -1,0 +1,30 @@
+GET-IANA(1)
+===========
+Costa Tsaousis <costa@tsaousis.gr>
+
+NAME
+----
+get-iana - updates the list of reserved ips from the IANA for usage from firehol 
+
+SYNOPSIS
+--------
+*get-iana*
+
+DESCRIPTION
+-----------
+This manual page documents briefly the *get-iana* command.
+
+*get-iana* fetches the list of reserver networks from the iana website 
+(http://www.iana.org/assignments/ipv4-address-space). And formats the for 
+inclusion in the firehol(1) firewall script. If available it uses aggregate(1) 
+for optimisation of the ip list. 
+
+SEE ALSO
+--------
+firehol(1), aggregate(1)
+
+AUTHOR
+------
+get-iana was written by Costa Tsaousis <costa@tsaousis.gr>. 
+
+This manual page was written by Alexander Wirt <formorer@debian.org>.
