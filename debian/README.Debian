@@ -1,0 +1,19 @@
+firehol for Debian GNU/Linux
+----------------------------
+
+You have to enable firehol in /etc/default/firehol to 
+get firehol starting. To enable it set START_FIREHOL to anything
+else than NO/no. 
+
+You should also give firehol-wizard a try for generating
+a starting configuration. To launch firehol-wizard just start /sbin/firehol 
+with the wizard parameter (/sbin/firehol wizard). 
+
+If you want to have firehol waiting until a device is up before
+it proceeds the firewall rules you can add it in WAIT_FOR_IFACE
+in the defaults file. Firehol then waits until the device is up
+or 60 secs are over.
+
+Thanks to Sam Couter for this contribution.
+
+-- Alexander Wirt <formorer@debian.org>  Fri, 21 Jul 2006 17:52:29 +0200
