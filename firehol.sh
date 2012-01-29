@@ -7710,7 +7710,10 @@ done
 if [ $FIREHOL_ROUTING -eq 1 ]
 then
 	postprocess ${SYSCTL_CMD} -w "net.ipv4.ip_forward=1"
-	postprocess ${SYSCTL_CMD} -w "net.ipv6.conf.all.forwarding=1"
+	if [ $IPVER != "ipv4" ]
+        then
+	  postprocess ${SYSCTL_CMD} -w "net.ipv6.conf.all.forwarding=1"
+	fi
 fi
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
