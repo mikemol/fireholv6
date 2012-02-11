@@ -6399,7 +6399,7 @@ case "${arg}" in
 			echo 
 			echo "--- NAT ------------------------------------------------------------------------"
 			echo 
-			iptables_cmd -t nat -nxvL
+			iptables_cmd --ignore-missing -t nat -nxvL
 			
 			echo 
 			echo 
