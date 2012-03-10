@@ -356,6 +356,12 @@ iptables_cmd() {
 		if [ $skip_next -eq 1 ]
 		then
 			skip_next=0
+		elif [ "$i" = "icmp-host-unreachable" ]
+                then
+			ipv6_ok=0
+		elif [ "$i" = "icmp6-addr-unreachable" ]
+                then
+			ipv4_ok=0
 		elif [ $frag_param -eq 1 ]
 		then
 			case "$i" in
@@ -2935,6 +2941,7 @@ blacklist() {
 		iptables -t filter -N BL_OUT_BI	# OUTPUT and FORWARD
 		iptables -A BL_OUT_BI -p tcp -j REJECT --reject-with tcp-reset
 		iptables -A BL_OUT_BI -j REJECT --reject-with icmp-host-unreachable
+		iptables -A BL_OUT_BI -j REJECT --reject-with icmp6-addr-unreachable
 		
 		blacklist_chain=1
 	fi
