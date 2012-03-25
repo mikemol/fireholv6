@@ -2,7 +2,7 @@
 #
 # Startup script to implement /etc/firehol/firehol.conf pre-defined rules.
 #
-# chkconfig: 2345 99 92
+# chkconfig: - 20 80
 #
 # description: creates stateful iptables packet filtering firewalls.
 #
