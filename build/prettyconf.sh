@@ -42,4 +42,4 @@ keyword outface
 
 cat $1 | sed -f "${CONF}"
 
-cat "${CONF}"
+#cat "${CONF}"

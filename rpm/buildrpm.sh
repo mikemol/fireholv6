@@ -12,7 +12,7 @@ then
 	exit 1
 fi
 
-files="firehol.sh .spec examples/client-all.conf"
+files="firehol.sh rpm/default.spec examples/client-all.conf"
 
 for x in $files
 do
@@ -55,14 +55,12 @@ mkdir -p "/tmp/${myname}"
 
 files="
 README
-TODO
 COPYING
 ChangeLog
-WhatIsNew
 firehol.sh
-adblock.sh
-buildrpm.sh
-get-iana.sh
+admin/adblock.sh
+admin/check-iana.sh
+admin/get-iana.sh
 man/firehol.1
 man/firehol.conf.5
 examples/client-all.conf
@@ -99,9 +97,9 @@ done
 chmod 755 /tmp/$myname/*.sh
 
 # fix the rpm spec file
-cat .spec						|\
-	sed "s/^Version: MYVERSION/Version: $1/"	|\
-	sed "s/^Release: MYRELEASE/Release: $2/" >"/tmp/$myname/.spec"
+cat rpm/default.spec						|\
+	sed "s/^Version:	MYVERSION/Version: $1/"	|\
+	sed "s/^Release:	MYRELEASE/Release: $2/" >"/tmp/$myname/default.spec"
 
 # make the tar
 cd /tmp
