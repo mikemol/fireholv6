@@ -5799,8 +5799,6 @@ if  ${LSMOD_CMD} 2>/dev/null | ${GREP_CMD} -q ipchains ; then
 	exit 0
 fi
 
-test -e /etc/default/firehol && . /etc/default/firehol 
-
 # ------------------------------------------------------------------------------
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 # ------------------------------------------------------------------------------
