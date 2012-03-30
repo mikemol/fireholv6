@@ -1,0 +1,4 @@
+/etc/init.d/firehol
+/etc/firehol/firehol.conf
+/etc/default/firehol
+/etc/firehol/RESERVED_IPS

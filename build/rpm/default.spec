@@ -1,5 +1,5 @@
 Summary:	A powerful yet easy to use iptables frontend
-Name:		firehol
+Name:		sanewall
 Version:	MYVERSION
 Release:	MYRELEASE
 License:	GPLv2+
@@ -32,17 +32,20 @@ Requires(postun):	initscripts
 
 
 %description
-FireHOL is a generic firewall generator, meaning that you can design any kind
+Sanewall is a generic firewall generator, meaning that you can design any kind
 of local or routing stateful packet filtering firewalls with ease. Install
-FireHOL if you want an easy way to configure stateful packet filtering
+Sanewall if you want an easy way to configure stateful packet filtering
 firewalls on Linux hosts and routers.
 
-FireHOL uses an extremely simple but powerful way to define firewall rules
+Sanewall uses an extremely simple but powerful way to define firewall rules
 which it turns into complete stateful iptables firewalls.
 
-You can run FireHOL with the 'helpme' argument, to get a configuration file for
+You can run Sanewall with the 'helpme' argument, to get a configuration file for
 the system run, which you can modify according to your needs. The default
 configuration file will allow only client traffic on all interfaces.
+
+Sanewall is a based on the FireHOL project and understands FireHOL
+configuration syntax.
 
 %prep
 %setup -q
@@ -57,8 +60,8 @@ install -D -p -m 640 examples/client-all.conf %{buildroot}/etc/firehol/firehol.c
 # Install man files
 mkdir -p %{buildroot}%{_mandir}/man1
 mkdir -p %{buildroot}%{_mandir}/man5
-install -p -m 644 man/*.1 %{buildroot}/%{_mandir}/man1
-install -p -m 644 man/*.5 %{buildroot}/%{_mandir}/man5
+install -p -m 644 man/man1/*.1 %{buildroot}/%{_mandir}/man1
+install -p -m 644 man/man5/*.5 %{buildroot}/%{_mandir}/man5
 
 # Executables
 mkdir -p %{buildroot}%{_libexecdir}/firehol
@@ -90,7 +93,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%doc README COPYING ChangeLog examples doc
+%doc README COPYING ChangeLog.gz examples doc
 %dir %{_sysconfdir}/firehol
 %config(noreplace) %{_sysconfdir}/firehol/firehol.conf
 %{_initrddir}/firehol

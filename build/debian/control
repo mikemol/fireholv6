@@ -1,0 +1,16 @@
+Source: sanewall
+Section: net
+Priority: optional
+Maintainer: Phil Whineray <phil.whineray@gmail.com>
+Uploaders: Phil Whineray <phil.whineray@gmail.com>
+
+Package: sanewall
+Architecture: all
+Depends: iptables (>= 1.2.4), iproute, net-tools, bash (>= 2.04), lsb-base
+Recommends: modutils | module-init-tools, wget | curl, aggregate
+Replaces: firehol
+Suggests: ulogd
+Description: An easy to use but powerful iptables stateful firewall
+ Generates generic firewalls with an extremely simple but powerful
+ configuration language, enabling you to design any kind of local
+ or routing stateful packet filtering firewall with ease.
