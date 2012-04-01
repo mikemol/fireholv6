@@ -9,6 +9,7 @@ Architecture: all
 Depends: iptables (>= 1.2.4), iproute, net-tools, bash (>= 2.04), lsb-base
 Recommends: modutils | module-init-tools, wget | curl, aggregate
 Replaces: firehol
+Conflicts: firehol
 Suggests: ulogd
 Description: An easy to use but powerful iptables stateful firewall
  Generates generic firewalls with an extremely simple but powerful

@@ -1,0 +1,24 @@
+#!/bin/sh -e
+
+if [ -d /etc/firehol -a ! -d /etc/sanewall ]
+then
+	mv -f /etc/firehol /etc/sanewall
+	echo
+	echo
+	echo "Changing your existing FireHOL configuration into a sanewall"
+	echo "configuration."
+	echo "  /etc/firehol => /etc/sanewall"
+	if [ -f /etc/sanewall/firehol.conf ]
+	then
+		mv -f /etc/sanewall/firehol.conf /etc/sanewall/sanewall.conf
+		echo "  /etc/firehol/firehol.conf => /etc/sanewall/sanewall.conf"
+	fi
+	echo
+fi
+
+if [ -f /etc/init.d/firehol ]
+then
+	rm -f /etc/init.d/firehol
+	update-rc.d firehol remove
+	echo
+fi
