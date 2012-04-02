@@ -5,13 +5,20 @@ then
 	mv -f /etc/firehol /etc/sanewall
 	echo
 	echo
-	echo "Changing your existing FireHOL configuration into a sanewall"
+	echo "Changing your existing FireHOL configuration into a sanewall one"
 	echo "configuration."
 	echo "  /etc/firehol => /etc/sanewall"
 	if [ -f /etc/sanewall/firehol.conf ]
 	then
 		mv -f /etc/sanewall/firehol.conf /etc/sanewall/sanewall.conf
-		echo "  /etc/firehol/firehol.conf => /etc/sanewall/sanewall.conf"
+		echo "  /etc/sanewall/firehol.conf => /etc/sanewall/sanewall.conf"
+	fi
+	if [ -f /etc/default/firehol ]
+	then
+		sed -e "s/FIREHOL/SANEWALL/g" /etc/default/firehol > /etc/default/sanewall
+		chmod 644 /etc/default/sanewall
+		rm -f /etc/default/firehol
+		echo "  /etc/default/firehol => /etc/default/sanewall"
 	fi
 	echo
 fi

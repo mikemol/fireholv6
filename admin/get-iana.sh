@@ -108,10 +108,10 @@ fi
 echo >&2
 echo >&2
 echo >&2 "Differences between the fetched list and the list installed in"
-echo >&2 "/etc/firehol/RESERVED_IPS:"
+echo >&2 "/etc/sanewall/RESERVED_IPS:"
 
-echo >&2 "# diff /etc/firehol/RESERVED_IPS ${tempfile}"
-diff /etc/firehol/RESERVED_IPS ${tempfile}
+echo >&2 "# diff /etc/sanewall/RESERVED_IPS ${tempfile}"
+diff /etc/sanewall/RESERVED_IPS ${tempfile}
 
 if [ $? -eq 0 ]
 then
@@ -125,8 +125,8 @@ fi
 
 echo >&2 
 echo >&2 
-echo >&2 "Would you like to save this list to /etc/firehol/RESERVED_IPS"
-echo >&2 "so that FireHOL will automatically use it from now on?"
+echo >&2 "Would you like to save this list to /etc/sanewall/RESERVED_IPS"
+echo >&2 "so that sanewall will automatically use it from now on?"
 echo >&2
 while [ 1 = 1 ]
 do
@@ -134,9 +134,9 @@ do
 	read x
 	
 	case "${x}" in
-		yes)	cp -f /etc/firehol/RESERVED_IPS /etc/firehol/RESERVED_IPS.old 2>/dev/null
-			cat "${tempfile}" >/etc/firehol/RESERVED_IPS || exit 1
-			echo >&2 "New RESERVED_IPS written to '/etc/firehol/RESERVED_IPS'."
+		yes)	cp -f /etc/sanewall/RESERVED_IPS /etc/sanewall/RESERVED_IPS.old 2>/dev/null
+			cat "${tempfile}" >/etc/sanewall/RESERVED_IPS || exit 1
+			echo >&2 "New RESERVED_IPS written to '/etc/sanewall/RESERVED_IPS'."
 			break
 			;;
 			

@@ -27,7 +27,7 @@ binary-indep:	checkroot build
 	install -d tgz/tmp/$(TARGET)/man/man5
 
 	#Install the scripts and the config:
-	install -m 755 ../*.sh tgz/tmp/$(TARGET)/
+	install -m 755 ../sanewall tgz/tmp/$(TARGET)/
 	install -m 755 ../admin/*.sh tgz/tmp/$(TARGET)/
 	install -m 755 ../init.d/* tgz/tmp/$(TARGET)/init.d
 	install -m 644 ../etc/RESERVED_IPS tgz/tmp/$(TARGET)/etc

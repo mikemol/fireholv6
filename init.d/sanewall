@@ -1,28 +1,28 @@
 #! /bin/sh
 ### BEGIN INIT INFO
-# Provides:          firehol
+# Provides:          sanewall
 # Required-Start:    $network $syslog
 # Required-Stop:     $network 
 # Default-Start:     2 3 4 5 
 # Default-Stop:      0 1 6 
-# Description: Starts firehol firewall configuration 
-# short-description: firehol firewall configuration
+# Description: Starts sanewall firewall configuration 
+# short-description: sanewall firewall configuration
 ### END INIT INFO
 
 #includes lsb functions 
 . /lib/lsb/init-functions
 
 PATH=/sbin:/bin
-NAME=firehol
+NAME=sanewall
 DESC=Firewall
 
-test -x /sbin/firehol || exit 0
+test -x /sbin/sanewall || exit 0
 
 set -e
 
-[ -r /etc/default/firehol ] && . /etc/default/firehol
+[ -r /etc/default/sanewall ] && . /etc/default/sanewall
 
-START_FIREHOL="$( echo $START_FIREHOL | /usr/bin/tr a-z A-Z)"
+START_SANEWALL="$( echo $START_SANEWALL | /usr/bin/tr a-z A-Z)"
 test -n "$WAIT_FOR_IFACE" && export WAIT_FOR_IFACE
 
 COMMAND="$1" 
@@ -31,31 +31,31 @@ test -n "$1" && shift
 case "$COMMAND" in
   start)
   	
-  	if [ "$START_FIREHOL" = "NO"  ]; then
-		log_warning_msg "$DESC disabled via /etc/default/firehol"
+  	if [ "$START_SANEWALL" = "NO"  ]; then
+		log_warning_msg "$DESC disabled via /etc/default/sanewall"
 		exit 0
 	else 
 		log_daemon_msg "Starting $DESC" "$NAME"
-		/sbin/firehol start "$@" >/dev/null || log_end_msg 1
+		/sbin/sanewall start "$@" >/dev/null || log_end_msg 1
 		log_end_msg 0
 	fi
 	;;
   stop)
 	log_daemon_msg "Stopping $DESC" "$NAME"
-	/sbin/firehol stop "$@" >/dev/null || log_end_msg 1
+	/sbin/sanewall stop "$@" >/dev/null || log_end_msg 1
 	log_end_msg 0
 	;;
   helpme|wizard) 
   	log_daemon_msg  "Starting $NAME wizard" 1>&2 
-	/sbin/firehol wizard
+	/sbin/sanewall wizard
 	;;
   restart|force-reload)
-  	if [ "$START_FIREHOL" = "NO"  ]; then
-		log_warning_msg "$DESC disabled via /etc/default/firehol"
+  	if [ "$START_SANEWALL" = "NO"  ]; then
+		log_warning_msg "$DESC disabled via /etc/default/sanewall"
 		exit 0
 	else 
 		log_daemon_msg "Restarting $DESC configuration"
-		/sbin/firehol restart "$@" >/dev/null || log_end_msg 1
+		/sbin/sanewall restart "$@" >/dev/null || log_end_msg 1
 		log_action_end_msg 0 
 	fi
 	;;

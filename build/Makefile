@@ -4,9 +4,13 @@ RELEASE=`cat RELEASE`
 
 all: VERSION RELEASE build-stamp build-stamp-tgz build-stamp-rpm
 
-VERSION: ../ChangeLog
+VERSION: ../ChangeLog ../sanewall
 	sed -e '2,$$d' -e 's|.*[a-z][a-z]* (\([^-)]*\)-*[^-)]*).*|\1|' ../ChangeLog > VERSION.tmp
 	test -s VERSION.tmp
+	sed -ne 's/^VERSION=\([0-9].*\)/\1/p' ../sanewall > VERSION.script
+	cmp -s VERSION.tmp VERSION.script || echo "ChangeLog and sanewall script have different versions"
+	cmp -s VERSION.tmp VERSION.script
+	rm -f VERSION.script
 	mv VERSION.tmp VERSION
 
 RELEASE: ../ChangeLog
@@ -32,5 +36,6 @@ build-stamp-tgz:
 
 clean:
 	rm -f build-stamp* *.tar.gz *.rpm *.deb RELEASE VERSION *.tmp
+	rm -f VERSION.script
 	sudo ./debian/rules clean
 	sudo ./tgz/rules clean

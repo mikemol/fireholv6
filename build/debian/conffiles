@@ -1,4 +1,4 @@
 /etc/init.d/sanewall
 /etc/sanewall/sanewall.conf
-/etc/default/firehol
+/etc/default/sanewall
 /etc/sanewall/RESERVED_IPS

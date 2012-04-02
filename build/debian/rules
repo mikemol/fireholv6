@@ -28,26 +28,26 @@ binary-indep:	checkroot build
 	install -d debian/tmp/usr/share/doc/sanewall/examples
 
 	#Install the scripts and the config:
-	install -m 755 ../firehol.sh debian/tmp/sbin/sanewall
-	install -m 755 ../init.d/firehol debian/tmp/etc/init.d/sanewall
+	install -m 755 ../sanewall debian/tmp/sbin/sanewall
+	install -m 755 ../init.d/sanewall debian/tmp/etc/init.d/sanewall
 	install -m 644 ../examples/client-all.conf debian/tmp/etc/sanewall/sanewall.conf
 	install -m 644 ../etc/RESERVED_IPS debian/tmp/etc/sanewall
 	install -m 755 ../admin/get-iana.sh debian/tmp/usr/sbin/get-iana
 
-	echo "#To enable sanewall at startup set START_FIREHOL=YES" > debian/tmp/etc/default/firehol
-	echo "START_FIREHOL=NO" >> debian/tmp/etc/default/firehol
-	echo "#If you want to have firehol wait for an iface to be up add it here" >> debian/tmp/etc/default/firehol
-	echo 'WAIT_FOR_IFACE=""' >> debian/tmp/etc/default/firehol
+	echo "#To enable sanewall at startup set START_SANEWALL=YES" > debian/tmp/etc/default/sanewall
+	echo "START_SANEWALL=NO" >> debian/tmp/etc/default/sanewall
+	echo "#If you want to have sanewall wait for an iface to be up add it here" >> debian/tmp/etc/default/sanewall
+	echo 'WAIT_FOR_IFACE=""' >> debian/tmp/etc/default/sanewall
 	
-	chmod 644 debian/tmp/etc/default/firehol
+	chmod 644 debian/tmp/etc/default/sanewall
 
 	#Copy the documentation:
 	install -m 644 debian/README.Debian debian/README.Services debian/tmp/usr/share/doc/sanewall/
 	install -m 644 ../doc/*.html ../doc/*.css debian/tmp/usr/share/doc/sanewall/html/
-	install -m 644 ../man/firehol.1 debian/tmp/usr/share/man/man1/
+	install -m 644 ../man/sanewall.1 debian/tmp/usr/share/man/man1/
 	install -m 644 ../man/get-iana.1 debian/tmp/usr/share/man/man1/
-	install -m 644 ../man/firehol.conf.5 debian/tmp/usr/share/man/man5/
-	gzip -9 debian/tmp/usr/share/man/man1/firehol.1 debian/tmp/usr/share/man/man5/firehol.conf.5 debian/tmp/usr/share/man/man1/get-iana.1
+	install -m 644 ../man/sanewall.conf.5 debian/tmp/usr/share/man/man5/
+	gzip -9 debian/tmp/usr/share/man/man1/sanewall.1 debian/tmp/usr/share/man/man5/sanewall.conf.5 debian/tmp/usr/share/man/man1/get-iana.1
 
 	#Copy the examples:
 	install -m 644 ../examples/*.conf debian/tmp/usr/share/doc/sanewall/examples/

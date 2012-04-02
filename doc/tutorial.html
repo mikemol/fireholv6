@@ -2,15 +2,15 @@
 <HTML>
 <HEAD>
 <link rel="stylesheet" type="text/css" href="css.css">
-<TITLE>FireHOL, Configuration tutorial</TITLE>
+<TITLE>Sanewall, Configuration tutorial</TITLE>
 <meta name="author" content="Costa Tsaousis">
 <meta name="description" content="
 
-Home for FireHOL, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
+Home for sanewall, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
 supporting NAT, SNAT, DNAT, REDIRECT, MASQUERADE, DMZ, dual-homed, multi-homed and router setups,
 protecting and securing hosts and LANs in all kinds of topologies. Configuration is done using
 simple client and server statements while it can detect (and produce) its configuration
-automatically. FireHOL is extremely easy to understand, configure and audit.
+automatically. Sanewall is extremely easy to understand, configure and audit.
 
 ">
 
@@ -20,45 +20,27 @@ automatically. FireHOL is extremely easy to understand, configure and audit.
 
 <BODY bgcolor="#FFFFFF">
 
-<center>
-<script type="text/javascript"><!--
-google_ad_client = "pub-4254040714325099";
-google_ad_width = 728;
-google_ad_height = 90;
-google_ad_format = "728x90_as";
-google_ad_channel ="";
-google_page_url = document.location;
-google_color_border = "336699";
-google_color_bg = "FFFFFF";
-google_color_link = "0000FF";
-google_color_url = "008000";
-google_color_text = "000000";
-//--></script>
-<script type="text/javascript"
-  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
-</center>
 <p>
 
-Since R5 v1.97 of FireHOL there is the command line argument <b>helpme</b> that will try to guess
+Since R5 v1.97 of sanewall there is the command line argument <b>helpme</b> that will try to guess
 your configuration on the running machine. To use it, simply run:<p>
 
-<b>/etc/init.d/firehol helpme &gt;/tmp/firehol.conf</b> <font color="gray">(installed from RPM)</font>, or
+<b>/etc/init.d/sanewall helpme &gt;/tmp/sanewall.conf</b> <font color="gray">(installed from RPM)</font>, or
 <p>
-<b>firehol.sh helpme &gt;/tmp/firehol.conf</b> <font color="gray">(installed from .tar.bz2)</font>
+<b>sanewall.sh helpme &gt;/tmp/sanewall.conf</b> <font color="gray">(installed from .tar.bz2)</font>
 <p>
 The purpose of the <b>helpme</b> feature is to give you a configuration file that you can modify to get an
 operational firewall quickly, especially if your firewalling and iptables knowledge is limited. This feature
 does not stop or alter the running firewall of your machine.
 <p>
-Bellow is the procedure you should follow to manually design a secure FireHOL firewall.
+Bellow is the procedure you should follow to manually design a secure sanewall firewall.
 <p>
 <table border=0 cellpadding=10 cellspacing=0 width="100%">
 <tr><td bgcolor="#EEEEEE"><b>1. Identify all the network interfaces your firewall host has</td></tr></table>
 <br>
 Network interfaces are there for some reason. You have to do something about all the interfaces of your host.
 If you don't do something at the firewall level with a network interface, then it depends of the firewall policy what will happen
-with traffic on this interface. By default FireHOL will <b>drop</b> all traffic coming in and going out via an undefined network interface,
+with traffic on this interface. By default sanewall will <b>drop</b> all traffic coming in and going out via an undefined network interface,
 so the network interface will have no meaning to be up and running. This is a common mistake on some ADSL configurations, where users
 ignore the loop device that connects the linux router with the ADSL device.
 <p>
@@ -82,7 +64,7 @@ To identify your network interfaces use the <b>ip link show</b> command. The exa
 There are a few important thinks to always remember:<p>
 <ul>
 	<li><b>lo</b> exists on all machines and is used for communication between programs running on this machine.
-	FireHOL handles this automatically. You don't have to do anything about <b>lo</b>.
+	Sanewall handles this automatically. You don't have to do anything about <b>lo</b>.
 	<br>&nbsp;
 	</li>
 	<li>Network interfaces (except the <b>lo</b> interface) are used for two purposes:
@@ -108,9 +90,9 @@ say that my link to the outside world is not <b>ppp0</b> but <b>ppp+</b>. The pl
 that <b>begin</b> with the text given before the plus sign. In this case, it matches all the possible network interfaces
 that start with <b>ppp</b>.
 <p>
-Keep in mind that FireHOL (and iptables) does not really care if the interface defined in a firewall actually exists or not.
+Keep in mind that sanewall (and iptables) does not really care if the interface defined in a firewall actually exists or not.
 This means that you can setup firewalls on interfaces that might become available later or altered during run time.
-This also means that if you define an interface with a wrong name, FireHOL and iptables will not complain.
+This also means that if you define an interface with a wrong name, sanewall and iptables will not complain.
 <p>
 
 <table border=0 cellpadding=10 cellspacing=0 width="100%">
@@ -172,9 +154,9 @@ So, the above could also be presented as:
 
 
 <table border=0 cellpadding=10 cellspacing=0 width="100%">
-<tr><td bgcolor="#EEEEEE"><b>3. Create the FireHOL configuration structure</td></tr></table>
+<tr><td bgcolor="#EEEEEE"><b>3. Create the sanewall configuration structure</td></tr></table>
 <br>
-Now that you have a list of all the interfaces and their roles, it is time to start writing the FireHOL configuration file.
+Now that you have a list of all the interfaces and their roles, it is time to start writing the sanewall configuration file.
 <p>
 First write one interface statement for each network interface you identified above:
 
@@ -405,7 +387,7 @@ We might want to have extra checks on each interface to prevent spoofing. To fin
 </td></tr>
 </table>
 </center>
-<a href="commands.html#UNROUTABLE_IPS">UNROUTABLE_IPS</a> is a variable defined by FireHOL and contains all the IPs that should not
+<a href="commands.html#UNROUTABLE_IPS">UNROUTABLE_IPS</a> is a variable defined by sanewall and contains all the IPs that should not
 be routed on the internet.
 <p>
 If home LAN did not had real IP addresses, we would have to add a <a href="commands.html#masquerade">masquerade</a> command in our
@@ -583,9 +565,7 @@ We could use the first router (home2internet) to do everything, but then the cli
 <tr><td align=center valign=middle>
 	<A href="http://sourceforge.net"><IMG src="http://sourceforge.net/sflogo.php?group_id=58425&amp;type=5" width="210" height="62" border="0" alt="SourceForge Logo"></A>
 </td><td align=center valign=middle>
-	<small>$Id: tutorial.html,v 1.16 2004/10/31 23:43:25 ktsaou Exp $</small>
-	<p>
-	<b>FireHOL</b>, a firewall for humans...<br>
+	<b>Sanewall</b>, a firewall for humans...<br>
 	&copy; Copyright 2004
 	Costa Tsaousis <a href="mailto: costa@tsaousis.gr">&lt;costa@tsaousis.gr&gt</a>
 </body>

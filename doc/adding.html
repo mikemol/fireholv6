@@ -1,15 +1,15 @@
 <HTML>
 <HEAD>
 <link rel="stylesheet" type="text/css" href="css.css">
-<TITLE>FireHOL, Adding new services to FireHOL.</TITLE>
+<TITLE>Sanewall, Adding new services to sanewall.</TITLE>
 <meta name="author" content="Costa Tsaousis">
 <meta name="description" content="
 
-Home for FireHOL, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
+Home for sanewall, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
 supporting NAT, SNAT, DNAT, REDIRECT, MASQUERADE, DMZ, dual-homed, multi-homed and router setups,
 protecting and securing hosts and LANs in all kinds of topologies. Configuration is done using
 simple client and server statements while it can detect (and produce) its configuration
-automatically. FireHOL is extremely easy to understand, configure and audit.
+automatically. Sanewall is extremely easy to understand, configure and audit.
 
 ">
 
@@ -19,34 +19,16 @@ automatically. FireHOL is extremely easy to understand, configure and audit.
 
 <BODY bgcolor="#FFFFFF">
 
-<center>
-<script type="text/javascript"><!--
-google_ad_client = "pub-4254040714325099";
-google_ad_width = 728;
-google_ad_height = 90;
-google_ad_format = "728x90_as";
-google_ad_channel ="";
-google_page_url = document.location;
-google_color_border = "336699";
-google_color_bg = "FFFFFF";
-google_color_link = "0000FF";
-google_color_url = "008000";
-google_color_text = "000000";
-//--></script>
-<script type="text/javascript"
-  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
-</center>
 <p>
 
-It is very simple to extend FireHOL for simple single socket services.
+It is very simple to extend sanewall for simple single socket services.
 There are two different ways to do it.<p>
 
 <table border=0 cellpadding=10 cellspacing=0 width="100%">
 <tr><td bgcolor="#EEEEEE"><b>The service definition syntax</td></tr></table>
 <br>
 The first needs a small service definition
-somewhere at the beginning of the FireHOL configuration file.
+somewhere at the beginning of the sanewall configuration file.
 <p>
 For example the following:
 
@@ -86,7 +68,7 @@ Where:
 			</li>
 			<li>if it is used for a client running at remote host (i.e. <a href="commands.html#server">server</a>
 			within an <a href="commands.html#interface">interface</a> or any kind within
-			a <a href="commands.html#router">router</a>), it resolves to the contents of the FireHOL variable
+			a <a href="commands.html#router">router</a>), it resolves to the contents of the sanewall variable
 			<a href="commands.html#DEFAULT_CLIENT_PORTS">DEFAULT_CLIENT_PORTS</a>.
 			<br>&nbsp;
 			</li>
@@ -111,7 +93,7 @@ Just the above two lines will allow you to use (for example):
 </center>
 later in the configuration file.
 <p>
-As an example, assuming that the IMAP4 service was not defined in FireHOL you would have to write:
+As an example, assuming that the IMAP4 service was not defined in sanewall you would have to write:
 
 <center><table border=0 cellpadding=15 cellspacing=20 width="70%">
 <tr><td bgcolor="#F0F0F0">
@@ -208,7 +190,7 @@ To define this service you will have to write:
 </td></tr>
 </table>
 </center>
-In this situation, FireHOL simply produces all the combinations between client and server ports and generates
+In this situation, sanewall simply produces all the combinations between client and server ports and generates
 multiple iptables statements to accomplish them.
 <p>
 This is also the reason why the protocol cannot be defined in client ports.
@@ -217,8 +199,8 @@ This is also the reason why the protocol cannot be defined in client ports.
 <table border=0 cellpadding=10 cellspacing=0 width="100%">
 <tr><td bgcolor="#EEEEEE"><b>Requiring kernel modules</td></tr></table>
 <br>
-Each service can be configured to require two sets of kernel modules depending whether <a href="commands.html#FIREHOL_NAT">NAT is enabled or not</a>.
-This is done on a per service basis, so that if a service is not used in a configuration, FireHOL will not load the module.
+Each service can be configured to require two sets of kernel modules depending whether <a href="commands.html#SANEWALL_NAT">NAT is enabled or not</a>.
+This is done on a per service basis, so that if a service is not used in a configuration, sanewall will not load the module.
 <p>
 The general format is:
 
@@ -232,7 +214,7 @@ The general format is:
 </table>
 </center>
 
-As an example you can see the complete IRC definition within FireHOL:
+As an example you can see the complete IRC definition within sanewall:
 
 <center><table border=0 cellpadding=15 cellspacing=20 width="70%">
 <tr><td bgcolor="#F0F0F0">
@@ -249,8 +231,8 @@ As an example you can see the complete IRC definition within FireHOL:
 </table>
 </center>
 
-The last statement in the above example says to FireHOL, that if the configuration is using the <a href="services.html#all">all</a> service,
-FireHOL should indirectly also setup the <a href="services.html#irc">irc</a> service with all the <a href="commands.html#parameters">optional rule parameters</a>
+The last statement in the above example says to sanewall, that if the configuration is using the <a href="services.html#all">all</a> service,
+sanewall should indirectly also setup the <a href="services.html#irc">irc</a> service with all the <a href="commands.html#parameters">optional rule parameters</a>
 of the <a href="services.html#all">all</a> service.
 
 <p>
@@ -265,17 +247,17 @@ using the connection tracker of iptables (i.e. stateless). In the future, and if
 services too.
 <p>
 To write a complex service you will have to write a BASH function. It is not hard, but it is not two lines of code too, and most probably I am going to change
-the interface to those functions in the future, as FireHOL evolves. So, if you write one, please sumbit a patch so that I will be able to change your function
+the interface to those functions in the future, as sanewall evolves. So, if you write one, please sumbit a patch so that I will be able to change your function
 if and when I change the interface to those functions.
 <p>
 Note however that there are a few types of currently complex services that I'll try to avoid. These are all those services that in order to be implemented in
-a stateful way there must exist a kernel module for them. If I support these services now, FireHOL will loose its beauty since it will have to have ranges of
+a stateful way there must exist a kernel module for them. If I support these services now, sanewall will loose its beauty since it will have to have ranges of
 ports completely open to everyone just in case your service wants them.
 There are plenty of <a href="http://www.netfilter.org/documentation/HOWTO//netfilter-extensions-HOWTO.html">such kernel modules</a> in an experimental state, which you can use if you decide to patch and recompile
 your kernel. If you do this, I'll be glad to support your <b>stateful</b> rules about them. If you try to allow such services in a stateless maner by, for
 example, allowing uncodintionally all traffic at high numbered ports... you are on your own.
 <p>
-If you decide to write a complex service, open FireHOL in your favorite editor and find all the functions that start with <b>rules_</b>. All these functions define rules for
+If you decide to write a complex service, open sanewall in your favorite editor and find all the functions that start with <b>rules_</b>. All these functions define rules for
 the complex services currently supported. If you know the basics of BASH programming, the existing functions will give you a clear idea of what you have to do to write your
 own.
 
@@ -283,13 +265,13 @@ own.
 <table border=0 cellpadding=10 cellspacing=0 width="100%">
 <tr><td bgcolor="#EEEEEE"><b><a name="distributed">Distribution of services with third party packages</a></td></tr></table>
 <br>
-FireHOL v1.213 and above includes a feature that allows third parties to install new service definitions
-in the directory <b>/etc/firehol/services</b>. The purpose of this feature is to allow the distributors of
+Sanewall v1.213 and above includes a feature that allows third parties to install new service definitions
+in the directory <b>/etc/sanewall/services</b>. The purpose of this feature is to allow the distributors of
 third party packages (like proxy servers, dns servers, etc) automatically install their service definitions
 in your system when their applications are installed.
 <p>
 To install a service definition, just create a file with any name, but with extension <b>.conf</b> in the
-directory <b>/etc/firehol/services</b>. The file itself must be a BASH script with any logic in it. The only
+directory <b>/etc/sanewall/services</b>. The file itself must be a BASH script with any logic in it. The only
 requirements are:
 <ul>
 	<li>The script sets up one or more service definitions, either in simple or complex form.</li>
@@ -297,12 +279,12 @@ requirements are:
 	<p>
 	<b>#FHVER: 1:213</b>
 	<p>
-	The two numbers are the major and minor versions of the FireHOL service definition API. In fact,
+	The two numbers are the major and minor versions of the sanewall service definition API. In fact,
 	the major number (1) is increased if the API logic is changed, and the minor (213) is the minimum version of
-	FireHOL the service is expected to work with.
+	sanewall the service is expected to work with.
 	<p>
-	FireHOL will deny to run the service if the major number is different or if the installed version
-	of FireHOL is older than the one expected by the service.
+	Sanewall will deny to run the service if the major number is different or if the installed version
+	of sanewall is older than the one expected by the service.
 	</li>
 </ul>
 
@@ -313,9 +295,7 @@ requirements are:
 <tr><td align=center valign=middle>
 	<A href="http://sourceforge.net"><IMG src="http://sourceforge.net/sflogo.php?group_id=58425&amp;type=5" width="210" height="62" border="0" alt="SourceForge Logo"></A>
 </td><td align=center valign=middle>
-	<small>$Id: adding.html,v 1.10 2004/10/31 23:43:25 ktsaou Exp $</small>
-	<p>
-	<b>FireHOL</b>, a firewall for humans...<br>
+	<b>Sanewall</b>, a firewall for humans...<br>
 	&copy; Copyright 2004
 	Costa Tsaousis <a href="mailto: costa@tsaousis.gr">&lt;costa@tsaousis.gr&gt</a>
 </body>

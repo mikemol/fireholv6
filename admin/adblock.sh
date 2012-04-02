@@ -5,11 +5,11 @@
 #
 # To use this, just put in your cron jobs, like this:
 #
-#      0 * * * * /path/to/adblock.sh >/etc/firehol/adblock-ips
+#      0 * * * * /path/to/adblock.sh >/etc/sanewall/adblock-ips
 #
-# and then in your firehol.conf:
+# and then in your sanewall.conf:
 #
-#     source /etc/firehol/adblock-ips
+#     source /etc/sanewall/adblock-ips
 #
 # later in the config file you can use (for example)
 #

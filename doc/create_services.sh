@@ -1,9 +1,9 @@
 #!/bin/bash
 
 
-if [ ! -f ../firehol.sh -o ! -f services.html ]
+if [ ! -f ../sanewall -o ! -f services.html ]
 then
-	echo "Please step into the 'doc' directory of firehol"
+	echo "Please step into the 'doc' directory of sanewall"
 	exit 1
 fi
 
@@ -24,7 +24,7 @@ APCUPSD, since the default is conflicting with IRC and many distributions (like 
 changed this to 6544.
 <p>
 You can define port 6544 in APCUPSD, by changing the value of NETPORT in its configuration file,
-or overwrite this FireHOL service definition using the procedures described in
+or overwrite this sanewall service definition using the procedures described in
 <a href=\"adding.html\">Adding Services</a>.
 "
 
@@ -51,16 +51,16 @@ service_amanda_notes="
 This implementation of <a href=\"http://amanda.sf.net\">AMANDA, the Advanced Maryland Automatic Network Disk Archiver</a>
 is based on the <a href=\"http://amanda.sourceforge.net/cgi-bin/fom?_highlightWords=firewall&file=139\">notes posted at Amanda's Faq-O-Matic</a>.
 <p>
-Based on this, FireHOL allows:<br>
+Based on this, sanewall allows:<br>
 <ul>
 	<li>a connection from the server to the client at <b>udp 10080</b></li>
 	<li>connections from the client to the server at <b>tcp & udp</b> ports
-	controlled by the variable <b>FIREHOL_AMANDA_PORTS</b>.
+	controlled by the variable <b>SANEWALL_AMANDA_PORTS</b>.
 	<p>
-	Default: <b>FIREHOL_AMANDA_PORTS=\"850:859\"</b>
+	Default: <b>SANEWALL_AMANDA_PORTS=\"850:859\"</b>
 	<p>It has been written in amanda mailing lists that by default amanda
 	chooses ports in the range of 600 to 950. If you don't compile amanda
-	yourself you may have to change the variable FIREHOL_AMANDA_PORTS to
+	yourself you may have to change the variable SANEWALL_AMANDA_PORTS to
 	accept a wider match (but consider the trust relationship you are
 	building with this).
 	</li>
@@ -71,10 +71,10 @@ I <b>strongly suggest</b> to use this service in your firewall like:
 <b><a href=\"commands.html#client\">client</a> amanda accept <a href=\"commands.html#dst\">dst</a> 5.6.7.8</b>
 <p>
 in order to limit the hosts
-that have access to the ports controlled by the variable <b>FIREHOL_AMANDA_PORTS</b>.
+that have access to the ports controlled by the variable <b>SANEWALL_AMANDA_PORTS</b>.
 <p>
 This complex service handles correctly the multi-socket bi-directional environment required.
-Use the FireHOL <b>server</b> directive on the Amanda server, and FireHOL's <b>client</b> on the Amanda client.
+Use the sanewall <b>server</b> directive on the Amanda server, and sanewall's <b>client</b> on the Amanda client.
 <p>
 The <b>amanda</b> service will break if it is NATed (to work it would require a bi-directional NAT and
 a modification in the amanda code to allow connections from/to high ports).
@@ -117,7 +117,7 @@ server_custom_ports="defined&nbsp;in&nbsp;the&nbsp;command"
 client_custom_ports="defined&nbsp;in&nbsp;the&nbsp;command"
 service_custom_type="complex"
 service_custom_notes="
-This service is used by FireHOL to allow you define services it currently does not support.<br>
+This service is used by sanewall to allow you define services it currently does not support.<br>
 To find more about this service please check the <a href=\"adding.html\">Adding Services</a> section.
 "
 service_custom_example="server custom <u>myimap</u> <u>tcp/143</u> <u>default</u> accept"
@@ -146,7 +146,7 @@ Direct Connect++ P2P, can be found <a href=\"http://dcplusplus.sourceforge.net\"
 server_dhcp_ports="udp/67"
 client_dhcp_ports="68"
 service_dhcp_notes="
-The DHCP service has been changed in v1.211 of FireHOL and now it is implemented as stateless.
+The DHCP service has been changed in v1.211 of sanewall and now it is implemented as stateless.
 This has been done because DHCP clients broadcast the network (src 0.0.0.0 dst 255.255.255.255) to find a DHCP server.
 If the DHCP service was stateful the iptables connection tracker would not match the packets and deny to send the reply.
 Note that this change does not affect the security of either DHCP servers or clients, since only the specific ports are
@@ -205,7 +205,7 @@ service_emule_example="client emule accept src 1.1.1.1"
 service_emule_type="complex"
 service_emule_notes="<a href=\"http://www.emule-project.com\">eMule</a> (Donkey network client).
 <p>
-According to <a href=\"http://www.emule-project.net/faq/ports.htm\">eMule Port Definitions</a>, FireHOL defines:
+According to <a href=\"http://www.emule-project.net/faq/ports.htm\">eMule Port Definitions</a>, sanewall defines:
 <ul>
 	<li>Connection from any client port to the server at tcp/4661<br>&nbsp;</li>
 	<li>Connection from any client port to the server at tcp/4662<br>&nbsp;</li>
@@ -214,7 +214,7 @@ According to <a href=\"http://www.emule-project.net/faq/ports.htm\">eMule Port D
 	<li>Connection from any server port to the client at tcp/4662<br>&nbsp;</li>
 	<li>Connection from any server port to the client at udp/4672<br>&nbsp;</li>
 </ul>
-Use the FireHOL <a href=\"commands.html#client\">client</a> command to match the eMule client.
+Use the sanewall <a href=\"commands.html#client\">client</a> command to match the eMule client.
 <p>
 Please note that the <a href=\"http://www.emule-project.com\">eMule</a> client is an HTTP client also.
 "
@@ -238,7 +238,7 @@ service_gift_notes="
 <a href=\"http://gift.sourceforge.net\">GiFT</a> is a collection of various software components
 geared towards improving the overall usability of a multitude of peer-to-peer file-sharing networks.<p>
 
-The <b>gift</b> FireHOL service supports:<br>
+The <b>gift</b> sanewall service supports:<br>
 <ul>
 <li>Gnutella listening at tcp/4302</li>
 <li>FastTrack listening at tcp/1214</li>
@@ -246,7 +246,7 @@ The <b>gift</b> FireHOL service supports:<br>
 </ul>
 
 The above ports are the defaults given for the coresponding GiFT modules.<p>
-To allow access to the user interface ports of GiFT, use the <a href=\"#giftui\">giftui</a> FireHOL service.
+To allow access to the user interface ports of GiFT, use the <a href=\"#giftui\">giftui</a> sanewall service.
 "
 
 service_giftui_notes="
@@ -254,7 +254,7 @@ service_giftui_notes="
 geared towards improving the overall usability of a multitude of peer-to-peer file-sharing networks.<p>
 
 This service refers only to the user interface ports offered by GiFT.
-To allow gift accept P2P requests, use the <a href=\"#gift\">gift</a> FireHOL service.
+To allow gift accept P2P requests, use the <a href=\"#gift\">gift</a> sanewall service.
 "
 
 server_tftp_ports="many"
@@ -278,7 +278,7 @@ Check <a href=\"http://erris.med.virginia.edu/tech/FIREWALL.HTM\">this document<
 
 service_heartbeat_notes="
 HeartBeat is the Linux clustering solution available <a href="http://www.linux-ha.org/">http://www.linux-ha.org/</a>.
-This FireHOL service has been designed such a way that it will allow multiple heartbeat clusters on the same LAN.
+This sanewall service has been designed such a way that it will allow multiple heartbeat clusters on the same LAN.
 "
 
 server_hylafax_ports="many"
@@ -407,7 +407,7 @@ access port 445 will have to timeout before falling back to port 139. This timeo
 <p>
 To overcome this problem either explicitly <b>REJECT</b> the <a href=\"#microsoft_ds\">microsoft_ds</a> service
 with a tcp-reset message (<b>server microsoft_ds reject with tcp-reset</b>),
-or redirect port 445 to port 139 using the following rule (put it all-in-one-line at the top of your FireHOL config):
+or redirect port 445 to port 139 using the following rule (put it all-in-one-line at the top of your sanewall config):
 <p>
 <b>
 iptables -t nat -A PREROUTING -i eth0 -p tcp -s 1.1.1.1/24 --dport 445 -d 2.2.2.2 -j REDIRECT --to-port 139
@@ -445,7 +445,7 @@ For this reason, the NFS service requires that:
 </ul>
 Since NFS queries the remote RPC server, it is required to also be allowed to do so, by allowing the
 <a href=\"#portmap\">portmap</a> service too. Take care, that this is allowed by the <b>running firewall</b>
-when FireHOL tries to query the RPC server. So you might have to setup NFS in two steps: First add the portmap
+when sanewall tries to query the RPC server. So you might have to setup NFS in two steps: First add the portmap
 service and activate the firewall, then add the NFS service and restart the firewall.
 <p>
 To avoid this you can setup your NFS server to listen on pre-defined ports, as it is well documented in
@@ -469,7 +469,7 @@ For this reason, the nis service requires that:
 </ul>
 Since nis queries the remote RPC server, it is required to also be allowed to do so, by allowing the
 <a href=\"#portmap\">portmap</a> service too. Take care, that this is allowed by the <b>running firewall</b>
-when FireHOL tries to query the RPC server. So you might have to setup nis in two steps: First add the portmap
+when sanewall tries to query the RPC server. So you might have to setup nis in two steps: First add the portmap
 service and activate the firewall, then add the nis service and restart the firewall.
 <p>
 This service has been created by <a href=\"https://sourceforge.net/tracker/?func=detail&atid=487695&aid=1050951&group_id=58425\">Carlos Rodrigues</a>.
@@ -720,16 +720,16 @@ smart_print_service() {
 tmp="/tmp/services.$$"
 
 # The simple services
-cat "../firehol.sh"			|\
+cat "../sanewall.sh"			|\
 	grep -e "^server_.*_ports=" >"${tmp}"
 
-cat "../firehol.sh"			|\
+cat "../sanewall.sh"			|\
 	grep -e "^client_.*_ports=" >>"${tmp}"
 
-cat "../firehol.sh"			|\
+cat "../sanewall.sh"			|\
 	grep -e "^service_.*_notes=" >>"${tmp}"
 
-cat "../firehol.sh"			|\
+cat "../sanewall.sh"			|\
 	grep -e "^require_.*_modules=" >>"${tmp}"
 
 . "${tmp}"
@@ -737,13 +737,13 @@ rm -f "${tmp}"
 
 all_services() {
 	(
-		cat "../firehol.sh"			|\
+		cat "../sanewall.sh"			|\
 			grep -e "^server_.*_ports="	|\
 			cut -d '=' -f 1			|\
 			sed "s/^server_//"		|\
 			sed "s/_ports\$//"
 			
-		cat "../firehol.sh"			|\
+		cat "../sanewall.sh"			|\
 			grep -e "^rules_.*()"		|\
 			cut -d '(' -f 1			|\
 			sed "s/^rules_//"
@@ -758,15 +758,15 @@ cat <<"EOF"
 <HTML>
 <HEAD>
 <link rel="stylesheet" type="text/css" href="css.css">
-<TITLE>FireHOL, Pre-defined service definitions.</TITLE>
+<TITLE>Sanewall, Pre-defined service definitions.</TITLE>
 <meta name="author" content="Costa Tsaousis">
 <meta name="description" content="
 
-Home for FireHOL, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
+Home for sanewall, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
 supporting NAT, SNAT, DNAT, REDIRECT, MASQUERADE, DMZ, dual-homed, multi-homed and router setups,
 protecting and securing hosts and LANs in all kinds of topologies. Configuration is done using
 simple client and server statements while it can detect (and produce) its configuration
-automatically. FireHOL is extremely easy to understand, configure and audit.
+automatically. Sanewall is extremely easy to understand, configure and audit.
 
 ">
 
@@ -776,34 +776,16 @@ automatically. FireHOL is extremely easy to understand, configure and audit.
 
 <BODY bgcolor="#FFFFFF">
 
-<center>
-<script type="text/javascript"><!--
-google_ad_client = "pub-4254040714325099";
-google_ad_width = 728;
-google_ad_height = 90;
-google_ad_format = "728x90_as";
-google_ad_channel ="";
-google_page_url = document.location;
-google_color_border = "336699";
-google_color_bg = "FFFFFF";
-google_color_link = "0000FF";
-google_color_url = "008000";
-google_color_text = "000000";
-//--></script>
-<script type="text/javascript"
-  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
-</center>
 <p>
 
-Bellow is the list of FireHOL supported services. You can overwrite all the services (including those marked as complex) with the
+Bellow is the list of sanewall supported services. You can overwrite all the services (including those marked as complex) with the
 procedures defined in <a href="adding.html">Adding Services</a>.
 <p>
 In case you have problems with some service because it is defined by its port names instead of its port numbers, you can find the
 required port numbers at <a href="http://www.graffiti.com/services">http://www.graffiti.com/services</a>.
 <p>
 Please report problems related to port names usage. I will replace the faulty names with the relative numbers to eliminate this problem.
-All the services defined by name in FireHOL are known to resolve in <a href="http://www.redhat.com">RedHat</a> systems 7.x and 8.
+All the services defined by name in sanewall are known to resolve in <a href="http://www.redhat.com">RedHat</a> systems 7.x and 8.
 <p>
 <center>
 <hr noshade size=1>
@@ -978,7 +960,7 @@ cat <<"EOF"
 </td><td align=center valign=middle>
 	<small>$Id: create_services.sh,v 1.57 2007/07/20 21:28:14 ktsaou Exp $</small>
 	<p>
-	<b>FireHOL</b>, a firewall for humans...<br>
+	<b>Sanewall</b>, a firewall for humans...<br>
 	&copy; Copyright 2004
 	Costa Tsaousis <a href="mailto: costa@tsaousis.gr">&lt;costa@tsaousis.gr&gt</a>
 </body>

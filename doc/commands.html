@@ -2,15 +2,15 @@
 <HTML>
 <HEAD>
 <link rel="stylesheet" type="text/css" href="css.css">
-<TITLE>FireHOL, Configuration commands</TITLE>
+<TITLE>Sanewall, Configuration commands</TITLE>
 <meta name="author" content="Costa Tsaousis">
 <meta name="description" content="
 
-Home for FireHOL, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
+Home for sanewall, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
 supporting NAT, SNAT, DNAT, REDIRECT, MASQUERADE, DMZ, dual-homed, multi-homed and router setups,
 protecting and securing hosts and LANs in all kinds of topologies. Configuration is done using
 simple client and server statements while it can detect (and produce) its configuration
-automatically. FireHOL is extremely easy to understand, configure and audit.
+automatically. Sanewall is extremely easy to understand, configure and audit.
 
 ">
 
@@ -20,24 +20,6 @@ automatically. FireHOL is extremely easy to understand, configure and audit.
 
 <BODY bgcolor="#FFFFFF">
 
-<center>
-<script type="text/javascript"><!--
-google_ad_client = "pub-4254040714325099";
-google_ad_width = 728;
-google_ad_height = 90;
-google_ad_format = "728x90_as";
-google_ad_channel ="";
-google_page_url = document.location;
-google_color_border = "336699";
-google_color_bg = "FFFFFF";
-google_color_link = "0000FF";
-google_color_url = "008000";
-google_color_text = "000000";
-//--></script>
-<script type="text/javascript"
-  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
-</center>
 <p>
 
 
@@ -90,7 +72,7 @@ google_color_text = "000000";
 			<li><a href="#tosfix">tosfix</a>, fix the TOS value of packets</li>
 			<li><a href="#transparent_proxy">transparent_proxy</a>, setup a transparent TCP proxy running on the firewall host</li>
 			<li><a href="#transparent_squid">transparent_squid</a>, setup a transparent web proxy running on the firewall host</li>
-			<li><a href="#version">version</a>, require a specific version of FireHOL
+			<li><a href="#version">version</a>, require a specific version of sanewall
 		</ul>
 		&nbsp;
 	</li>
@@ -137,13 +119,13 @@ google_color_text = "000000";
 		</ul>
 		&nbsp;
 	</li>
-	<li><a href="#control_variables">Variables that control FireHOL</a><br>&nbsp;</li>
-	<li><a href="#use_variables">Variables FireHOL offers</a><br>&nbsp;</li>
+	<li><a href="#control_variables">Variables that control sanewall</a><br>&nbsp;</li>
+	<li><a href="#use_variables">Variables sanewall offers</a><br>&nbsp;</li>
 </ul>
 
 <table border=0 cellpadding=10 cellspacing=0 width="100%"><tr bgcolor="#777777"><td align=center><font color="white"><b><big><a name="primary_commands">Primary Commands</a></td</tr></table>
 <small>
-Primary commands form groups of rules within a FireHOL firewall.
+Primary commands form groups of rules within a sanewall firewall.
 The optional rule parameters given to the primary commands are <b>indirectly</b> applied to all sub-commands given within this primary command.
 </small>
 <p>
@@ -157,7 +139,7 @@ The optional rule parameters given to the primary commands are <b>indirectly</b>
 	INPORTANT<br>
 	Note that unlike ipchains, in <b>iptables</b> traffic passing through the firewall
 	host (FORWARDed traffic) does not pass through the INPUT/OUTPUT chains of the firewall and
-	therefore the <b>interface</b> rules in FireHOL never match it.
+	therefore the <b>interface</b> rules in sanewall never match it.
 	To match the traffic passing through (even if DNATed) you have to place
 	the filtering rules in <b>router</b> statements. <b>Interface</b>
 	statements filter traffic <b>only from/to the firewall host</b>. Nothing else.
@@ -175,7 +157,7 @@ The optional rule parameters given to the primary commands are <b>indirectly</b>
 
 		<li>	<b>name</b> is a name for this interface.
 			<br>Generally you should use short names (10 characters max) without spaces or other symbols.
-			<br>You should not use the same name more than once in FireHOL primary commands.
+			<br>You should not use the same name more than once in sanewall primary commands.
 			<br>&nbsp;
 			</li>
 			
@@ -183,7 +165,7 @@ The optional rule parameters given to the primary commands are <b>indirectly</b>
 			gets matched for this interface. See <a href="#parameters">Optional Rules Parameters</a> for more information.
 			<br>Example 1: <b>interface eth0 intranet src 10.0.0.0/16</b>
 			<br>Example 2: <b>interface eth0 internet src not "$UNROUTABLE_IPS"</b>
-			(note: UNROUTABLE_IPS is a variable defined by FireHOL that includes all IPs that should not be routable
+			(note: UNROUTABLE_IPS is a variable defined by sanewall that includes all IPs that should not be routable
 			by the Internet).
 			<br>&nbsp;
 			</li>
@@ -204,7 +186,7 @@ The optional rule parameters given to the primary commands are <b>indirectly</b>
 	INPORTANT<br>
 	Note that unlike ipchains, in <b>iptables</b> traffic passing through the firewall
 	host (FORWARDed traffic) does not pass through the INPUT/OUTPUT chains of the firewall and
-	therefore the <b>interface</b> rules in FireHOL never match it.
+	therefore the <b>interface</b> rules in sanewall never match it.
 	To match the traffic passing through (even if DNATed) you have to place
 	the filtering rules in <b>router</b> statements. <b>Interface</b>
 	statements filter traffic <b>only from/to the firewall host</b>.
@@ -262,7 +244,7 @@ The optional rule parameters given to the primary commands are <b>indirectly</b>
 	The <b>client</b> subcommand <u>reverses</u> all the optional rules that are applied <u>indirectly</u> to it.
 	Indirect rule parameters are those that are inherited from the parent command (<b>router</b> in this case).
 	<br>
-	To make it simple, for FireHOL a <b>client</b> is: "a <b>server</b> with all the implicit optional rule parameters reversed".
+	To make it simple, for sanewall a <b>client</b> is: "a <b>server</b> with all the implicit optional rule parameters reversed".
 	<p>
 	So, in the first example, the <b>client</b> simply flipped the inface and outface rules defined at the <b>router</b>
 	and became an SMTP <b>server</b>.
@@ -271,7 +253,7 @@ The optional rule parameters given to the primary commands are <b>indirectly</b>
 	I suggest to use <b>client</b> subcommands in routers only if you have inface/outface or src/dst in the <b>router</b> statements.
 	If you are building routers like the second example, don't use <b>client</b>, it is confusing.
 	<p>
-	Older versions of FireHOL did not allow server and client subcommands in routers.
+	Older versions of sanewall did not allow server and client subcommands in routers.
 	Only the <b>route</b> subcommand was allowed. Today, <b>route</b> is just an alias for <b>server</b> and can be
 	used only in routers, not interfaces.
 	<p>
@@ -290,7 +272,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 	This directive accepts all the actions specified in <a href="#actions">Actions</a>.
 	<p>
-	<b>Please note that FireHOL is only useful for "DROP/REJECT EVERYTHING, ALLOW EXPLICITLY" type of firewalls.
+	<b>Please note that sanewall is only useful for "DROP/REJECT EVERYTHING, ALLOW EXPLICITLY" type of firewalls.
 	By changing the policy to accept, you <u>CANNOT</u> create valid "ACCEPT EVERYTHING, DROP EXPLICITLY" firewalls.</b><br>
 	The policy should be set to accept only if you <u>really trust</u> the hosts that can reach the machine via this interface.
 	For information about this, see: <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=927532&group_id=58425&atid=487692">Bug 927532</a>.
@@ -319,7 +301,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<br>Drops all incoming INVALID packets. Invalid packets are those that are matched by "-m state --state INVALID", so they are all those
 	packets that the iptables connection tracker believes are INVALID.
 	<br>
-	There is also the <a href="#FIREHOL_DROP_INVALID">FIREHOL_DROP_INVALID</a> variable which controls the same function globally, for the
+	There is also the <a href="#SANEWALL_DROP_INVALID">SANEWALL_DROP_INVALID</a> variable which controls the same function globally, for the
 	whole firewall.
 	</ul>
 	<ul><b>fragments</b>
@@ -367,8 +349,8 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	
 	<a name="server"><h3><b>server</b> <font color="red">&lt;service&gt;</font> <font color="red">&lt;action&gt;</font> [optional rule parameters]</h3></a>
 	<H4>Description</H4>
-	The <b>server</b> subcommand defines a server of a service. For FireHOL a server is the destination of a request,
-	and even if this is more complex for multi-socket services, <u>for FireHOL a server always accepts requests</u>.
+	The <b>server</b> subcommand defines a server of a service. For sanewall a server is the destination of a request,
+	and even if this is more complex for multi-socket services, <u>for sanewall a server always accepts requests</u>.
 	<p>
 	The optional rule parameters given to the parent primary command (interface or router) are inherited by the <b>server</b> as they have been given.
 	<p>
@@ -384,8 +366,8 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 			<br>&nbsp;
 			</li>
 
-		<li>	<b>action</b> tells FireHOL what to do with the traffic matching this rule.
-			<p>FireHOL supports the actions defined in the section <a href="#actions">Actions</a>.
+		<li>	<b>action</b> tells sanewall what to do with the traffic matching this rule.
+			<p>Sanewall supports the actions defined in the section <a href="#actions">Actions</a>.
 			<br>&nbsp;
 			</li>
 			
@@ -401,8 +383,8 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 <hr noshade size=1 width="100%">
 	
 	<a name="client"><h3><b>client</b> <font color="red">&lt;service&gt;</font> <font color="red">&lt;action&gt;</font> [optional rule parameters]</h3></a>
-	The <b>client</b> subcommand defines a client of a service. For FireHOL a client is the source of a request.
-	FireHOL follows this simple rule even on multi-socket complex protocols, so that <u>for FireHOL a client always sends requests</u>.
+	The <b>client</b> subcommand defines a client of a service. For sanewall a client is the source of a request.
+	Sanewall follows this simple rule even on multi-socket complex protocols, so that <u>for sanewall a client always sends requests</u>.
 	<br>The parameters are exactly the same with the <a href="#server">server</a> subcommand.
 	<p>
 	The optional rule parameters given to the parent primary command (interface or router) are inherited by the <b>client</b>, but they are reversed.
@@ -450,12 +432,12 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 </center>
 	The above will be optimal compared with <b>server "ssh telnet" accept src "1.2.3.4 5.6.7.8"</b>.
 	<p>
-	FireHOL supports nested groups.
+	Sanewall supports nested groups.
 	<p>
 
 
 <table border=0 cellpadding=10 cellspacing=0 width="100%"><tr bgcolor="#777777"><td align=center><font color="white"><b><big><a name="helpers">Helper Commands</a></td</tr></table>
-<small>Helper commands provide shortcuts for common functions not handled by the core of FireHOL's logic.</small>
+<small>Helper commands provide shortcuts for common functions not handled by the core of sanewall's logic.</small>
 <p>
 
 	<a name="action"><h3><b>action</b> [chain <font color="red">&lt;name&gt;</font> <font color="red">&lt;action&gt;</font></h3></a>
@@ -468,7 +450,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 		<li><b>name</b> can be any chain name accepted by iptables. It is suggested to keep it between 5 to 10 letters.
 		<br>&nbsp;
 		</li>
-		<li><b>action</b> can be any <a href="action">action</a> supported by FireHOL, although only ACCEPT, REJECT, DROP, RETURN may
+		<li><b>action</b> can be any <a href="action">action</a> supported by sanewall, although only ACCEPT, REJECT, DROP, RETURN may
 		have any meaning under this use.
 		</li>
 		<p>
@@ -476,7 +458,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	
 	Example 1:
 	<p>
-	At the top of firehol.conf, create the action ACT1:
+	At the top of sanewall.conf, create the action ACT1:
 	<p>
 	action chain ACT1 accept
 	<p>
@@ -486,18 +468,18 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	client imap ACT1
 	<p>
 	Please note that actions created this way are case sensitive.<br>
-	At some point, and while the firewall is running, the action ACT1 can be changed to DROP, with this linux command (this is not FireHOL specific):
+	At some point, and while the firewall is running, the action ACT1 can be changed to DROP, with this linux command (this is not sanewall specific):
 	<p>
 	iptables -t filter -I ACT1 -j DROP
 	<p>
-	The above command inserts (-I) the new action DROP above the default action ACCEPT, and therefore all the traffic matching the FireHOL rules that have
+	The above command inserts (-I) the new action DROP above the default action ACCEPT, and therefore all the traffic matching the sanewall rules that have
 	the action ACT1 will now be dropped.<br>
 	To return to the default action (ACCEPT), run the following linux command:
 	<p>
 	iptables -t filter -D ACT1 -j DROP
 	<p>
 	This command deletes (-D) the DROP action that was inserted above the default action. If you delete all actions in the chain ACT1, the default action will be RETURN,
-	in which case all rules with action ACT1 will be neutralized (it will be the same as they were not specified at all in firehol.conf).
+	in which case all rules with action ACT1 will be neutralized (it will be the same as they were not specified at all in sanewall.conf).
 	<p>
 	Example 2: <b>action chain "ACT1 ACT2 ACT3" accept chain "ACT4 ACT5 ACT6" drop</b> # will create 6 actions, ACT1, ACT2, ACT3 with ACCEPT and ACT4, ACT5, ACT6 with DROP<br>
 	<p>
@@ -515,7 +497,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 		but they will not be able to ask (initiate connections) anything from you or the remote hosts you protect (routing).
 		<br>&nbsp;
 		</li>
-		<li>one of the words <b>all, full</b> or ommitted (no option given), in which case FireHOL will create bidirectional
+		<li>one of the words <b>all, full</b> or ommitted (no option given), in which case sanewall will create bidirectional
 		stateless rules that will DROP all traffic comming in from these IPs and will REJECT all traffic going to them.
 		</li>
 		<p>
@@ -558,7 +540,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 			<br>&nbsp;
 			</li>
 
-		<li>	<b>WHERE</b> tells FireHOL where to search for the specific traffic to be marked.
+		<li>	<b>WHERE</b> tells sanewall where to search for the specific traffic to be marked.
 			<br>Currently, WHERE can be one of the build-in iptables chains attached to table <b>mangle</b>.
 			(for example: INPUT, FORWARD, OUTPUT, PREROUTING, POSTROUTING - case does matter here).
 			<br>&nbsp;
@@ -616,7 +598,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 			<br>&nbsp;
 			</li>
 
-		<li>	<b>WHERE</b> tells FireHOL where to search for the specific traffic to be marked.
+		<li>	<b>WHERE</b> tells sanewall where to search for the specific traffic to be marked.
 			<br>Currently, WHERE can be one of the build-in iptables chains attached to table <b>mangle</b>.
 			(for example: INPUT, FORWARD, OUTPUT, PREROUTING, POSTROUTING - case does matter here).
 			<br>&nbsp;
@@ -646,12 +628,12 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<H4>Description</H4>
 	The <b>iptables</b> command passes all its arguments to the real iptables command, during run-time.
 	<p>
-	You should not use in FireHOL configurations <b>/sbin/iptables</b> or other means to alter a FireHOL firewall.
-	If you do, your commands will be run <u>before</u> FireHOL activates its firewall and while the <u>previous</u>
-	firewall is still running. Also, since FireHOL will delete all <u>previous</u> firewall rules in order to
+	You should not use in sanewall configurations <b>/sbin/iptables</b> or other means to alter a sanewall firewall.
+	If you do, your commands will be run <u>before</u> sanewall activates its firewall and while the <u>previous</u>
+	firewall is still running. Also, since sanewall will delete all <u>previous</u> firewall rules in order to
 	activate the new firewall, any changes you will make, will be deleted too.
 	<p>
-	Always use the <b>iptables</b> directive to hook iptables commands in a FireHOL firewall. Nothing else.
+	Always use the <b>iptables</b> directive to hook iptables commands in a sanewall firewall. Nothing else.
 	<p>
 
 <hr noshade size=1 width="100%">
@@ -684,7 +666,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 			<br>&nbsp;
 			</li>
 
-		<li>	<b>WHERE</b> tells FireHOL where to search for the specific traffic to be marked.
+		<li>	<b>WHERE</b> tells sanewall where to search for the specific traffic to be marked.
 			<br>Currently, WHERE can be one of the build-in iptables chains attached to table <b>mangle</b>.
 			(for example: INPUT, FORWARD, OUTPUT, PREROUTING, POSTROUTING - case does matter here).
 			<br>&nbsp;
@@ -729,7 +711,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<a href="#inface">inface</a> and <a href="#outface">outface</a> should not be given as parameters to <b>masquerade</b> (inface because iptables does not support this
 	in the POSTROUTING chain, and outface because it will be overwritten by the interface(s) mentioned above).
 	<p>
-	Finally, the <b>masquerade</b> helper will turn on <a href="#FIREHOL_NAT">FIREHOL_NAT</a> and instruct the kernel to do packet forwarding (like the <a href="#router">router</a>
+	Finally, the <b>masquerade</b> helper will turn on <a href="#SANEWALL_NAT">SANEWALL_NAT</a> and instruct the kernel to do packet forwarding (like the <a href="#router">router</a>
 	commands do).
 	<p>
 	Example 1: before the first interface or router: <b>masquerade eth0 src 10.0.0.0/8 dst not 10.0.0.0/8</b>
@@ -852,7 +834,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	Its purpose is to overcome situations where Path MTU Discovery is not working and packet
 	fragmentation is not possible.
 	<p>
-	Within FireHOL, it can be defined either before any primary command, in which case it is applied to all
+	Within sanewall, it can be defined either before any primary command, in which case it is applied to all
 	traffic passing through the firewall, or to any <b>router</b>, in which case it is applied to traffic going out on the outfaces of the router.
 	<p>
 	The argument can either be the word <b>auto</b> or a number:
@@ -875,12 +857,12 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	
 	<H4>Parameters</H4>
 	<ul>
-		<li>	<b>NUMBER</b> is a number to set TOS to. FireHOL supports decimal numbers, hex numbers and the
+		<li>	<b>NUMBER</b> is a number to set TOS to. Sanewall supports decimal numbers, hex numbers and the
 			descriptive values iptables supports. For more information see <b>iptables -j TOS --help</b>.
 			<br>&nbsp;
 			</li>
 
-		<li>	<b>WHERE</b> tells FireHOL where to search for the specific traffic to be marked.
+		<li>	<b>WHERE</b> tells sanewall where to search for the specific traffic to be marked.
 			<br>Currently, WHERE can be one of the build-in iptables chains attached to table <b>mangle</b>.
 			(for example: INPUT, FORWARD, OUTPUT, PREROUTING, POSTROUTING - case does matter here).
 			<br>&nbsp;
@@ -971,29 +953,29 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	
 	<a name="version"><h3><b>version</b> <font color="red">&lt;number&gt;</font></h3></a>
 	<H4>Description</H4>
-	The <b>version</b> command states the FireHOL <u>release</u> the configuration file was
-	created for. In case the configuration file is newer than FireHOL, FireHOL will deny
+	The <b>version</b> command states the sanewall <u>release</u> the configuration file was
+	created for. In case the configuration file is newer than sanewall, sanewall will deny
 	to run it.
 	<p>
-	This command is here to allow you or anyone else design and distribute FireHOL configuration files, while
-	ensuring that the correct FireHOL version is going to run them.
+	This command is here to allow you or anyone else design and distribute sanewall configuration files, while
+	ensuring that the correct sanewall version is going to run them.
 	<p>
-	Since FireHOL configurations are BASH script, it is relatively easy to use FireHOL configurations as small
+	Since sanewall configurations are BASH script, it is relatively easy to use sanewall configurations as small
 	scripts that dynamically process rules stored in a database, in a file system as separate files, or elsewhere.
-	This directive will help the developers of FireHOL configurations to control the required version of
-	FireHOL.
+	This directive will help the developers of sanewall configurations to control the required version of
+	sanewall.
 	<p>
-	The FireHOL release is increased every time the format of the configuration file and the internals of FireHOL are changed.
+	The sanewall release is increased every time the format of the configuration file and the internals of sanewall are changed.
 	<p>
-	Since FireHOL v1.67 <b>version</b> is not required to be present in every configuration file.
+	Since sanewall v1.67 <b>version</b> is not required to be present in every configuration file.
 	<p>
 	
 <table border=0 cellpadding=10 cellspacing=0 width="100%"><tr bgcolor="#777777"><td align=center><font color="white"><b><big><a name="actions">Actions</a></td</tr></table>
 <small>
 Actions are the actions to be taken on services and traffic described by other commands and functions.
-Please note that normally, FireHOL will pass-through to the generated iptables statements all the possible actions iptables accepts, but only the ones defined here can be used
-with lower case letters and currently it will be impossible to pass arguments to some unknown action. Also, keep in mind that the iptables action LOG is a FireHOL optional rule
-parameter (see <a href="#log">log</a> and <a href="#loglimit">loglimit</a>) that can be defined together with one of the following actions and FireHOL will actually produce
+Please note that normally, sanewall will pass-through to the generated iptables statements all the possible actions iptables accepts, but only the ones defined here can be used
+with lower case letters and currently it will be impossible to pass arguments to some unknown action. Also, keep in mind that the iptables action LOG is a sanewall optional rule
+parameter (see <a href="#log">log</a> and <a href="#loglimit">loglimit</a>) that can be defined together with one of the following actions and sanewall will actually produce
 multiple iptables statements to achieve both the logging and the action.
 </small>
 <p>
@@ -1019,7 +1001,7 @@ multiple iptables statements to achieve both the logging and the action.
 	but it prevent any new connections from taking place. In case, knockd has not allowed new connections, this traffic entering this chain will just return back
 	and continue to match against the other rules until the end of the firewall.
 	<p>
-	How to use it: lets say that you want to allow https traffic based on a knock. In FireHOL you write:
+	How to use it: lets say that you want to allow https traffic based on a knock. In sanewall you write:
 	<p>
 	<pre>server https accept with knock hidden</pre>
 	<p>
@@ -1027,14 +1009,14 @@ multiple iptables statements to achieve both the logging and the action.
 	<p>
 	<pre>iptables -A knock_hidden -s %IP% -j ACCEPT</pre>
 	<p>
-	to enable the https service (notice that there is no need to match anything else than the IP. FireHOL already matches everything needed for its rules to work), and:
+	to enable the https service (notice that there is no need to match anything else than the IP. Sanewall already matches everything needed for its rules to work), and:
 	<p>
 	<pre>iptables -D knock_hidden -s %IP% -j ACCEPT</pre>
 	<p>
 	to disable this service for the given IP.
 	<p>
-	You can use the same knock name in more than one FireHOL services to enable/disable all the services together, without any extra effort in knockd configuration (just one ACCEPT row like above
-	- i.e. the same knock as far as knockd is concerned - will allow all the FireHOL services with the same knock name to serve requests for the given IP).
+	You can use the same knock name in more than one sanewall services to enable/disable all the services together, without any extra effort in knockd configuration (just one ACCEPT row like above
+	- i.e. the same knock as far as knockd is concerned - will allow all the sanewall services with the same knock name to serve requests for the given IP).
 	Check also <a href="https://sourceforge.net/forum/forum.php?thread_id=1199404&forum_id=196547">this forum post</a>.
 	<p>
 	<p>
@@ -1203,14 +1185,14 @@ multiple iptables statements to achieve both the logging and the action.
 	<a name="mirror"><h3><b>mirror</b></h3></a>
 	<b>mirror</b> will return the traffic to the wanted port, back to the sending host.
 	Use this with care, and only if you understand what you doing.
-	Keep also in mind that FireHOL will apply this action to both requests and replies comming in or passing through,
+	Keep also in mind that sanewall will apply this action to both requests and replies comming in or passing through,
 	and will replace it with REJECT for traffic generated by the local host.
 	<p>
 	
 <hr noshade size=1 width="100%">
 
 	<a name="redirect"><h3><b>redirect</b> [to-port port]</h3></a>
-	<b>redirect</b> is used internally by FireHOL <a href="#helpers">Helper Commands</a> to redirect traffic to ports on the local host.
+	<b>redirect</b> is used internally by sanewall <a href="#helpers">Helper Commands</a> to redirect traffic to ports on the local host.
 	Unless you are a developer, you will never need to use this directly.
 	<p>
 
@@ -1218,11 +1200,11 @@ multiple iptables statements to achieve both the logging and the action.
 <table border=0 cellpadding=10 cellspacing=0 width="100%"><tr bgcolor="#777777"><td align=center><font color="white"><b><big><a name="parameters">Optional Rule Parameters</a></td</tr></table>
 <small>
 Optional rule parameters are accepted by many commands to narrow the match they do by default.
-The parameters described bellow are all that FireHOL supports. You should check the documentation of each command to find which parameters should not be used with it.
-Normally, all FireHOL commands are designed so that if you specify a parameters that is also used internally, the internal one will overwrite the one given in the configuration file. In such a case,
-FireHOL will present you a warning with the old and the new value.<p>
+The parameters described bellow are all that sanewall supports. You should check the documentation of each command to find which parameters should not be used with it.
+Normally, all sanewall commands are designed so that if you specify a parameters that is also used internally, the internal one will overwrite the one given in the configuration file. In such a case,
+sanewall will present you a warning with the old and the new value.<p>
 Not all parameters should be used in all cases. For example <a href="#sport">sport</a> and <a href="#dport">dport</a> should not be used in normal <a href="#server">server</a> and
-<a href="#client">client</a> commands since such ports are internally defined by the <a href="services.html">services</a> themselves. In any case, FireHOL will complain
+<a href="#client">client</a> commands since such ports are internally defined by the <a href="services.html">services</a> themselves. In any case, sanewall will complain
 about optional rule parameters that should not be used in certain commands.
 </small>
 <p>
@@ -1282,7 +1264,7 @@ about optional rule parameters that should not be used in certain commands.
 	</ul>
 	<p>
 	More that one types can be specified if given as a space separated list enclosed in quotes.<br>
-	FireHOL will convert to upper case any strings given as types.
+	Sanewall will convert to upper case any strings given as types.
 	<p>
 	For more information check: <b>iptables -m addrtype --help</b> (or <b>man iptables</b>).
 	<p>
@@ -1368,16 +1350,16 @@ about optional rule parameters that should not be used in certain commands.
 	<a name="log"><h3><b>log</b> <font color="red">"&lt;some text&gt;"</font> [<b>level</b> a_level]</h3></a>
 	<H4>Description</H4>
 	<b>log</b> will log the matching packets to syslog. Note that this is not an action (in iptables it is).
-	FireHOL will actually produce multiple iptables commands to accomplish both the action for the rule and the logging.
-	You can control how logging works, by altering the variables <a href="#FIREHOL_LOG_MODE">FIREHOL_LOG_MODE</a>, <a href="#FIREHOL_LOG_OPTIONS">FIREHOL_LOG_OPTIONS</a> and
-	<a href="#FIREHOL_LOG_LEVEL">FIREHOL_LOG_LEVEL</a>. You can also change the level of just one rule by using the
-	<b>level</b> argument of the <b>log</b> parameter (only when FIREHOL_LOG_MODE=LOG).
+	Sanewall will actually produce multiple iptables commands to accomplish both the action for the rule and the logging.
+	You can control how logging works, by altering the variables <a href="#SANEWALL_LOG_MODE">SANEWALL_LOG_MODE</a>, <a href="#SANEWALL_LOG_OPTIONS">SANEWALL_LOG_OPTIONS</a> and
+	<a href="#SANEWALL_LOG_LEVEL">SANEWALL_LOG_LEVEL</a>. You can also change the level of just one rule by using the
+	<b>level</b> argument of the <b>log</b> parameter (only when SANEWALL_LOG_MODE=LOG).
 	<p>
-	FireHOL logs traffic, exactly the same way iptables does. Many users have complained about packet logs appearing at
+	Sanewall logs traffic, exactly the same way iptables does. Many users have complained about packet logs appearing at
 	their console. To avoid this you will have to:
 	<ul>
 		<li>setup <b>klogd</b> to log only more important traffic</li>
-		<li>change <a href="#FIREHOL_LOG_LEVEL">FIREHOL_LOG_LEVEL</a> to log at a not so important log-level</li>
+		<li>change <a href="#SANEWALL_LOG_LEVEL">SANEWALL_LOG_LEVEL</a> to log at a not so important log-level</li>
 	</ul>
 	Actually <b>klogd</b>'s -c option and <b>iptables</b>' --log-level option are the same thing (iptables accepts also
 	the numeric values klogd accepts). If iptables logs at a
@@ -1442,7 +1424,7 @@ about optional rule parameters that should not be used in certain commands.
 	<a name="loglimit"><h3><b>loglimit</b> <font color="red">"&lt;some text&gt;"</font></h3></a>
 	<H4>Description</H4>
 	<b>loglimit</b> is the same with <b>log</b> but limits the frequency of logging according to the setting of
-	<a href="#FIREHOL_LOG_FREQUENCY">FIREHOL_LOG_FREQUENCY</a> and <a href="#FIREHOL_LOG_BURST">FIREHOL_LOG_BURST</a>.
+	<a href="#SANEWALL_LOG_FREQUENCY">SANEWALL_LOG_FREQUENCY</a> and <a href="#SANEWALL_LOG_BURST">SANEWALL_LOG_BURST</a>.
 	<p>
 
 <hr noshade size=1 width="100%">
@@ -1457,7 +1439,7 @@ about optional rule parameters that should not be used in certain commands.
 
 	<a name="limit"><h3><b>limit</b> <font color="red">&lt;frequency&gt; &lt;burst&gt;</font></h3></a>
 	<H4>Description</H4>
-	<b>limit</b> will limit the match in both directions of the traffic (request and reply). This is used internally by FireHOL and its effects has not been tested in the high level
+	<b>limit</b> will limit the match in both directions of the traffic (request and reply). This is used internally by sanewall and its effects has not been tested in the high level
 	configuration file directives.
 	<p>
 
@@ -1487,8 +1469,8 @@ about optional rule parameters that should not be used in certain commands.
 	<b>uid</b> or <b>user</b> define the operating system user sending this traffic. The parameter can be a username, a user number or a list of these two, seperated by spaces and quoted as
 	a single argument.<p>
 	This parameter can be used only in services (<a href="#client">client</a> and <a href="#server">server</a> commands) defined within <a href="#interface">interfaces</a>, not <a href="#router">routers</a>.
-	FireHOL is "smart" enough to apply this parameter only to traffic send by the localhost, i.e. the replies of <a href="#server">servers</a> and requests of <a href="#clients">clients</a>.
-	It is not possible, and FireHOL will simply ignore this parameter, on traffic coming in or passign through the firewall host.
+	Sanewall is "smart" enough to apply this parameter only to traffic send by the localhost, i.e. the replies of <a href="#server">servers</a> and requests of <a href="#clients">clients</a>.
+	It is not possible, and sanewall will simply ignore this parameter, on traffic coming in or passign through the firewall host.
 	<p>
 	<br>Example 1: <b>client "pop3 imap" accept user not "user1 user2 user3" dst mymailer.example.com</b>
 	<br>The above will allow local users except user1, user2 and user3 to use POP3 and IMAP services on mymailer.example.com.
@@ -1506,8 +1488,8 @@ about optional rule parameters that should not be used in certain commands.
 	<b>gid</b> or <b>group</b> define the operating system user group sending this traffic. The parameter can be a group name, a group number or a list of these two, seperated by spaces and quoted as
 	a single argument.<p>
 	This parameter can be used only in services (<a href="#client">client</a> and <a href="#server">server</a> commands) defined within <a href="#interface">interfaces</a>, not <a href="#router">routers</a>.
-	FireHOL is "smart" enough to apply this parameter only to traffic send by the localhost, i.e. the replies of <a href="#server">servers</a> and requests of <a href="#clients">clients</a>.
-	It is not possible, and FireHOL will simply ignore this parameter, on traffic coming in or passign through the firewall host.
+	Sanewall is "smart" enough to apply this parameter only to traffic send by the localhost, i.e. the replies of <a href="#server">servers</a> and requests of <a href="#clients">clients</a>.
+	It is not possible, and sanewall will simply ignore this parameter, on traffic coming in or passign through the firewall host.
 	<p>
 	
 <hr noshade size=1 width="100%">
@@ -1518,8 +1500,8 @@ about optional rule parameters that should not be used in certain commands.
 	<b>pid</b> or <b>process</b> define the operating system process ID (or PID) sending this traffic. The parameter can be a PID or a list of PIDs, seperated by spaces and quoted as
 	a single argument.<p>
 	This parameter can be used only in services (<a href="#client">client</a> and <a href="#server">server</a> commands) defined within <a href="#interface">interfaces</a>, not <a href="#router">routers</a>.
-	FireHOL is "smart" enough to apply this parameter only to traffic send by the localhost, i.e. the replies of <a href="#server">servers</a> and requests of <a href="#clients">clients</a>.
-	It is not possible, and FireHOL will simply ignore this parameter, on traffic coming in or passign through the firewall host.
+	Sanewall is "smart" enough to apply this parameter only to traffic send by the localhost, i.e. the replies of <a href="#server">servers</a> and requests of <a href="#clients">clients</a>.
+	It is not possible, and sanewall will simply ignore this parameter, on traffic coming in or passign through the firewall host.
 	<p>
 
 <hr noshade size=1 width="100%">
@@ -1530,8 +1512,8 @@ about optional rule parameters that should not be used in certain commands.
 	<b>sid</b> or <b>session</b> define the operating system session ID of the process sending this traffic (The session ID of a process is the process group ID of the session leader).
 	The parameter can be a list of such IDs, seperated by spaces and quoted as a single argument.<p>
 	This parameter can be used only in services (<a href="#client">client</a> and <a href="#server">server</a> commands) defined within <a href="#interface">interfaces</a>, not <a href="#router">routers</a>.
-	FireHOL is "smart" enough to apply this parameter only to traffic send by the localhost, i.e. the replies of <a href="#server">servers</a> and requests of <a href="#clients">clients</a>.
-	It is not possible, and FireHOL will simply ignore this parameter, on traffic coming in or passign through the firewall host.
+	Sanewall is "smart" enough to apply this parameter only to traffic send by the localhost, i.e. the replies of <a href="#server">servers</a> and requests of <a href="#clients">clients</a>.
+	It is not possible, and sanewall will simply ignore this parameter, on traffic coming in or passign through the firewall host.
 	<p>
 
 <hr noshade size=1 width="100%">
@@ -1542,8 +1524,8 @@ about optional rule parameters that should not be used in certain commands.
 	<b>cmd</b> or <b>command</b> define the operating system command name of the process sending this traffic.
 	The parameter can be a list of such command names, seperated by spaces and quoted as a single argument.<p>
 	This parameter can be used only in services (<a href="#client">client</a> and <a href="#server">server</a> commands) defined within <a href="#interface">interfaces</a>, not <a href="#router">routers</a>.
-	FireHOL is "smart" enough to apply this parameter only to traffic send by the localhost, i.e. the replies of <a href="#server">servers</a> and requests of <a href="#clients">clients</a>.
-	It is not possible, and FireHOL will simply ignore this parameter, on traffic coming in or passign through the firewall host.
+	Sanewall is "smart" enough to apply this parameter only to traffic send by the localhost, i.e. the replies of <a href="#server">servers</a> and requests of <a href="#clients">clients</a>.
+	It is not possible, and sanewall will simply ignore this parameter, on traffic coming in or passign through the firewall host.
 	<p>
 
 <hr noshade size=1 width="100%">
@@ -1555,13 +1537,13 @@ about optional rule parameters that should not be used in certain commands.
 	For interfaces, the mac parameter matches against all traffic that comes into the firewall, whether it is <a href="#server">server</a>
 	or <a href="#client">client</a> traffic.
 	<br>
-	For routers, the mac parameter matches also against all traffic comming into the firewall, but firehol considers the router
+	For routers, the mac parameter matches also against all traffic comming into the firewall, but sanewall considers the router
 	input differently based on the command given. For <a href="#server">server</a> or <a href="#route">route</a> statements,
 	the mac parameter matches the MAC address of the client (the host sending the request),
 	while for <a href="#client">client</a> statements it matches the source MAC address of the server (the host accepting requests).
 	<p>
 	In principle, the mac parameter behaves the same for both interfaces and routers and this is why:
-	The mac parameter matches the source MAC address of what FireHOL considers the "remote" host, not the one that FireHOL considers the "protected" one.
+	The mac parameter matches the source MAC address of what sanewall considers the "remote" host, not the one that sanewall considers the "protected" one.
 	For interfaces, this is simple, because always the "remote" host is a remote host and the "protected" host is the one running the
 	firewall. For routers though, the command chosen (client or server) defines what the firewall protects. Therefore, a client statement
 	protects the client making the "remote" host the server, while a server statement protects the server and therefore the "remote"
@@ -1601,7 +1583,7 @@ about optional rule parameters that should not be used in certain commands.
 	More than one IDs can be given if separated by spaces and enclosed in quotes as a single argument.
 	<p>
 
-<table border=0 cellpadding=10 cellspacing=0 width="100%"><tr bgcolor="#777777"><td align=center><font color="white"><b><big><a name="control_variables">Variables that control FireHOL</a></td</tr></table>
+<table border=0 cellpadding=10 cellspacing=0 width="100%"><tr bgcolor="#777777"><td align=center><font color="white"><b><big><a name="control_variables">Variables that control sanewall</a></td</tr></table>
 <p>
 	<a name="DEFAULT_INTERFACE_POLICY"><h3><b>DEFAULT_INTERFACE_POLICY</b></h3></a>
 	<H4>Description</H4>
@@ -1641,7 +1623,7 @@ about optional rule parameters that should not be used in certain commands.
 	<br>UNMATCHED_OUTPUT_POLICY controls the default action to be taken for outgoing traffic not matched by any interface command.
 	<br>UNMATCHED_ROUTER_POLICY controls the default action to be taken for forwarded traffic not matched by any router command.
 	<p>
-	All variables accept all the <a href="#actions">Actions</a> FireHOL supports.
+	All variables accept all the <a href="#actions">Actions</a> sanewall supports.
 	<p>
 	All packets that reach the end of firewall in all three chains are logged (always, regardless of these settings).
 	You can control the frequency of this logging by altering the frequency <a href="#loglimit">loglimit</a> uses.
@@ -1657,86 +1639,86 @@ about optional rule parameters that should not be used in certain commands.
 	
 <hr noshade size=1 width="100%">
 
-	<a name="FIREHOL_INPUT_ACTIVATION_POLICY"><h3><b>FIREHOL_INPUT_ACTIVATION_POLICY</b></h3></a>
-	<a name="FIREHOL_OUTPUT_ACTIVATION_POLICY"><h3><b>FIREHOL_OUTPUT_ACTIVATION_POLICY</b></h3></a>
-	<a name="FIREHOL_FORWARD_ACTIVATION_POLICY"><h3><b>FIREHOL_FORWARD_ACTIVATION_POLICY</b></h3></a>
+	<a name="SANEWALL_INPUT_ACTIVATION_POLICY"><h3><b>SANEWALL_INPUT_ACTIVATION_POLICY</b></h3></a>
+	<a name="SANEWALL_OUTPUT_ACTIVATION_POLICY"><h3><b>SANEWALL_OUTPUT_ACTIVATION_POLICY</b></h3></a>
+	<a name="SANEWALL_FORWARD_ACTIVATION_POLICY"><h3><b>SANEWALL_FORWARD_ACTIVATION_POLICY</b></h3></a>
 	<H4>Description</H4>
 	All these variables have been added in v1.133
 	<p>
-	FIREHOL_INPUT_ACTIVATION_POLICY controls the default action to be taken for incoming traffic during firewall activation.
-	<br>FIREHOL_OUTPUT_ACTIVATION_POLICY controls the default action to be taken for outgoing traffic during firewall activation.
-	<br>FIREHOL_FORWARD_ACTIVATION_POLICY controls the default action to be taken for forwarded traffic during firewall activation.
+	SANEWALL_INPUT_ACTIVATION_POLICY controls the default action to be taken for incoming traffic during firewall activation.
+	<br>SANEWALL_OUTPUT_ACTIVATION_POLICY controls the default action to be taken for outgoing traffic during firewall activation.
+	<br>SANEWALL_FORWARD_ACTIVATION_POLICY controls the default action to be taken for forwarded traffic during firewall activation.
 	<p>
 	All variables accept either <b>ACCEPT</b>, <b>DROP</b> or <b>REJECT</b>.
 	<p>
 	The default is ACCEPT in order to prevent a denial of service during a firewall restart. This is by design correct,
-	since FireHOL will block all invalid connections after the firewall is fully activated (remember that FireHOL allows
+	since sanewall will block all invalid connections after the firewall is fully activated (remember that sanewall allows
 	specific traffic to pass in both directions of the firewall).
 	<p>
-	Default: <b>FIREHOL_INPUT_ACTIVATION_POLICY="ACCEPT"</b><br>
-	Default: <b>FIREHOL_OUTPUT_ACTIVATION_POLICY="ACCEPT"</b><br>
-	Default: <b>FIREHOL_FORWARD_ACTIVATION_POLICY="ACCEPT"</b><br>
+	Default: <b>SANEWALL_INPUT_ACTIVATION_POLICY="ACCEPT"</b><br>
+	Default: <b>SANEWALL_OUTPUT_ACTIVATION_POLICY="ACCEPT"</b><br>
+	Default: <b>SANEWALL_FORWARD_ACTIVATION_POLICY="ACCEPT"</b><br>
 	<br>
-	Example: <b>FIREHOL_INPUT_ACTIVATION_POLICY="REJECT"</b><br>
-	Example: <b>FIREHOL_OUTPUT_ACTIVATION_POLICY="REJECT"</b><br>
-	Example: <b>FIREHOL_FORWARD_ACTIVATION_POLICY="REJECT"</b>
+	Example: <b>SANEWALL_INPUT_ACTIVATION_POLICY="REJECT"</b><br>
+	Example: <b>SANEWALL_OUTPUT_ACTIVATION_POLICY="REJECT"</b><br>
+	Example: <b>SANEWALL_FORWARD_ACTIVATION_POLICY="REJECT"</b>
 	<p>
 	
 <hr noshade size=1 width="100%">
 
-	<a name="FIREHOL_LOG_MODE"><h3><b>FIREHOL_LOG_MODE</b></h3></a>
-	<a name="FIREHOL_LOG_LEVEL"><h3><b>FIREHOL_LOG_LEVEL</b></h3></a>
-	<a name="FIREHOL_LOG_OPTIONS"><h3><b>FIREHOL_LOG_OPTIONS</b></h3></a>
-	<a name="FIREHOL_LOG_FREQUENCY"><h3><b>FIREHOL_LOG_FREQUENCY</b></h3></a>
-	<a name="FIREHOL_LOG_BURST"><h3><b>FIREHOL_LOG_BURST</b></h3></a>
-	<a name="FIREHOL_LOG_PREFIX"><h3><b>FIREHOL_LOG_PREFIX</b></h3></a>
+	<a name="SANEWALL_LOG_MODE"><h3><b>SANEWALL_LOG_MODE</b></h3></a>
+	<a name="SANEWALL_LOG_LEVEL"><h3><b>SANEWALL_LOG_LEVEL</b></h3></a>
+	<a name="SANEWALL_LOG_OPTIONS"><h3><b>SANEWALL_LOG_OPTIONS</b></h3></a>
+	<a name="SANEWALL_LOG_FREQUENCY"><h3><b>SANEWALL_LOG_FREQUENCY</b></h3></a>
+	<a name="SANEWALL_LOG_BURST"><h3><b>SANEWALL_LOG_BURST</b></h3></a>
+	<a name="SANEWALL_LOG_PREFIX"><h3><b>SANEWALL_LOG_PREFIX</b></h3></a>
 	<H4>Description</H4>
-	FIREHOL_LOG_MODE controls the method of logging used by FireHOL. Currently,
+	SANEWALL_LOG_MODE controls the method of logging used by sanewall. Currently,
 	two modes are supported: <b>LOG</b> and <b>ULOG</b>.
-	FIREHOL_LOG_LEVEL controls the level at which iptables will log things to the syslog.
+	SANEWALL_LOG_LEVEL controls the level at which iptables will log things to the syslog.
 	For a description of the possible values supported and for per-rule control of log level,
-	see the <a href="#log">log</a> optional rule parameter. FIREHOL_LOG_LEVEL is ignored when FIREHOL_LOG_MODE=ULOG.
+	see the <a href="#log">log</a> optional rule parameter. SANEWALL_LOG_LEVEL is ignored when SANEWALL_LOG_MODE=ULOG.
 	<p>
-	FIREHOL_LOG_OPTIONS controls the way iptables will log things to the syslog.
+	SANEWALL_LOG_OPTIONS controls the way iptables will log things to the syslog.
 	The value of this variable is passed as is to iptables, so use exact iptables parameters.
 	This variable can have special arguments for the LOG or ULOG actions of iptables.
 	<p>
-	FIREHOL_LOG_FREQUENCY and FIREHOL_LOG_BURST (added in v1.39 of FireHOL) control the frequency at each each logging
-	rule will write packets to the syslog. FIREHOL_LOG_FREQUENCY is set to the maximum average
-	frequency and FIREHOL_LOG_BURST specifies the maximum initial number of packets to match.
+	SANEWALL_LOG_FREQUENCY and SANEWALL_LOG_BURST (added in v1.39 of sanewall) control the frequency at each each logging
+	rule will write packets to the syslog. SANEWALL_LOG_FREQUENCY is set to the maximum average
+	frequency and SANEWALL_LOG_BURST specifies the maximum initial number of packets to match.
 	<p>
-	FIREHOL_LOG_PREFIX adds its contents to every log line, so that FireHOL logs can easily be detected in the 
+	SANEWALL_LOG_PREFIX adds its contents to every log line, so that sanewall logs can easily be detected in the 
 	system log. By default it is empty.
 	<p>
-	Default: <b>FIREHOL_LOG_MODE="LOG"</b><br>
-	Default: <b>FIREHOL_LOG_OPTIONS="--log-level warning"</b><br>
-	Default: <b>FIREHOL_LOG_FREQUENCY="1/second"</b><br>
-	Default: <b>FIREHOL_LOG_BURST="5"</b><br>
-	Default: <b>FIREHOL_LOG_PREFIX=""</b><br>
+	Default: <b>SANEWALL_LOG_MODE="LOG"</b><br>
+	Default: <b>SANEWALL_LOG_OPTIONS="--log-level warning"</b><br>
+	Default: <b>SANEWALL_LOG_FREQUENCY="1/second"</b><br>
+	Default: <b>SANEWALL_LOG_BURST="5"</b><br>
+	Default: <b>SANEWALL_LOG_PREFIX=""</b><br>
 	<br>
-	Example: <b>FIREHOL_LOG_OPTIONS="--log-level info --log-tcp-options --log-ip-options"</b><br>
-	Example: <b>FIREHOL_LOG_FREQUENCY="30/minute"</b><br>
-	Example: <b>FIREHOL_LOG_BURST="2"</b><br>
-	Example: <b>FIREHOL_LOG_PREFIX="FIREHOL: "</b><br>
+	Example: <b>SANEWALL_LOG_OPTIONS="--log-level info --log-tcp-options --log-ip-options"</b><br>
+	Example: <b>SANEWALL_LOG_FREQUENCY="30/minute"</b><br>
+	Example: <b>SANEWALL_LOG_BURST="2"</b><br>
+	Example: <b>SANEWALL_LOG_PREFIX="SANEWALL: "</b><br>
 	<br>
-	To see the available iptables log options, run <b>/sbin/iptables -j LOG --help</b> or <b>/sbin/iptables -j ULOG --help</b> (depending on FIREHOL_LOG_MODE)<br>
+	To see the available iptables log options, run <b>/sbin/iptables -j LOG --help</b> or <b>/sbin/iptables -j ULOG --help</b> (depending on SANEWALL_LOG_MODE)<br>
 	To see what iptables accepts as frequencies and bursts run, <b>/sbin/iptables -m limit --help</b></br>
 	You can also check <b>man iptables</b>.
 	<p>
 	
 <hr noshade size=1 width="100%">
 
-	<a name="FIREHOL_DROP_INVALID"><h3><b>FIREHOL_DROP_INVALID</b></h3></a>
+	<a name="SANEWALL_DROP_INVALID"><h3><b>SANEWALL_DROP_INVALID</b></h3></a>
 	<H4>Description</H4>
-	If FIREHOL_DROP_INVALID is set to 1, FireHOL will drop all packets that are matched by the INVALID state of the
+	If SANEWALL_DROP_INVALID is set to 1, sanewall will drop all packets that are matched by the INVALID state of the
 	iptables connection tracker. The default in versions prior to v1.183 was to drop all those packers. The new default
 	is not to drop those packets globally, but only as part of the <a href="#protection">protection</a> statement.
 	<p>
 	See also <a href="https://sourceforge.net/tracker/index.php?func=detail&aid=927509&group_id=58425&atid=487692">Bug 927509</a> that discusses the effects of globally dropping invalid packets.
 	<p>
-	Default: <b>FIREHOL_DROP_INVALID="0"</b>
+	Default: <b>SANEWALL_DROP_INVALID="0"</b>
 	<br>
-	Example: <b>FIREHOL_DROP_INVALID="1"</b>
+	Example: <b>SANEWALL_DROP_INVALID="1"</b>
 	<p>
 
 <hr noshade size=1 width="100%">
@@ -1744,7 +1726,7 @@ about optional rule parameters that should not be used in certain commands.
 	<a name="DEFAULT_CLIENT_PORTS"><h3><b>DEFAULT_CLIENT_PORTS</b></h3></a>
 	<H4>Description</H4>
 	DEFAULT_CLIENT_PORTS controls the port range to be used when a remote client is specified.
-	For localhost clients, FireHOL finds the exact client ports by querying the kernel options.
+	For localhost clients, sanewall finds the exact client ports by querying the kernel options.
 	<p>
 	Default: <b>DEFAULT_CLIENT_PORTS="1024:65535"</b>
 	<br>
@@ -1753,60 +1735,60 @@ about optional rule parameters that should not be used in certain commands.
 
 <hr noshade size=1 width="100%">
 
-	<a name="FIREHOL_NAT"><h3><b>FIREHOL_NAT</b></h3></a>
+	<a name="SANEWALL_NAT"><h3><b>SANEWALL_NAT</b></h3></a>
 	<H4>Description</H4>
-	If FIREHOL_NAT is set to 1, FireHOL will load NAT kernel modules for those services that they are require such.
-	FireHOL sets this to 1 automatically if you use the <a href="#helpers">Helper Commands</a> that do NAT.
+	If SANEWALL_NAT is set to 1, sanewall will load NAT kernel modules for those services that they are require such.
+	Sanewall sets this to 1 automatically if you use the <a href="#helpers">Helper Commands</a> that do NAT.
 	<p>
-	Default: <b>FIREHOL_NAT="0"</b>
+	Default: <b>SANEWALL_NAT="0"</b>
 	<br>
-	Example: <b>FIREHOL_NAT="1"</b>
+	Example: <b>SANEWALL_NAT="1"</b>
 	<p>
 
 <hr noshade size=1 width="100%">
 
-	<a name="FIREHOL_AUTOSAVE"><h3><b>FIREHOL_AUTOSAVE</b></h3></a>
+	<a name="SANEWALL_AUTOSAVE"><h3><b>SANEWALL_AUTOSAVE</b></h3></a>
 	<H4>Description</H4>
-	FIREHOL_AUTOSAVE controls the file that will be created when FireHOL is called with the <b>save</b> command line argument.
-	If this variable is empty (the default), FireHOL will try to detect where to save the file. Currently, the RedHat way
+	SANEWALL_AUTOSAVE controls the file that will be created when sanewall is called with the <b>save</b> command line argument.
+	If this variable is empty (the default), sanewall will try to detect where to save the file. Currently, the RedHat way
 	(/etc/sysconfig/iptables) and the Debian way (/var/lib/iptables/autosave) are automatically detected (in the order given here)
 	based on the existance of the directory this file should be created in.
 	<p>
-	Default: <b>FIREHOL_AUTOSAVE=""</b>
+	Default: <b>SANEWALL_AUTOSAVE=""</b>
 	<br>
-	Example: <b>FIREHOL_AUTOSAVE="/tmp/firehol-saved.txt"</b>
+	Example: <b>SANEWALL_AUTOSAVE="/tmp/sanewall-saved.txt"</b>
 	<p>
 
 <hr noshade size=1 width="100%">
 
-	<a name="FIREHOL_LOAD_KERNEL_MODULES"><h3><b>FIREHOL_LOAD_KERNEL_MODULES</b></h3></a>
+	<a name="SANEWALL_LOAD_KERNEL_MODULES"><h3><b>SANEWALL_LOAD_KERNEL_MODULES</b></h3></a>
 	<H4>Description</H4>
-	FIREHOL_LOAD_KERNEL_MODULES controls the way FireHOL handles required kernel modules.
-	If set to 0 (zero), FireHOL will not attempt to load kernel modules at all. Set this to 0 (zero)
+	SANEWALL_LOAD_KERNEL_MODULES controls the way sanewall handles required kernel modules.
+	If set to 0 (zero), sanewall will not attempt to load kernel modules at all. Set this to 0 (zero)
 	if you have compiled a kernel that has all the modules build into it.
 	<p>
-	Since v1.165 of the FireHOL this feature is almost useless.
-	FireHOL now tries to find the .config file of your kernel
+	Since v1.165 of the sanewall this feature is almost useless.
+	Sanewall now tries to find the .config file of your kernel
 	(in <b>/proc/config</b> or <b>/lib/modules/`uname -r`/build/.config</b>
 	or <b>/usr/src/linux/.config</b>, in this order) and figures out which kernel modules are compiled
 	build-in and which are modules.
 	<br>
-	So, this variable is only used in cases where FireHOL has no access at all to kernel configuration.
+	So, this variable is only used in cases where sanewall has no access at all to kernel configuration.
 	<p>
-	Keep in mind, that FireHOL is able to detect the <b>ip_tables</b> and <b>ip_conntrack</b> modules
+	Keep in mind, that sanewall is able to detect the <b>ip_tables</b> and <b>ip_conntrack</b> modules
 	by examining the relative entries in /proc, so it can detect whether these are loaded without the
 	need for the kernel configuration.
 	<p>
-	Default: <b>FIREHOL_LOAD_KERNEL_MODULES=1</b>
+	Default: <b>SANEWALL_LOAD_KERNEL_MODULES=1</b>
 	<br>
-	Example: <b>FIREHOL_LOAD_KERNEL_MODULES=0</b>
+	Example: <b>SANEWALL_LOAD_KERNEL_MODULES=0</b>
 	<p>
 
 <hr noshade size=1 width="100%">
 
-	<a name="FIREHOL_TRUST_LOOPBACK"><h3><b>FIREHOL_TRUST_LOOPBACK</b></h3></a>
+	<a name="SANEWALL_TRUST_LOOPBACK"><h3><b>SANEWALL_TRUST_LOOPBACK</b></h3></a>
 	<H4>Description</H4>
-	FIREHOL_TRUST_LOOPBACK allows you to choose if FireHOL will trust the <b>lo</b> interface and
+	SANEWALL_TRUST_LOOPBACK allows you to choose if sanewall will trust the <b>lo</b> interface and
 	accept all traffic to or from it (although not FORWARD, it matches only INPUT and OUTPUT).
 	<p>
 	The default is to accept all traffic from/to <b>lo</b>. If however you need to control what
@@ -1814,39 +1796,39 @@ about optional rule parameters that should not be used in certain commands.
 	allowing you to setup the firewall as you will.
 	<p>
 	<b>IMPORTANT: If you choose not to trust interface lo and you don't specifically setup the lo
-	interface in firehol.conf, no local process will be able to communicate to any other local process,
+	interface in sanewall.conf, no local process will be able to communicate to any other local process,
 	which most likely will break several things. Be sure you know what you are doing.</b>
 	<p>
-	This option appeared in FireHOL version 1.195.
+	This option appeared in sanewall version 1.195.
 	<p>
-	Default: <b>FIREHOL_TRUST_LOOPBACK=1</b>
+	Default: <b>SANEWALL_TRUST_LOOPBACK=1</b>
 	<br>
-	Example: <b>FIREHOL_TRUST_LOOPBACK=0</b>
+	Example: <b>SANEWALL_TRUST_LOOPBACK=0</b>
 	<p>
 
 <hr noshade size=1 width="100%">
 
-	<a name="FIREHOL_DROP_ORPHAN_TCP_ACK_FIN"><h3><b>FIREHOL_DROP_ORPHAN_TCP_ACK_FIN</b></h3></a>
+	<a name="SANEWALL_DROP_ORPHAN_TCP_ACK_FIN"><h3><b>SANEWALL_DROP_ORPHAN_TCP_ACK_FIN</b></h3></a>
 	<H4>Description</H4>
-	FIREHOL_DROP_ORPHAN_TCP_ACK_FIN allows you to choose if FireHOL will drop all TCP connections
+	SANEWALL_DROP_ORPHAN_TCP_ACK_FIN allows you to choose if sanewall will drop all TCP connections
 	with ACK FIN set without logging them.
 	In busy environments the iptables connection tracker removes from the connection tracking list
 	entries when it receives a FIN. This makes the ACK FIN appear as an invalid packet (it does not
 	match anything on the connection tracking list, and it is not a new connection).
-	Normally FireHOL logs this traffic. If FIREHOL_DROP_ORPHAN_TCP_ACK_FIN is set to 1, FireHOL
+	Normally sanewall logs this traffic. If SANEWALL_DROP_ORPHAN_TCP_ACK_FIN is set to 1, sanewall
 	will silentrly drop such packets.
 	<p>
-	Default: <b>FIREHOL_DROP_ORPHAN_TCP_ACK_FIN=0</b>
+	Default: <b>SANEWALL_DROP_ORPHAN_TCP_ACK_FIN=0</b>
 	<br>
-	Example: <b>FIREHOL_DROP_ORPHAN_TCP_ACK_FIN=1</b>
+	Example: <b>SANEWALL_DROP_ORPHAN_TCP_ACK_FIN=1</b>
 	<p>
 
-<table border=0 cellpadding=10 cellspacing=0 width="100%"><tr bgcolor="#777777"><td align=center><font color="white"><b><big><a name="use_variables">Variables that FireHOL offers</a></td</tr></table>
+<table border=0 cellpadding=10 cellspacing=0 width="100%"><tr bgcolor="#777777"><td align=center><font color="white"><b><big><a name="use_variables">Variables that sanewall offers</a></td</tr></table>
 <p>
 	<a name="RESERVED_IPS"><h3><b>RESERVED_IPS</b></h3></a>
 	<H4>Description</H4>
 	This variable includes all the IP addresses defined as <b>IANA - Reserved</b> by <a href="http://www.iana.org">IANA</a>.
-	You can overwrite the internal default definion of this variable by creating a file with same name in /etc/firehol.
+	You can overwrite the internal default definion of this variable by creating a file with same name in /etc/sanewall.
 	This file accepts an IP definition per line.
 	The supplied <b>get-iana.sh</b> script creates this file by directly fetching <a href="http://www.iana.org/assignments/ipv4-address-space">this</a> document.
 	<p>
@@ -1858,7 +1840,7 @@ about optional rule parameters that should not be used in certain commands.
 	<a name="PRIVATE_IPS"><h3><b>PRIVATE_IPS</b></h3></a>
 	<H4>Description</H4>
 	This variable includes all the IP addresses defined as <b>Private</b> or <b>Test</b> by <a href="http://www.ietf.org/rfc/rfc3330.txt?number=3330">RFC 3330</a>.
-	You can overwrite the internal default definion of this variable by creating a file with same name in /etc/firehol.
+	You can overwrite the internal default definion of this variable by creating a file with same name in /etc/sanewall.
 	This file accepts an IP definition per line.
 	<p>
 	Example: <b>interface eth0 internet src not "${PRIVATE_IPS}"</b>
@@ -1870,7 +1852,7 @@ about optional rule parameters that should not be used in certain commands.
 	<H4>Description</H4>
 	This variable is both RESERVED_IPS and PRIVATE_IPS together. I suggest to use this variable on interfaces and routers
 	accepting Internet traffic.
-	You can overwrite the internal default definion of this variable by creating a file with same name in /etc/firehol.
+	You can overwrite the internal default definion of this variable by creating a file with same name in /etc/sanewall.
 	This file accepts an IP definition per line.
 	<p>
 	Example: <b>interface eth0 internet src not "${UNROUTABLE_IPS}"</b>
@@ -1881,7 +1863,7 @@ about optional rule parameters that should not be used in certain commands.
 
 	<a name="MULTICAST_IPS"><h3><b>MULTICAST_IPS</b></h3></a>
 	<H4>Description</H4>
-	You can overwrite the internal default definion of this variable by creating a file with same name in /etc/firehol.
+	You can overwrite the internal default definion of this variable by creating a file with same name in /etc/sanewall.
 	This file accepts an IP definition per line.
 	<p>
 	Example: <b>interface eth0 internet src not "${MULTICAST_IPS}"</b>
@@ -1894,9 +1876,7 @@ about optional rule parameters that should not be used in certain commands.
 <tr><td align=center valign=middle>
 	<A href="http://sourceforge.net"><IMG src="http://sourceforge.net/sflogo.php?group_id=58425&amp;type=5" width="210" height="62" border="0" alt="SourceForge Logo"></A>
 </td><td align=center valign=middle>
-	<small>$Id$</small>
-	<p>
-	<b>FireHOL</b>, a firewall for humans...<br>
+	<b>Sanewall</b>, a firewall for humans...<br>
 	&copy; Copyright 2004
 	Costa Tsaousis <a href="mailto: costa@tsaousis.gr">&lt;costa@tsaousis.gr&gt</a>
 </body>

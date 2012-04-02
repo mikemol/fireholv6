@@ -1,15 +1,15 @@
 <HTML>
 <HEAD>
 <link rel="stylesheet" type="text/css" href="css.css">
-<TITLE>FireHOL, Troubleshooting the firewall.</TITLE>
+<TITLE>Sanewall, Troubleshooting the firewall.</TITLE>
 <meta name="author" content="Costa Tsaousis">
 <meta name="description" content="
 
-Home for FireHOL, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
+Home for sanewall, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
 supporting NAT, SNAT, DNAT, REDIRECT, MASQUERADE, DMZ, dual-homed, multi-homed and router setups,
 protecting and securing hosts and LANs in all kinds of topologies. Configuration is done using
 simple client and server statements while it can detect (and produce) its configuration
-automatically. FireHOL is extremely easy to understand, configure and audit.
+automatically. Sanewall is extremely easy to understand, configure and audit.
 
 ">
 
@@ -19,33 +19,15 @@ automatically. FireHOL is extremely easy to understand, configure and audit.
 
 <BODY bgcolor="#FFFFFF">
 
-<center>
-<script type="text/javascript"><!--
-google_ad_client = "pub-4254040714325099";
-google_ad_width = 728;
-google_ad_height = 90;
-google_ad_format = "728x90_as";
-google_ad_channel ="";
-google_page_url = document.location;
-google_color_border = "336699";
-google_color_bg = "FFFFFF";
-google_color_link = "0000FF";
-google_color_url = "008000";
-google_color_text = "000000";
-//--></script>
-<script type="text/javascript"
-  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
-</center>
 <p>
 
 Troubleshooting a running firewall is relatively simple and for almost all iptables firewalls the means you have are the same:
 <b>the system log</b>.
 <p>
-The system log (usually at <b>/var/log/messages</b>) will log all the packets dropped <b>implicitly</b> by FireHOL.
-<b>Implicitly</b> means all packets that did not match any of the rules in FireHOL's configuration file.
+The system log (usually at <b>/var/log/messages</b>) will log all the packets dropped <b>implicitly</b> by sanewall.
+<b>Implicitly</b> means all packets that did not match any of the rules in sanewall's configuration file.
 <p>
-FireHOL always logs all packets not matched by any rule, although it does not log every single packet,
+Sanewall always logs all packets not matched by any rule, although it does not log every single packet,
 in order to protect you from an attack that could "eat" all of your free hard disk space.
 <p>
 The frequency packets are logged is controlled by the same means the optional rule parameter
@@ -67,26 +49,26 @@ Each of such lines represent one packet that did not satisfy the requirements of
 The important things to look in these logs are:
 <br>&nbsp;
 <ul>
-	<li><b>Its reason text</b>. In FireHOL this has the form <b>IN-name</b>, <b>OUT-name</b>, <b>PASS-name</b>.
+	<li><b>Its reason text</b>. In sanewall this has the form <b>IN-name</b>, <b>OUT-name</b>, <b>PASS-name</b>.
 	<br>&nbsp;
 	<ul>
 		<li><b>IN-name</b> matches packets that dropped at the end of the interface's <b>name</b> input.
 		These are packets tried to come into this host (it is not routed traffic).
 		<br>
-		<b>Name</b> matches the name given to a FireHOL <a href="commands.html#interface">interface</a>.
+		<b>Name</b> matches the name given to a sanewall <a href="commands.html#interface">interface</a>.
 		There is also the special name <b>unknown</b> that matches packets tried to come into this
 		host but did not match any of the <a href="commands.html#interface">interfaces</a> given
-		in FireHOL's configuration file.
+		in sanewall's configuration file.
 		<br>&nbsp;
 		</li>
 		
 		<li><b>OUT-name</b> matches packets that dropped at the end of the interface's <b>name</b> output.
 		These are packets the host tried to send (it is not traffic routed).
 		<br>
-		<b>Name</b> matches the name given to a FireHOL <a href="commands.html#interface">interface</a>.
+		<b>Name</b> matches the name given to a sanewall <a href="commands.html#interface">interface</a>.
 		There is also the special name <b>unknown</b> that matches packets tried to go out of this
 		host but did not match any of the <a href="commands.html#interface">interfaces</a> given
-		in FireHOL's configuration file.
+		in sanewall's configuration file.
 		<br>&nbsp;
 		</li>
 		
@@ -94,7 +76,7 @@ The important things to look in these logs are:
 		<a href="commands.html#router">routers</a>. 
 		This matches forwarded traffic.
 		<br>
-		There is no <b>name</b> here, since all FireHOL <a href="commands.html#router">routers</a>
+		There is no <b>name</b> here, since all sanewall <a href="commands.html#router">routers</a>
 		have only one <a href="commands.html#policy">policy</a>: <b>RETURN</b>.
 		This makes all packets traverse all routers and then dropped at the end of the firewall.
 		<br>&nbsp;
@@ -136,11 +118,11 @@ The important things to look in these logs are:
 </ul>
 
 Generally, you should monitor the system log for such entries and decide if each entry was something useful or not.
-If it was something useful, you should have added another service somewhere in your FireHOL configuration to match
-that packet and allow it to reach its destination. If it was not something useful, then FireHOL did the right job
+If it was something useful, you should have added another service somewhere in your sanewall configuration to match
+that packet and allow it to reach its destination. If it was not something useful, then sanewall did the right job
 and dropped it.
 <p>
-Keep in mind that there are certain cases where packets get dropped even though FireHOL has specific rules that should
+Keep in mind that there are certain cases where packets get dropped even though sanewall has specific rules that should
 allow them to pass. Such cases are not always errors, and here is why:
 <p>
 The iptables connection tracker has a mechanism for matching request packets and reply packets.
@@ -167,9 +149,7 @@ list.
 <tr><td align=center valign=middle>
 	<A href="http://sourceforge.net"><IMG src="http://sourceforge.net/sflogo.php?group_id=58425&amp;type=5" width="210" height="62" border="0" alt="SourceForge Logo"></A>
 </td><td align=center valign=middle>
-	<small>$Id: trouble.html,v 1.8 2004/10/31 23:43:25 ktsaou Exp $</small>
-	<p>
-	<b>FireHOL</b>, a firewall for humans...<br>
+	<b>Sanewall</b>, a firewall for humans...<br>
 	&copy; Copyright 2004
 	Costa Tsaousis <a href="mailto: costa@tsaousis.gr">&lt;costa@tsaousis.gr&gt</a>
 </body>

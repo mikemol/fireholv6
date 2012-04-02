@@ -2,15 +2,15 @@
 <HTML>
 <HEAD>
 <link rel="stylesheet" type="text/css" href="css.css">
-<TITLE>FireHOL, The configuration language.</TITLE>
+<TITLE>Sanewall, The configuration language.</TITLE>
 <meta name="author" content="Costa Tsaousis">
 <meta name="description" content="
 
-Home for FireHOL, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
+Home for sanewall, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
 supporting NAT, SNAT, DNAT, REDIRECT, MASQUERADE, DMZ, dual-homed, multi-homed and router setups,
 protecting and securing hosts and LANs in all kinds of topologies. Configuration is done using
 simple client and server statements while it can detect (and produce) its configuration
-automatically. FireHOL is extremely easy to understand, configure and audit.
+automatically. Sanewall is extremely easy to understand, configure and audit.
 
 ">
 
@@ -20,40 +20,22 @@ automatically. FireHOL is extremely easy to understand, configure and audit.
 
 <BODY bgcolor="#FFFFFF">
 
-<center>
-<script type="text/javascript"><!--
-google_ad_client = "pub-4254040714325099";
-google_ad_width = 728;
-google_ad_height = 90;
-google_ad_format = "728x90_as";
-google_ad_channel ="";
-google_page_url = document.location;
-google_color_border = "336699";
-google_color_bg = "FFFFFF";
-google_color_link = "0000FF";
-google_color_url = "008000";
-google_color_text = "000000";
-//--></script>
-<script type="text/javascript"
-  src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-</script>
-</center>
 <p>
 
 
-FireHOL configuration files are normal <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> scripts.
-As such, you can use all <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> features within FireHOL configuration
+Sanewall configuration files are normal <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> scripts.
+As such, you can use all <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> features within sanewall configuration
 files, including functions, loops, variables, I/O, etc, etc.
 <p>
-I have chosen <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> as the configuration language for FireHOL
+I have chosen <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> as the configuration language for sanewall
 since it is the common denominator for a language that all UNIX system administrators and developers
 (or at least those that respect themselves) know and understand better.
 
 <center><table border=0 cellpadding=15 cellspacing=20 width="70%">
 <tr><td bgcolor="#F0F0F0">
 The fact that
-FireHOL uses <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> for its configuration,
-allows third parties to develop add-ons, to enable FireHOL use
+sanewall uses <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> for its configuration,
+allows third parties to develop add-ons, to enable sanewall use
 SQL databases, directory structures, DBM or other files, WEB front ends or other means for the rules of the firewall.
 <p>
 Exactly the same reason allows the build of remote managers for centralized administration of a large number of Linux hosts and
@@ -62,17 +44,17 @@ routers.
 </table>
 </center>
 
-The only <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> features a FireHOL configuration script should never use, is <b>traps</b> and the <b>exit</b> command. Traps are used by FireHOL for cleaning
-up all temporary files, and possibly restoring the previously running firewall in case FireHOL execution breaks, and the exit command will not just exit the configuration file, it will exit
-FireHOL. FireHOL has disabled these features by default, so that you will not be able to use them, unless you specifically enable them.
+The only <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> features a sanewall configuration script should never use, is <b>traps</b> and the <b>exit</b> command. Traps are used by sanewall for cleaning
+up all temporary files, and possibly restoring the previously running firewall in case sanewall execution breaks, and the exit command will not just exit the configuration file, it will exit
+sanewall. Sanewall has disabled these features by default, so that you will not be able to use them, unless you specifically enable them.
 <p>
-Also, since a FireHOL configuration script runs inline with FireHOL, all variables and function names defined within the
-configuration file overwrite the ones defined by FireHOL. For this reason you should avoid using variables that start with
-<b>FIREHOL_</b>, <b>work_</b>, <b>server_</b>, and <b>client_</b> as many such variables are used by FireHOL internally.
+Also, since a sanewall configuration script runs inline with sanewall, all variables and function names defined within the
+configuration file overwrite the ones defined by sanewall. For this reason you should avoid using variables that start with
+<b>SANEWALL_</b>, <b>work_</b>, <b>server_</b>, and <b>client_</b> as many such variables are used by sanewall internally.
 There are also a number of functions names you should avoid, but there is no generic pattern at the moment. I suggest you should
-avoid defining functions with the names of FireHOL commands (interface, router, client, server, etc) and functions starting with <b>rules_</b>.
+avoid defining functions with the names of sanewall commands (interface, router, client, server, etc) and functions starting with <b>rules_</b>.
 <p>
-Note however that it is allowed to overwrite a few variables and functions if you want to modify FireHOL services (See the <a href="adding.html">Adding Services</a> section for more on this).
+Note however that it is allowed to overwrite a few variables and functions if you want to modify sanewall services (See the <a href="adding.html">Adding Services</a> section for more on this).
 <p>
 To learn <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> scripting I suggest the following documents:
 <ul>
@@ -86,9 +68,7 @@ To learn <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> scripting
 <tr><td align=center valign=middle>
 	<A href="http://sourceforge.net"><IMG src="http://sourceforge.net/sflogo.php?group_id=58425&amp;type=5" width="210" height="62" border="0" alt="SourceForge Logo"></A>
 </td><td align=center valign=middle>
-	<small>$Id: language.html,v 1.9 2004/10/31 23:43:25 ktsaou Exp $</small>
-	<p>
-	<b>FireHOL</b>, a firewall for humans...<br>
+	<b>Sanewall</b>, a firewall for humans...<br>
 	&copy; Copyright 2004
 	Costa Tsaousis <a href="mailto: costa@tsaousis.gr">&lt;costa@tsaousis.gr&gt</a>
 </body>

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Startup script to implement /etc/firehol/firehol.conf pre-defined rules.
+# Startup script to implement /etc/sanewall/sanewall.conf pre-defined rules.
 #
 # chkconfig: - 20 80
 #
@@ -8,23 +8,22 @@
 #
 # by Costa Tsaousis <costa@tsaousis.gr>
 #
-# config: /etc/firehol/firehol.conf
+# config: /etc/sanewall/sanewall.conf
 #
-# $Id$
-#
+VERSION=0.9.0
 
 # Make sure only root can run us.
 if [ ! "${UID}" = 0 ]
 then
 	echo >&2
 	echo >&2
-	echo >&2 "Only user root can run FireHOL."
+	echo >&2 "Only user root can run sanewall."
 	echo >&2
 fi
 
 # Remember who you are.
-FIREHOL_FILE="${0}"
-FIREHOL_DEFAULT_WORKING_DIRECTORY="${PWD}"
+SANEWALL_FILE="${0}"
+SANEWALL_DEFAULT_WORKING_DIRECTORY="${PWD}"
 
 # ------------------------------------------------------------------------------
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -38,8 +37,8 @@ FIREHOL_DEFAULT_WORKING_DIRECTORY="${PWD}"
 
 export PATH="${PATH}:/bin:/usr/bin:/sbin:/usr/sbin"
 
-# External commands FireHOL will need.
-# If one of those is not found, FireHOL will refuse to run.
+# External commands sanewall will need.
+# If one of those is not found, sanewall will refuse to run.
 
 which_cmd() {
 	local block=1
@@ -57,11 +56,11 @@ which_cmd() {
 		then
 			echo >&2
 			echo >&2 "ERROR:	Command '$2' not found in the system path."
-			echo >&2 "	FireHOL requires this command for its operation."
+			echo >&2 "	Sanewall requires this command for its operation."
 			echo >&2 "	Please install the required package and retry."
 			echo >&2
 			echo >&2 "	Note that you need an operational 'which' command"
-			echo >&2 "	for FireHOL to find all the external programs it"
+			echo >&2 "	for sanewall to find all the external programs it"
 			echo >&2 "	needs. Check it yourself. Run:"
 			echo >&2
 			echo >&2 "	which $2"
@@ -98,11 +97,11 @@ require_cmd() {
 	if [ $block -eq 1 ]
 	then
 		echo >&2
-		echo >&2 "ERROR:	FIREHOL REQUIRES THESE COMMANDS:"
+		echo >&2 "ERROR:	SANEWALL REQUIRES THESE COMMANDS:"
 		echo >&2
 		echo >&2 "	${@}"
 		echo >&2
-		echo >&2 "	You have requested the use of an optional FireHOL"
+		echo >&2 "	You have requested the use of an optional sanewall"
 		echo >&2 "	feature that requires certain external programs"
 		echo >&2 "	to be installed in the running system."
 		echo >&2
@@ -111,7 +110,7 @@ require_cmd() {
 		echo >&2 "	programs and retry."
 		echo >&2
 		echo >&2 "	Note that you need an operational 'which' command"
-		echo >&2 "	for FireHOL to find all the external programs it"
+		echo >&2 "	for sanewall to find all the external programs it"
 		echo >&2 "	needs. Check it yourself. Run:"
 		echo >&2
 		for x in "${@}"
@@ -139,7 +138,7 @@ require_cmd() {
 # gawk or awk
 # nice (none is fine)
 
-# Commands that are mandatory for FireHOL operation:
+# Commands that are mandatory for sanewall operation:
 which_cmd CAT_CMD cat
 which_cmd CUT_CMD cut
 which_cmd CHOWN_CMD chown
@@ -195,7 +194,7 @@ zcat_cmd() {
 	echo >&2 " "
 	echo >&2 " IMPORTANT WARNING:"
 	echo >&2 " ------------------"
-	echo >&2 " FireHOL cannot find any of the commands: zcat, gzcat, gzip."
+	echo >&2 " Sanewall cannot find any of the commands: zcat, gzcat, gzip."
 	echo >&2 " Make sure you have one of these available in the system path."
 	echo >&2 " "
 	
@@ -215,7 +214,7 @@ gawk_cmd() {
 	echo >&2 " "
 	echo >&2 " IMPORTANT WARNING:"
 	echo >&2 " ------------------"
-	echo >&2 " FireHOL cannot find any of the commands: gawk, awk."
+	echo >&2 " Sanewall cannot find any of the commands: gawk, awk."
 	echo >&2 " Make sure you have one of these available in the system path."
 	echo >&2 " "
 	
@@ -242,7 +241,7 @@ modprobe_cmd() {
 	echo >&2 " "
 	echo >&2 " IMPORTANT WARNING:"
 	echo >&2 " ------------------"
-	echo >&2 " FireHOL cannot find any of the commands: modprobe, insmod."
+	echo >&2 " Sanewall cannot find any of the commands: modprobe, insmod."
 	echo >&2 " Make sure you have one of these available in the system path."
 	echo >&2 " "
 	
@@ -287,33 +286,33 @@ iptables_restore_cmd() {
 }
 
 # Concurrent run control
-FIREHOL_LOCK_FILE="/var/run/firehol.lck"
+SANEWALL_LOCK_FILE="/var/run/sanewall.lck"
 
 # Time in secs to consider a lock stale
-FIREHOL_LOCK_FILE_TIMEOUT=600
+SANEWALL_LOCK_FILE_TIMEOUT=600
 
-firehol_concurrent_run_lock() {
+sanewall_concurrent_run_lock() {
 	require_cmd -n lockfile
 	
-	if [ -f "${FIREHOL_LOCK_FILE}" ]
+	if [ -f "${SANEWALL_LOCK_FILE}" ]
 	then
-		echo >&2 "FireHOL is already running. Waiting for the other process to exit..."
+		echo >&2 "Sanewall is already running. Waiting for the other process to exit..."
 	fi
 	
 	if [ -z "${LOCKFILE_CMD}" ]
 	then
 		local c=0
-		while [ -f "${FIREHOL_LOCK_FILE}" ]
+		while [ -f "${SANEWALL_LOCK_FILE}" ]
 		do
 			c=$[c + 1]
-			test $c -gt ${FIREHOL_LOCK_FILE_TIMEOUT} && break
+			test $c -gt ${SANEWALL_LOCK_FILE_TIMEOUT} && break
 			sleep 1
 		done
 		
-		touch "${FIREHOL_LOCK_FILE}"
+		touch "${SANEWALL_LOCK_FILE}"
 		
 	else
-		${LOCKFILE_CMD} -1 -r ${FIREHOL_LOCK_FILE_TIMEOUT} -l ${FIREHOL_LOCK_FILE_TIMEOUT} "${FIREHOL_LOCK_FILE}"
+		${LOCKFILE_CMD} -1 -r ${SANEWALL_LOCK_FILE_TIMEOUT} -l ${SANEWALL_LOCK_FILE_TIMEOUT} "${SANEWALL_LOCK_FILE}"
 	fi
 	
 	return 0
@@ -325,19 +324,8 @@ umask 077
 # Be nice on production environments
 renice_cmd 10 $$ >/dev/null 2>/dev/null
 
-# Find our minor version
-firehol_minor_version() {
-${CAT_CMD} <<"EOF" | ${CUT_CMD} -d ' ' -f 3 | ${CUT_CMD} -d '.' -f 2
-$Id$
-EOF
-}
-
-FIREHOL_MINOR_VERSION=`firehol_minor_version`
-${EXPR_CMD} ${FIREHOL_MINOR_VERSION} + 0 >/dev/null 2>&1
-if [ $? -ne 0 ]
-then
-	FIREHOL_MINOR_VERSION=257
-fi
+# Use the old, static FIREHOL minor version
+FIREHOL_MINOR_VERSION=257
 
 for check in IPTABLES_CMD IPTABLES_SAVE_CMD IPTABLES_RESTORE_CMD
 do
@@ -368,31 +356,31 @@ iptables_cmd -nxvL >/dev/null 2>&1
 # Directories and files
 
 # These files will be created and deleted during our run.
-FIREHOL_DIR="/tmp/.firehol-tmp-$$-${RANDOM}-${RANDOM}"
-FIREHOL_CHAINS_DIR="${FIREHOL_DIR}/chains"
-FIREHOL_OUTPUT="${FIREHOL_DIR}/firehol-out.sh"
-FIREHOL_SAVED="${FIREHOL_DIR}/firehol-save.sh"
-FIREHOL_TMP="${FIREHOL_DIR}/firehol-tmp.sh"
+SANEWALL_DIR="/tmp/.sanewall-tmp-$$-${RANDOM}-${RANDOM}"
+SANEWALL_CHAINS_DIR="${SANEWALL_DIR}/chains"
+SANEWALL_OUTPUT="${SANEWALL_DIR}/sanewall-out.sh"
+SANEWALL_SAVED="${SANEWALL_DIR}/sanewall-save.sh"
+SANEWALL_TMP="${SANEWALL_DIR}/sanewall-tmp.sh"
 
 # Redhat like status info for startup script
-FIREHOL_LOCK_DIR="/var/lock/subsys"
-test ! -d "${FIREHOL_LOCK_DIR}" && FIREHOL_LOCK_DIR="/var/lock"
+SANEWALL_LOCK_DIR="/var/lock/subsys"
+test ! -d "${SANEWALL_LOCK_DIR}" && SANEWALL_LOCK_DIR="/var/lock"
 
 if [ -d "/var/spool" ]
 then
-	FIREHOL_SPOOL_DIR="/var/spool/firehol"
+	SANEWALL_SPOOL_DIR="/var/spool/sanewall"
 else
-	FIREHOL_SPOOL_DIR="/tmp/firehol"
+	SANEWALL_SPOOL_DIR="/tmp/sanewall"
 fi
 
 # The default configuration file
 # It can be changed on the command line
-FIREHOL_CONFIG_DIR="/etc/firehol"
-FIREHOL_CONFIG="${FIREHOL_CONFIG_DIR}/firehol.conf"
+SANEWALL_CONFIG_DIR="/etc/sanewall"
+SANEWALL_CONFIG="${SANEWALL_CONFIG_DIR}/sanewall.conf"
 
 # Where /etc/init.d/iptables expects its configuration?
 # Leave it empty for automatic detection
-FIREHOL_AUTOSAVE=
+SANEWALL_AUTOSAVE=
 
 
 # ------------------------------------------------------------------------------
@@ -400,48 +388,48 @@ FIREHOL_AUTOSAVE=
 # WHY:
 # Even a CTRL-C will call this and we will not leave temp files.
 # Also, if a configuration file breaks, we will detect this too.
-FIREHOL_ACTIVATED_SUCCESSFULLY=0
-FIREHOL_SYSLOG_FACILITY="daemon"
-FIREHOL_NOTIFICATION_PROGRAM=""
+SANEWALL_ACTIVATED_SUCCESSFULLY=0
+SANEWALL_SYSLOG_FACILITY="daemon"
+SANEWALL_NOTIFICATION_PROGRAM=""
 
 syslog() {
 	local p="$1"; shift
 	
-	"${LOGGER_CMD}" -p ${FIREHOL_SYSLOG_FACILITY}.$p -t "FireHOL[$$]" "${@}"
+	"${LOGGER_CMD}" -p ${SANEWALL_SYSLOG_FACILITY}.$p -t "sanewall[$$]" "${@}"
 	return 0
 }
 
-firehol_exit() {
+sanewall_exit() {
 	local restored="NO"
-	if [ -f "${FIREHOL_SAVED}" -a "${FIREHOL_MODE}" = "START" ]
+	if [ -f "${SANEWALL_SAVED}" -a "${SANEWALL_MODE}" = "START" ]
 	then
 		echo
-		echo -n $"FireHOL: Restoring old firewall:"
-		iptables_restore_cmd <"${FIREHOL_SAVED}"
+		echo -n $"Sanewall: Restoring old firewall:"
+		iptables_restore_cmd <"${SANEWALL_SAVED}"
 		if [ $? -eq 0 ]
 		then
 			local restored="OK"
-			success $"FireHOL: Restoring old firewall:"
+			success $"Sanewall: Restoring old firewall:"
 		else
 			local restored="FAILED"
-			failure $"FireHOL: Restoring old firewall:"
+			failure $"Sanewall: Restoring old firewall:"
 		fi
 		echo
 	fi
 	
 	# remove the temporary directory created for this session
-	test -d "${FIREHOL_DIR}" && ${RM_CMD} -rf "${FIREHOL_DIR}"
+	test -d "${SANEWALL_DIR}" && ${RM_CMD} -rf "${SANEWALL_DIR}"
 	
 	# syslog
 	local result=
 	local notify=0
-	case "${FIREHOL_MODE}" in
-		START)	if [ ${FIREHOL_ACTIVATED_SUCCESSFULLY} -eq 0 ]
+	case "${SANEWALL_MODE}" in
+		START)	if [ ${SANEWALL_ACTIVATED_SUCCESSFULLY} -eq 0 ]
 			then
-				syslog emerg "FAILED to activate the firewall from ${FIREHOL_CONFIG}. Last good firewall restoration: ${restored}."
+				syslog emerg "FAILED to activate the firewall from ${SANEWALL_CONFIG}. Last good firewall restoration: ${restored}."
 				local result="FAILED"
 			else
-				syslog info "Successfully activated new firewall from ${FIREHOL_CONFIG}."
+				syslog info "Successfully activated new firewall from ${SANEWALL_CONFIG}."
 				local result="OK"
 			fi
 			local notify=1
@@ -463,96 +451,96 @@ firehol_exit() {
 	# do we have to run a program?
 	if [ ${notify} -eq 1 ]
 	then
-		if [ ! -z "${FIREHOL_NOTIFICATION_PROGRAM}" -a -x "${FIREHOL_NOTIFICATION_PROGRAM}" ]
+		if [ ! -z "${SANEWALL_NOTIFICATION_PROGRAM}" -a -x "${SANEWALL_NOTIFICATION_PROGRAM}" ]
 		then
 			# we just fork it, so that it will not depend on terminal conditions
-			"${FIREHOL_NOTIFICATION_PROGRAM}" "${FIREHOL_CONFIG}" "${result}" "${restored}" "${work_error}" "${work_runtime_error}" >/dev/null 2>&1 </dev/null &
+			"${SANEWALL_NOTIFICATION_PROGRAM}" "${SANEWALL_CONFIG}" "${result}" "${restored}" "${work_error}" "${work_runtime_error}" >/dev/null 2>&1 </dev/null &
 		fi
 	fi
 	
 	# remove the lock
-	test -f "${FIREHOL_LOCK_FILE}" && rm -f "${FIREHOL_LOCK_FILE}"
+	test -f "${SANEWALL_LOCK_FILE}" && rm -f "${SANEWALL_LOCK_FILE}"
 	
 	return 0
 }
 
 # Run our exit even if we don't call exit.
-trap firehol_exit EXIT
-trap firehol_exit SIGHUP
+trap sanewall_exit EXIT
+trap sanewall_exit SIGHUP
 
 
 # ------------------------------------------------------------------------------
 # Create the directories we need.
 
-if [ ! -d "${FIREHOL_CONFIG_DIR}" ]
+if [ ! -d "${SANEWALL_CONFIG_DIR}" ]
 then
-	"${MKDIR_CMD}" "${FIREHOL_CONFIG_DIR}"			|| exit 1
-	"${CHOWN_CMD}" root:root "${FIREHOL_CONFIG_DIR}"	|| exit 1
-	"${CHMOD_CMD}" 700 "${FIREHOL_CONFIG_DIR}"		|| exit 1
+	"${MKDIR_CMD}" "${SANEWALL_CONFIG_DIR}"			|| exit 1
+	"${CHOWN_CMD}" root:root "${SANEWALL_CONFIG_DIR}"	|| exit 1
+	"${CHMOD_CMD}" 700 "${SANEWALL_CONFIG_DIR}"		|| exit 1
 	
-	if [ -f /etc/firehol.conf ]
+	if [ -f /etc/sanewall.conf ]
 	then
-		"${MV_CMD}" /etc/firehol.conf "${FIREHOL_CONFIG}"	|| exit 1
+		"${MV_CMD}" /etc/sanewall.conf "${SANEWALL_CONFIG}"	|| exit 1
 		
 		echo >&2
 		echo >&2
-		echo >&2 "NOTICE: Your config file /etc/firehol.conf has been moved to ${FIREHOL_CONFIG}"
+		echo >&2 "NOTICE: Your config file /etc/sanewall.conf has been moved to ${SANEWALL_CONFIG}"
 		echo >&2
 		sleep 5
 	fi
 fi
 
-# Externally defined services can be placed in "${FIREHOL_CONFIG_DIR}/services/"
-if [ ! -d "${FIREHOL_CONFIG_DIR}/services" ]
+# Externally defined services can be placed in "${SANEWALL_CONFIG_DIR}/services/"
+if [ ! -d "${SANEWALL_CONFIG_DIR}/services" ]
 then
-	"${MKDIR_CMD}" "${FIREHOL_CONFIG_DIR}/services"
+	"${MKDIR_CMD}" "${SANEWALL_CONFIG_DIR}/services"
 	if [ $? -ne 0 ]
 	then
 		echo >&2
 		echo >&2
-		echo >&2 "FireHOL needs to create the directory '${FIREHOL_CONFIG_DIR}/services', but it cannot."
+		echo >&2 "Sanewall needs to create the directory '${SANEWALL_CONFIG_DIR}/services', but it cannot."
 		echo >&2 "Possibly you have a file with this name, or something else is happening."
 		echo >&2 "Please solve this issue and retry".
 		echo >&2
 		exit 1
 	fi
-	"${CHOWN_CMD}" root:root "${FIREHOL_CONFIG_DIR}/services"
-	"${CHMOD_CMD}" 700 "${FIREHOL_CONFIG_DIR}/services"
+	"${CHOWN_CMD}" root:root "${SANEWALL_CONFIG_DIR}/services"
+	"${CHMOD_CMD}" 700 "${SANEWALL_CONFIG_DIR}/services"
 fi
 
 # Remove any old directories that might be there.
-if [ -d "${FIREHOL_DIR}" ]
+if [ -d "${SANEWALL_DIR}" ]
 then
-	"${RM_CMD}" -rf "${FIREHOL_DIR}"
-	if [ $? -ne 0 -o -e "${FIREHOL_DIR}" ]
+	"${RM_CMD}" -rf "${SANEWALL_DIR}"
+	if [ $? -ne 0 -o -e "${SANEWALL_DIR}" ]
 	then
 		echo >&2
 		echo >&2
-		echo >&2 "Cannot clean temporary directory '${FIREHOL_DIR}'."
+		echo >&2 "Cannot clean temporary directory '${SANEWALL_DIR}'."
 		echo >&2
 		exit 1
 	fi
 fi
-"${MKDIR_CMD}" "${FIREHOL_DIR}"				|| exit 1
-"${MKDIR_CMD}" "${FIREHOL_CHAINS_DIR}"			|| exit 1
+"${MKDIR_CMD}" "${SANEWALL_DIR}"				|| exit 1
+"${MKDIR_CMD}" "${SANEWALL_CHAINS_DIR}"			|| exit 1
 
 # prepare the file that will hold all modules to be loaded.
 # this is needed only when we are going to save the firewall
 # with iptables-save.
-cat >"${FIREHOL_DIR}/modules_to_load.sh" <<EOFMTL
+cat >"${SANEWALL_DIR}/modules_to_load.sh" <<EOFMTL
 #!/bin/sh
-# Generated by FireHOL to restore the kernel modules required
-# by the last saved FireHOL generated firewall.
+# Generated by sanewall to restore the kernel modules required
+# by the last saved sanewall generated firewall.
 
 EOFMTL
 
 
 # Make sure we have a directory for our data.
-if [ ! -d "${FIREHOL_SPOOL_DIR}" ]
+if [ ! -d "${SANEWALL_SPOOL_DIR}" ]
 then
-	"${MKDIR_CMD}" "${FIREHOL_SPOOL_DIR}"		|| exit 1
-	"${CHOWN_CMD}" root:root "${FIREHOL_SPOOL_DIR}"	|| exit 1
-	"${CHMOD_CMD}" 700 "${FIREHOL_SPOOL_DIR}"	|| exit 1
+	"${MKDIR_CMD}" "${SANEWALL_SPOOL_DIR}"		|| exit 1
+	"${CHOWN_CMD}" root:root "${SANEWALL_SPOOL_DIR}"	|| exit 1
+	"${CHMOD_CMD}" 700 "${SANEWALL_SPOOL_DIR}"	|| exit 1
 fi
 
 load_ips() {
@@ -562,14 +550,14 @@ load_ips() {
 	local m="${4}" # additional info for file generation
 	local c="${5}" # if set, complain if file is missing
 	
-	if [ ! -f "${FIREHOL_CONFIG_DIR}/${v}" ]
+	if [ ! -f "${SANEWALL_CONFIG_DIR}/${v}" ]
 	then
 		if [ ! -z "${c}" ]
 		then
 			echo >&2
 			echo >&2
 			echo >&2 "WARNING "
-			echo >&2 "Cannot find file '${FIREHOL_CONFIG_DIR}/${v}'."
+			echo >&2 "Cannot find file '${SANEWALL_CONFIG_DIR}/${v}'."
 			echo >&2 "Using internal default values for variable '${v}' and all inherited ones."
 			echo >&2
 			
@@ -586,13 +574,13 @@ load_ips() {
 	
 	if [ ${dt} -gt 0 ]
 	then
-		local t=`${FIND_CMD} "${FIREHOL_CONFIG_DIR}/${v}" -mtime +${dt}`
+		local t=`${FIND_CMD} "${SANEWALL_CONFIG_DIR}/${v}" -mtime +${dt}`
 		if [ ! -z "${t}" ]
 		then
 			echo >&2
 			echo >&2
 			echo >&2 "WARNING"
-			echo >&2 "File '${FIREHOL_CONFIG_DIR}/${v}' is more than ${dt} days old."
+			echo >&2 "File '${SANEWALL_CONFIG_DIR}/${v}' is more than ${dt} days old."
 			echo >&2 "You should update it to ensure proper operation of your firewall."
 			echo >&2
 			
@@ -604,7 +592,7 @@ load_ips() {
 		fi
 	fi
 	
-	local t=`${CAT_CMD} "${FIREHOL_CONFIG_DIR}/${v}" | ${EGREP_CMD} "^ *[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/[0-9]+ *$"`
+	local t=`${CAT_CMD} "${SANEWALL_CONFIG_DIR}/${v}" | ${EGREP_CMD} "^ *[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+/[0-9]+ *$"`
 	local t2=
 	local i=0
 	for x in ${t}
@@ -613,7 +601,7 @@ load_ips() {
 		t2="${t2} ${x}"
 	done
 	
-	local t6=`${CAT_CMD} "${FIREHOL_CONFIG_DIR}/${v}" | ${EGREP_CMD} "^ *((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}(:|((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})|(:[0-9A-Fa-f]{1,4})))|(([0-9A-Fa-f]{1,4}:){5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){4}(:[0-9A-Fa-f]{1,4}){0,1}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){3}(:[0-9A-Fa-f]{1,4}){0,2}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){2}(:[0-9A-Fa-f]{1,4}){0,3}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:)(:[0-9A-Fa-f]{1,4}){0,4}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(:(:[0-9A-Fa-f]{1,4}){0,5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})))(%.+)?/[0-9]+ *$"`
+	local t6=`${CAT_CMD} "${SANEWALL_CONFIG_DIR}/${v}" | ${EGREP_CMD} "^ *((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}(:|((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})|(:[0-9A-Fa-f]{1,4})))|(([0-9A-Fa-f]{1,4}:){5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){4}(:[0-9A-Fa-f]{1,4}){0,1}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){3}(:[0-9A-Fa-f]{1,4}){0,2}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){2}(:[0-9A-Fa-f]{1,4}){0,3}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:)(:[0-9A-Fa-f]{1,4}){0,4}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(:(:[0-9A-Fa-f]{1,4}){0,5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})))(%.+)?/[0-9]+ *$"`
 	for x in ${t6}
 	do
 		i=$[i + 1]
@@ -625,7 +613,7 @@ load_ips() {
 		echo >&2
 		echo >&2
 		echo >&2 "WARNING "
-		echo >&2 "The file '${FIREHOL_CONFIG_DIR}/${v}' contains zero IP definitions."
+		echo >&2 "The file '${SANEWALL_CONFIG_DIR}/${v}' contains zero IP definitions."
 		echo >&2 "Using internal default values for variable '${v}' and all inherited ones."
 		echo >&2
 		
@@ -687,12 +675,12 @@ DEFAULT_INTERFACE_POLICY="DROP"
 DEFAULT_ROUTER_POLICY="RETURN"
 
 # Which is the filter table chains policy during firewall activation?
-FIREHOL_INPUT_ACTIVATION_POLICY="ACCEPT"
-FIREHOL_OUTPUT_ACTIVATION_POLICY="ACCEPT"
-FIREHOL_FORWARD_ACTIVATION_POLICY="ACCEPT"
+SANEWALL_INPUT_ACTIVATION_POLICY="ACCEPT"
+SANEWALL_OUTPUT_ACTIVATION_POLICY="ACCEPT"
+SANEWALL_FORWARD_ACTIVATION_POLICY="ACCEPT"
 
 # Should we drop all INVALID packets always?
-FIREHOL_DROP_INVALID=0
+SANEWALL_DROP_INVALID=0
 
 # What to do with unmatched packets?
 # To change these, simply define them the configuration file.
@@ -701,24 +689,24 @@ UNMATCHED_OUTPUT_POLICY="DROP"
 UNMATCHED_ROUTER_POLICY="DROP"
 
 # Options for iptables LOG action.
-# These options will be added to all LOG actions FireHOL will generate.
+# These options will be added to all LOG actions sanewall will generate.
 # To change them, type such a line in the configuration file.
-# FIREHOL_LOG_OPTIONS="--log-tcp-sequence --log-tcp-options --log-ip-options"
-FIREHOL_LOG_OPTIONS=""
-FIREHOL_LOG_LEVEL="warning"
-FIREHOL_LOG_MODE="LOG"
-FIREHOL_LOG_FREQUENCY="1/second"
-FIREHOL_LOG_BURST="5"
-FIREHOL_LOG_PREFIX=""
+# SANEWALL_LOG_OPTIONS="--log-tcp-sequence --log-tcp-options --log-ip-options"
+SANEWALL_LOG_OPTIONS=""
+SANEWALL_LOG_LEVEL="warning"
+SANEWALL_LOG_MODE="LOG"
+SANEWALL_LOG_FREQUENCY="1/second"
+SANEWALL_LOG_BURST="5"
+SANEWALL_LOG_PREFIX=""
 
-# If enabled, FireHOL will silently drop orphan TCP packets with ACK,FIN set.
-FIREHOL_DROP_ORPHAN_TCP_ACK_FIN=0
+# If enabled, sanewall will silently drop orphan TCP packets with ACK,FIN set.
+SANEWALL_DROP_ORPHAN_TCP_ACK_FIN=0
 
 # The client ports to be used for "default" client ports when the
 # client specified is a foreign host.
 # We give all ports above 1000 because a few systems (like Solaris)
 # use this range.
-# Note that FireHOL will ask the kernel for default client ports of
+# Note that sanewall will ask the kernel for default client ports of
 # the local host. This only applies to client ports of remote hosts.
 DEFAULT_CLIENT_PORTS="1024:65535"
 
@@ -734,32 +722,32 @@ LOCAL_CLIENT_PORTS="${LOCAL_CLIENT_PORTS_LOW}:${LOCAL_CLIENT_PORTS_HIGH}"
 # This is our version number. It is increased when the configuration
 # file commands and arguments change their meaning and usage, so that
 # the user will have to review it more precisely.
-FIREHOL_VERSION=5
+SANEWALL_CONFIG_VERSION=5
 
 
 # ----------------------------------------------------------------------
 # The initial line number of the configuration file.
-FIREHOL_LINEID="INIT"
+SANEWALL_LINEID="INIT"
 
 # Variable kernel module requirements.
 # Suggested by Fco.Felix Belmonte <ffelix@gescosoft.com>
 # Note that each of the complex services
 # may add to this variable the kernel modules it requires.
-FIREHOL_KERNEL_MODULES=""
+SANEWALL_KERNEL_MODULES=""
 #
 # In the configuration file you can write:
 #
 #                     require_kernel_module <module_name>
 # 
-# to have FireHOL require a specific module for the configurarion.
+# to have sanewall require a specific module for the configurarion.
 
-# Set this to 1 in the configuration file to have FireHOL complex
+# Set this to 1 in the configuration file to have sanewall complex
 # services' rules load NAT kernel modules too.
-FIREHOL_NAT=0
+SANEWALL_NAT=0
 
 # Set this to 1 in the configuration file if routing should be enabled
 # in the kernel.
-FIREHOL_ROUTING=0
+SANEWALL_ROUTING=0
 
 # Services may add themeselves to this variable so that the service "all" will
 # also call them.
@@ -772,23 +760,23 @@ ALL_SHOULD_ALSO_RUN=
 
 # Valid modes:
 # START, DEBUG, EXPLAIN, WIZARD, STOP, PANIC
-FIREHOL_MODE="NONE"
+SANEWALL_MODE="NONE"
 
 # If set to 1, the firewall will be saved for normal iptables processing.
-# Valid only for FIREHOL_MODE="START"
-FIREHOL_SAVE=0
+# Valid only for SANEWALL_MODE="START"
+SANEWALL_SAVE=0
 
 # If set to 1, the firewall will be restored if you don't commit it.
-# Valid only for FIREHOL_MODE="START"
-FIREHOL_TRY=0
+# Valid only for SANEWALL_MODE="START"
+SANEWALL_TRY=0
 
-# If set to 0, FireHOL will not try to load the required kernel modules.
+# If set to 0, sanewall will not try to load the required kernel modules.
 # It can be set in the configuration file.
-FIREHOL_LOAD_KERNEL_MODULES=1
+SANEWALL_LOAD_KERNEL_MODULES=1
 
-# If set to 1, FireHOL will output the commands of the configuration file
+# If set to 1, sanewall will output the commands of the configuration file
 # with variables expanded.
-FIREHOL_CONF_SHOW=1
+SANEWALL_CONF_SHOW=1
 
 
 # ------------------------------------------------------------------------------
@@ -814,19 +802,19 @@ work_runtime_error=0
 
 # This variable is used for generating dynamic chains when needed for
 # combined negative statements (AND) implied by the "not" parameter
-# to many FireHOL directives.
-# What FireHOL is doing to accomplish this, is to produce dynamically
+# to many sanewall directives.
+# What sanewall is doing to accomplish this, is to produce dynamically
 # a linked list of iptables chains with just one condition each, making
 # the packets to traverse from chain to chain when matched, to reach
 # their final destination.
-FIREHOL_DYNAMIC_CHAIN_COUNTER=1
+SANEWALL_DYNAMIC_CHAIN_COUNTER=1
 
-# If set to 0, FireHOL will not trust interface lo for all traffic.
+# If set to 0, sanewall will not trust interface lo for all traffic.
 # This means the admin could setup a firewall on lo.
-FIREHOL_TRUST_LOOPBACK=1
+SANEWALL_TRUST_LOOPBACK=1
 
 # Services API version
-FIREHOL_SERVICES_API="1"
+SANEWALL_SERVICES_API="1"
 
 
 # ------------------------------------------------------------------------------
@@ -1540,7 +1528,7 @@ rules_nfs() {
 	local x=
 	for x in ${servers}
 	do
-		local tmp="${FIREHOL_DIR}/firehol.rpcinfo.$$.${RANDOM}"
+		local tmp="${SANEWALL_DIR}/sanewall.rpcinfo.$$.${RANDOM}"
 		
 		set_work_function "Getting RPC information from server '${x}'"
 		
@@ -1659,7 +1647,7 @@ rules_nis() {
 	local x=
 	for x in ${servers}
 	do
-		local tmp="${FIREHOL_DIR}/firehol.rpcinfo.$$.${RANDOM}"
+		local tmp="${SANEWALL_DIR}/sanewall.rpcinfo.$$.${RANDOM}"
 		
 		set_work_function "Getting RPC information from server '${x}'"
 		
@@ -1707,7 +1695,7 @@ rules_nis() {
 # THIS IS OLD
 # THE NEW ONE USES THE KERNEL HELPER TO DO IT, AND THEREFORE IS A SIMPLE SERVICE
 #
-#FIREHOL_AMANDA_PORTS="850:859"
+#SANEWALL_AMANDA_PORTS="850:859"
 #
 #rules_amanda() {
 #	local mychain="${1}"; shift
@@ -1738,8 +1726,8 @@ rules_nis() {
 #	
 #	
 #	set_work_function "Setting up rules for amanda data exchange client-to-server"
-#	rule ${in}          action "$@" chain "${in}_${mychain}"  proto "tcp udp" dport "${FIREHOL_AMANDA_PORTS}" state NEW,ESTABLISHED || return 1
-#	rule ${out} reverse action "$@" chain "${out}_${mychain}" proto "tcp udp" dport "${FIREHOL_AMANDA_PORTS}" state ESTABLISHED     || return 1
+#	rule ${in}          action "$@" chain "${in}_${mychain}"  proto "tcp udp" dport "${SANEWALL_AMANDA_PORTS}" state NEW,ESTABLISHED || return 1
+#	rule ${out} reverse action "$@" chain "${out}_${mychain}" proto "tcp udp" dport "${SANEWALL_AMANDA_PORTS}" state ESTABLISHED     || return 1
 #	
 #	return 0
 #}
@@ -1811,7 +1799,7 @@ rules_nis() {
 #	rule ${out} reverse action "$@" chain "${out}_${mychain}" proto tcp sport "${c_client_ports}" dport "${s_client_ports}" state ESTABLISHED         || return 1
 #	
 #	require_kernel_module nf_conntrack_ftp
-#	test ${FIREHOL_NAT} -eq 1 && require_kernel_module nf_nat_ftp
+#	test ${SANEWALL_NAT} -eq 1 && require_kernel_module nf_nat_ftp
 #	
 #	return 0
 #}
@@ -1878,7 +1866,7 @@ rules_nis() {
 #	rule ${in}          action "$@" chain "${in}_${mychain}"  proto "udp" sport "${c_client_ports}" dport "${s_client_ports}" state ESTABLISHED         || return 1
 #	
 #	require_kernel_module nf_conntrack_tftp
-#	test ${FIREHOL_NAT} -eq 1 && require_kernel_module nf_nat_tftp
+#	test ${SANEWALL_NAT} -eq 1 && require_kernel_module nf_nat_tftp
 #	
 #	return 0
 #}
@@ -2185,14 +2173,14 @@ fi
 
 # Load all the services.
 # All these files should start with: #FHVER: 1
-cd "${FIREHOL_CONFIG_DIR}/services" || exit 1
+cd "${SANEWALL_CONFIG_DIR}/services" || exit 1
 for f in `ls *.conf 2>/dev/null`
 do
-	cd "${FIREHOL_CONFIG_DIR}/services" || exit 1
+	cd "${SANEWALL_CONFIG_DIR}/services" || exit 1
 	
 	if [ ! -O "${f}" ]
 	then
-		echo >&2 " >>> Ignoring service in '${FIREHOL_CONFIG_DIR}/services/${f}' because it is not owned by root."
+		echo >&2 " >>> Ignoring service in '${SANEWALL_CONFIG_DIR}/services/${f}' because it is not owned by root."
 		continue
 	fi
 	
@@ -2200,33 +2188,33 @@ do
 	"${EXPR_CMD}" ${n} + 0 >/dev/null 2>&1
 	if [ $? -ne 0 ]
 	then
-		echo >&2 " >>> Ignoring service in '${FIREHOL_CONFIG_DIR}/services/${f}' due to malformed header."
-	elif [ ${n} -ne ${FIREHOL_SERVICES_API} ]
+		echo >&2 " >>> Ignoring service in '${SANEWALL_CONFIG_DIR}/services/${f}' due to malformed header."
+	elif [ ${n} -ne ${SANEWALL_SERVICES_API} ]
 	then
-		echo >&2 " >>> Ignoring service '${FIREHOL_CONFIG_DIR}/services/${f}' due to incompatible API version."
+		echo >&2 " >>> Ignoring service '${SANEWALL_CONFIG_DIR}/services/${f}' due to incompatible API version."
 	else
 		n=`"${HEAD_CMD}" -n 1 "${f}" | "${CUT_CMD}" -d ':' -f 3`
 		"${EXPR_CMD}" ${n} + 0 >/dev/null 2>&1
 		if [ $? -ne 0 ]
 		then
-			echo >&2 " >>> Ignoring service in '${FIREHOL_CONFIG_DIR}/services/${f}' due to malformed API minor number."
+			echo >&2 " >>> Ignoring service in '${SANEWALL_CONFIG_DIR}/services/${f}' due to malformed API minor number."
 		else
 			if [ ${n} -gt ${FIREHOL_MINOR_VERSION} ]
 			then
-				echo >&2 " >>> Ignoring service in '${FIREHOL_CONFIG_DIR}/services/${f}' because the required MINOR version (${n}) is higher than the one provided by FireHOL (${FIREHOL_MINOR_VERSION})."
+				echo >&2 " >>> Ignoring service in '${SANEWALL_CONFIG_DIR}/services/${f}' because the required FireHOL MINOR version (${n}) is higher than the one provided by sanewall (${FIREHOL_MINOR_VERSION})."
 			else
 				source ${f}
 				ret=$?
 				if [ ${ret} -ne 0 ]
 				then
-					echo >&2 " >>> Service in '${FIREHOL_CONFIG_DIR}/services/${f}' returned code ${ret}."
+					echo >&2 " >>> Service in '${SANEWALL_CONFIG_DIR}/services/${f}' returned code ${ret}."
 					continue
 				fi
 			fi
 		fi
 	fi
 done
-cd "${FIREHOL_DEFAULT_WORKING_DIRECTORY}" || exit 1
+cd "${SANEWALL_DEFAULT_WORKING_DIRECTORY}" || exit 1
 
 
 # ------------------------------------------------------------------------------
@@ -2240,7 +2228,7 @@ cd "${FIREHOL_DEFAULT_WORKING_DIRECTORY}" || exit 1
 # ------------------------------------------------------------------------------
 
 # Fetch a URL and output it to the standard output.
-firehol_wget() {
+sanewall_wget() {
 	local url="${1}"
 	
 	require_cmd wget curl
@@ -2259,7 +2247,7 @@ firehol_wget() {
 	return 1
 }
 
-FIREHOL_ECN_SHAME_URL="http://urchin.earth.li/cgi-bin/ecn.pl?output=ip"
+SANEWALL_ECN_SHAME_URL="http://urchin.earth.li/cgi-bin/ecn.pl?output=ip"
 ecn_shame() {
 	work_realcmd_helper ${FUNCNAME} "$@"
 	
@@ -2269,26 +2257,26 @@ ecn_shame() {
 	
 	if [ `${CAT_CMD} /proc/sys/net/ipv4/tcp_ecn` -eq 1 ]
 	then
-		set_work_function "Fetching '${FIREHOL_ECN_SHAME_URL}'."
+		set_work_function "Fetching '${SANEWALL_ECN_SHAME_URL}'."
 		
 		# Reads in list of ip address and makes iptables rules to drop ecn
 		# from packets destined for those hosts.
 		# http://urchin.earth.li/ecn/
 		
-		local tmp="${FIREHOL_DIR}/ecn_shame.ips"
+		local tmp="${SANEWALL_DIR}/ecn_shame.ips"
 		
-		firehol_wget "${FIREHOL_ECN_SHAME_URL}" | ${SORT_CMD} | ${UNIQ_CMD} >"${tmp}"
+		sanewall_wget "${SANEWALL_ECN_SHAME_URL}" | ${SORT_CMD} | ${UNIQ_CMD} >"${tmp}"
 		if [ $? -ne 0 -o ! -s "${tmp}" ]
 		then
-			softwarning "Cannot fetch '${FIREHOL_ECN_SHAME_URL}'."
+			softwarning "Cannot fetch '${SANEWALL_ECN_SHAME_URL}'."
 		else
-			${MV_CMD} -f "${tmp}" "${FIREHOL_SPOOL_DIR}/ecn_shame.ips"
+			${MV_CMD} -f "${tmp}" "${SANEWALL_SPOOL_DIR}/ecn_shame.ips"
 		fi
 		
 		set_work_function "Removing ECN for all communication from/to SHAME ECN list."
 		
 		local count=0
-		for ip in `${CAT_CMD} "${FIREHOL_SPOOL_DIR}/ecn_shame.ips"`
+		for ip in `${CAT_CMD} "${SANEWALL_SPOOL_DIR}/ecn_shame.ips"`
 		do
 			local count=$[count + 1]
 			iptables -t mangle -A POSTROUTING -p tcp -d ${ip} -j ECN --ecn-tcp-remove
@@ -2363,8 +2351,8 @@ masquerade() {
 	
 	rule noowner table nat chain POSTROUTING "$@" inface any outface "${f}" action MASQUERADE || return 1
 	
-	FIREHOL_NAT=1
-	FIREHOL_ROUTING=1
+	SANEWALL_NAT=1
+	SANEWALL_ROUTING=1
 	
 	return 0
 }
@@ -2403,8 +2391,8 @@ transparent_proxy() {
 		rule table nat chain "out_trproxy.${transparent_proxy_count}" proto tcp action REDIRECT to-port ${redirect} || return 1
 	fi
 	
-	FIREHOL_NAT=1
-	FIREHOL_ROUTING=1
+	SANEWALL_NAT=1
+	SANEWALL_ROUTING=1
 	
 	return 0
 }
@@ -2456,8 +2444,8 @@ nat_helper() {
 	# we now need to keep the protocol
 	rule table nat chain "nat.${nat_count}" noowner "$@" action "${action}" to "${to}" nosoftwarnings src any dst any inface any outface any sport any dport any || return 1
 	
-	FIREHOL_NAT=1
-	FIREHOL_ROUTING=1
+	SANEWALL_NAT=1
+	SANEWALL_ROUTING=1
 	
 	return 0
 }
@@ -2847,15 +2835,15 @@ tcpmss() {
 # Check the version required by the configuration file
 # WHY:
 # We have to make sure the configuration file has been written for this version
-# of FireHOL. Note that the version command does not actually check the version
-# of firehol.sh. It checks only its release number (R5 currently).
+# of sanewall. Note that the version command does not actually check the version
+# of the script. It checks only its release number (R5 currently).
 
 version() {
         work_realcmd_helper ${FUNCNAME} "$@"
 	
-	if [ ${1} -gt ${FIREHOL_VERSION} ]
+	if [ ${1} -gt ${SANEWALL_CONFIG_VERSION} ]
 	then
-		error "Wrong version. FireHOL is v${FIREHOL_VERSION}, your script requires v${1}."
+		error "Wrong version. Sanewall provides config v${SANEWALL_CONFIG_VERSION}, your script requires v${1}."
 	fi
 }
 
@@ -2936,7 +2924,7 @@ router() {
 	create_chain filter "in_${work_name}" FORWARD in set_work_inface set_work_outface "$@" || return 1
 	create_chain filter "out_${work_name}" FORWARD out reverse "$@" || return 1
 	
-	FIREHOL_ROUTING=1
+	SANEWALL_ROUTING=1
 	
 	return 0
 }
@@ -2948,21 +2936,21 @@ postprocess() {
 	test "A${1}" = "A-ne"   && shift && local check="none"
 	test "A${1}" = "A-warn" && shift && local check="warn"
 	
-	test "${FIREHOL_MODE}" = "DEBUG"   && local check="none"
-	test "${FIREHOL_MODE}" = "EXPLAIN" && local check="none"
+	test "${SANEWALL_MODE}" = "DEBUG"   && local check="none"
+	test "${SANEWALL_MODE}" = "EXPLAIN" && local check="none"
 	
 	if [ ! ${check} = "none" ]
 	then
-		printf "runcmd '${check}' '${FIREHOL_LINEID}' " >>${FIREHOL_OUTPUT}
+		printf "runcmd '${check}' '${SANEWALL_LINEID}' " >>${SANEWALL_OUTPUT}
 	fi
 	
-	printf "%q " "$@" >>${FIREHOL_OUTPUT}
-	printf "\n" >>${FIREHOL_OUTPUT}
+	printf "%q " "$@" >>${SANEWALL_OUTPUT}
+	printf "\n" >>${SANEWALL_OUTPUT}
 	
-	if [ "${FIREHOL_MODE}" = "EXPLAIN" ]
+	if [ "${SANEWALL_MODE}" = "EXPLAIN" ]
 	then
-		${CAT_CMD} ${FIREHOL_OUTPUT}
-		${RM_CMD} -f ${FIREHOL_OUTPUT}
+		${CAT_CMD} ${SANEWALL_OUTPUT}
+		${RM_CMD} -f ${SANEWALL_OUTPUT}
 	fi
 	
 	return 0
@@ -2973,19 +2961,19 @@ runcmd() {
 	local line="${1}"; shift
 	local cmd="${1}"; shift
 	
-	"${cmd}" "$@" >${FIREHOL_OUTPUT}.log 2>&1
+	"${cmd}" "$@" >${SANEWALL_OUTPUT}.log 2>&1
 	local r=$?
 	test ${r} -gt 0 && runtime_error ${check} ${r} ${line} "${cmd}" "$@"
 	
 	return 0
 }
 
-FIREHOL_COMMAND_COUNTER=0
+SANEWALL_COMMAND_COUNTER=0
 iptables() {
 #       work_realcmd_helper ${FUNCNAME} "$@"
 	
 	postprocess iptables_cmd "$@"
-	FIREHOL_COMMAND_COUNTER=$[FIREHOL_COMMAND_COUNTER + 1]
+	SANEWALL_COMMAND_COUNTER=$[SANEWALL_COMMAND_COUNTER + 1]
 	
 	return 0
 }
@@ -3214,45 +3202,45 @@ KERNEL_CONFIG=
 if [ -f "/proc/config" ]
 then
 	KERNEL_CONFIG="/proc/config"
-	${CAT_CMD} /proc/config >"${FIREHOL_DIR}/kcfg" || KERNEL_CONFIG=
+	${CAT_CMD} /proc/config >"${SANEWALL_DIR}/kcfg" || KERNEL_CONFIG=
 fi
 
 if [ -z "${KERNEL_CONFIG}" -a -f "/proc/config.gz" ]
 then
 	KERNEL_CONFIG="/proc/config.gz"
-	zcat_cmd /proc/config.gz >"${FIREHOL_DIR}/kcfg" || KERNEL_CONFIG=
+	zcat_cmd /proc/config.gz >"${SANEWALL_DIR}/kcfg" || KERNEL_CONFIG=
 fi
 
 if [ -z "${KERNEL_CONFIG}" -a -f "/lib/modules/`${UNAME_CMD} -r`/build/.config" ]
 then
 	KERNEL_CONFIG="/lib/modules/`${UNAME_CMD} -r`/build/.config"
-	"${CAT_CMD}" "${KERNEL_CONFIG}" >"${FIREHOL_DIR}/kcfg" || KERNEL_CONFIG=
+	"${CAT_CMD}" "${KERNEL_CONFIG}" >"${SANEWALL_DIR}/kcfg" || KERNEL_CONFIG=
 fi
 
 if [ -z "${KERNEL_CONFIG}" -a -f "/boot/config-`${UNAME_CMD} -r`" ]
 then
 	KERNEL_CONFIG="/boot/config-`${UNAME_CMD} -r`"
-	"${CAT_CMD}" "${KERNEL_CONFIG}" >"${FIREHOL_DIR}/kcfg" || KERNEL_CONFIG=
+	"${CAT_CMD}" "${KERNEL_CONFIG}" >"${SANEWALL_DIR}/kcfg" || KERNEL_CONFIG=
 fi
 
 if [ -z "${KERNEL_CONFIG}" -a -f "/usr/src/linux/.config" ]
 then
 	KERNEL_CONFIG="/usr/src/linux/.config"
-	"${CAT_CMD}" "${KERNEL_CONFIG}" >"${FIREHOL_DIR}/kcfg" || KERNEL_CONFIG=
+	"${CAT_CMD}" "${KERNEL_CONFIG}" >"${SANEWALL_DIR}/kcfg" || KERNEL_CONFIG=
 fi
 
 # Did we managed to find the kernel configuration?
-if [ ! -z "{$KERNEL_CONFIG}" -a -s "${FIREHOL_DIR}/kcfg" ]
+if [ ! -z "{$KERNEL_CONFIG}" -a -s "${SANEWALL_DIR}/kcfg" ]
 then
 	# We found a kernel configuration
 	
 	# Load all the definitions for CONFIG_*_NF_* variables
 	# We grep what we care for, to make sure there is no garbage or malicious code
 	# in the file we will run.
-	"${CAT_CMD}" "${FIREHOL_DIR}/kcfg" | ${GREP_CMD} -e "^CONFIG_[A-Z0-9_]\+_NF_[A-Z0-9_]\+=[ynm]$" >"${FIREHOL_DIR}/kcfg.nf"
+	"${CAT_CMD}" "${SANEWALL_DIR}/kcfg" | ${GREP_CMD} -e "^CONFIG_[A-Z0-9_]\+_NF_[A-Z0-9_]\+=[ynm]$" >"${SANEWALL_DIR}/kcfg.nf"
 	
 	# run it to get the variables
-	source "${FIREHOL_DIR}/kcfg.nf"
+	source "${SANEWALL_DIR}/kcfg.nf"
 else
 	# We could not find a kernel configuration
 	
@@ -3260,12 +3248,12 @@ else
 	echo >&2 " "
 	echo >&2 " IMPORTANT WARNING:"
 	echo >&2 " ------------------"
-	echo >&2 " FireHOL cannot find your current kernel configuration."
+	echo >&2 " Sanewall cannot find your current kernel configuration."
 	echo >&2 " Please, either compile your kernel with /proc/config,"
 	echo >&2 " or make sure there is a valid kernel config in:"
 	echo >&2 " /usr/src/linux/.config"
 	echo >&2 " "
-	echo >&2 " Because of this, FireHOL will simply attempt to load"
+	echo >&2 " Because of this, sanewall will simply attempt to load"
 	echo >&2 " all kernel modules for the services used, without"
 	echo >&2 " being able to detect failures."
 	echo >&2 " "
@@ -3364,31 +3352,31 @@ check_kernel_module() {
 load_kernel_module() {
 	local mod="${1}"
 	
-	if [ ! ${FIREHOL_LOAD_KERNEL_MODULES} -eq 0 ]
+	if [ ! ${SANEWALL_LOAD_KERNEL_MODULES} -eq 0 ]
 	then
 		check_kernel_module ${mod}
 		if [ $? -gt 0 ]
 		then
-			runcmd warn ${FIREHOL_LINEID} modprobe_cmd ${mod} -q
-			echo >>"${FIREHOL_DIR}/modules_to_load.sh" "${MODPROBE_CMD} ${mod} -q"
+			runcmd warn ${SANEWALL_LINEID} modprobe_cmd ${mod} -q
+			echo >>"${SANEWALL_DIR}/modules_to_load.sh" "${MODPROBE_CMD} ${mod} -q"
 		fi
 	fi
 	return 0
 }
 
-# Processing-phase command to tell FireHOL to find one or more
+# Processing-phase command to tell sanewall to find one or more
 # kernel modules to load, during activation-phase.
 require_kernel_module() {
 	local new="${1}"
 	
 	local m=
-	for m in ${FIREHOL_KERNEL_MODULES}
+	for m in ${SANEWALL_KERNEL_MODULES}
 	do
 		test "${m}" = "${new}" && return 0
 	done
 	
 	set_work_function "Adding kernel module '${new}' in the list of kernel modules to load"
-	FIREHOL_KERNEL_MODULES="${FIREHOL_KERNEL_MODULES} ${new}"
+	SANEWALL_KERNEL_MODULES="${SANEWALL_KERNEL_MODULES} ${new}"
 	
 	return 0
 }
@@ -3398,7 +3386,7 @@ require_kernel_module() {
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 # ------------------------------------------------------------------------------
 #
-# INTERNAL FUNCTIONS BELLOW THIS POINT - FireHOL internals
+# INTERNAL FUNCTIONS BELLOW THIS POINT - sanewall internals
 #
 # ------------------------------------------------------------------------------
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
@@ -3411,12 +3399,12 @@ set_work_function() {
 	
 	work_function="$*"
 	
-	if [ "${FIREHOL_MODE}" = "EXPLAIN" ]
+	if [ "${SANEWALL_MODE}" = "EXPLAIN" ]
 	then
 		test ${show_explain} -eq 1 && printf "\n# %s\n" "$*"
-	elif [ ${FIREHOL_CONF_SHOW} -eq 1 ]
+	elif [ ${SANEWALL_CONF_SHOW} -eq 1 ]
 	then
-		test ${show_explain} -eq 1 && printf "\n# INFO>>> %s\n" "$*" >>${FIREHOL_OUTPUT}
+		test ${show_explain} -eq 1 && printf "\n# INFO>>> %s\n" "$*" >>${SANEWALL_OUTPUT}
 	fi
 }
 
@@ -3522,7 +3510,7 @@ close_interface() {
 			;;
 		
 		*)	
-			if [ "${FIREHOL_DROP_ORPHAN_TCP_ACK_FIN}" = "1" ]
+			if [ "${SANEWALL_DROP_ORPHAN_TCP_ACK_FIN}" = "1" ]
 			then
 				# Silently drop orphan TCP/ACK FIN packets
 				rule chain "in_${work_name}" proto tcp custom "--tcp-flags ALL ACK,FIN" action DROP || return 1
@@ -3568,7 +3556,7 @@ close_router() {
 			;;
 		
 		*)	
-			if [ "${FIREHOL_DROP_ORPHAN_TCP_ACK_FIN}" = "1" ]
+			if [ "${SANEWALL_DROP_ORPHAN_TCP_ACK_FIN}" = "1" ]
 			then
 				# Silently drop orphan TCP/ACK FIN packets
 				rule chain "in_${work_name}" proto tcp custom "--tcp-flags ALL ACK,FIN" action DROP || return 1
@@ -3601,7 +3589,7 @@ close_master() {
 	rule chain OUTPUT state RELATED action ACCEPT || return 1
 	rule chain FORWARD state RELATED action ACCEPT || return 1
 	
-	if [ "${FIREHOL_DROP_ORPHAN_TCP_ACK_FIN}" = "1" ]
+	if [ "${SANEWALL_DROP_ORPHAN_TCP_ACK_FIN}" = "1" ]
 	then
 		# Silently drop orphan TCP/ACK FIN packets
 		rule chain INPUT proto tcp custom "--tcp-flags ALL ACK,FIN" action DROP || return 1
@@ -3616,9 +3604,9 @@ close_master() {
 }
 
 
-FIREHOL_GROUP_COUNTER=0
-FIREHOL_GROUP_DEPTH=0
-FIREHOL_GROUP_STACK=()
+SANEWALL_GROUP_COUNTER=0
+SANEWALL_GROUP_DEPTH=0
+SANEWALL_GROUP_STACK=()
 group() {
         work_realcmd_primary ${FUNCNAME} "$@"
 	
@@ -3629,16 +3617,16 @@ group() {
 	case $type in
 		with|start|begin)
 			# increase the counter
-			FIREHOL_GROUP_COUNTER=$[FIREHOL_GROUP_COUNTER + 1]
+			SANEWALL_GROUP_COUNTER=$[SANEWALL_GROUP_COUNTER + 1]
 			
-			set_work_function "Starting new group No ${FIREHOL_GROUP_COUNTER}, under '${work_name}'"
+			set_work_function "Starting new group No ${SANEWALL_GROUP_COUNTER}, under '${work_name}'"
 			
 			# put the current name in the stack
-			FIREHOL_GROUP_STACK[$FIREHOL_GROUP_DEPTH]=${work_name}
-			FIREHOL_GROUP_DEPTH=$[FIREHOL_GROUP_DEPTH + 1]
+			SANEWALL_GROUP_STACK[$SANEWALL_GROUP_DEPTH]=${work_name}
+			SANEWALL_GROUP_DEPTH=$[SANEWALL_GROUP_DEPTH + 1]
 			
 			# name for the new chain
-			mychain="group${FIREHOL_GROUP_COUNTER}"
+			mychain="group${SANEWALL_GROUP_COUNTER}"
 			
 			# create the new chain
 			create_chain filter "in_${mychain}" "in_${work_name}" in "$@" || return 1
@@ -3649,18 +3637,18 @@ group() {
 			;;
 		
 		end|stop|close)
-			if [ ${FIREHOL_GROUP_DEPTH} -eq 0 ]
+			if [ ${SANEWALL_GROUP_DEPTH} -eq 0 ]
 			then
 				error "There is no group open to close."
 				return 1
 			fi
 			
 			# pop one name from the stack
-			FIREHOL_GROUP_DEPTH=$[FIREHOL_GROUP_DEPTH - 1]
+			SANEWALL_GROUP_DEPTH=$[SANEWALL_GROUP_DEPTH - 1]
 			
-			set_work_function "Closing group '${work_name}'. Now working under '${FIREHOL_GROUP_STACK[$FIREHOL_GROUP_DEPTH]}'"
+			set_work_function "Closing group '${work_name}'. Now working under '${SANEWALL_GROUP_STACK[$SANEWALL_GROUP_DEPTH]}'"
 			
-			work_name=${FIREHOL_GROUP_STACK[$FIREHOL_GROUP_DEPTH]}
+			work_name=${SANEWALL_GROUP_STACK[$SANEWALL_GROUP_DEPTH]}
 			;;
 		
 		*)
@@ -3673,7 +3661,7 @@ group() {
 }
 
 close_all_groups() {
-	while [ ${FIREHOL_GROUP_DEPTH} -gt 0 ]
+	while [ ${SANEWALL_GROUP_DEPTH} -gt 0 ]
 	do
 		group close || return 1
 	done
@@ -3684,11 +3672,11 @@ close_all_groups() {
 
 
 # ------------------------------------------------------------------------------
-# rule - the heart of FireHOL - iptables commands generation
+# rule - the heart of sanewall - iptables commands generation
 # WHY:
-# This is the function that gives all the magic to FireHOL. Actually it is a
+# This is the function that gives all the magic to sanewall. Actually it is a
 # wrapper for iptables, producing multiple iptables commands based on its
-# arguments. The rest of FireHOL is simply a "driver" for this function.
+# arguments. The rest of sanewall is simply a "driver" for this function.
 
 
 # rule_action_param() is a function - part of rule() - to create the final iptables cmd
@@ -3696,7 +3684,7 @@ close_all_groups() {
 
 # rule_action_param() should only be used within rule() - no other place
 
-FIREHOL_ACCEPT_CHAIN_COUNT=0
+SANEWALL_ACCEPT_CHAIN_COUNT=0
 rule_action_param() {
 	local action="${1}"; shift
 	local protocol="${1}"; shift
@@ -3767,11 +3755,11 @@ rule_action_param() {
 							local accept_limit_chain="`echo "ACCEPT LIMIT ${freq} ${burst} ${overflow}" | tr " /." "___"`"
 							
 							# does the chain we need already exist?
-							if [ ! -f "${FIREHOL_CHAINS_DIR}/${accept_limit_chain}" ]
+							if [ ! -f "${SANEWALL_CHAINS_DIR}/${accept_limit_chain}" ]
 							then
 								# the chain does not exist. create it.
 								iptables ${table} -N "${accept_limit_chain}"
-								touch "${FIREHOL_CHAINS_DIR}/${accept_limit_chain}"
+								touch "${SANEWALL_CHAINS_DIR}/${accept_limit_chain}"
 								
 								# first, if the traffic is not a NEW connection, allow it.
 								# doing this first will speed up normal traffic.
@@ -3782,16 +3770,16 @@ rule_action_param() {
 								
 								# log the overflow NEW connections reaching this step within the new chain
 								local -a logopts_arg=()
-								if [ "${FIREHOL_LOG_MODE}" = "ULOG" ]
+								if [ "${SANEWALL_LOG_MODE}" = "ULOG" ]
 								then
-									local -a logopts_arg=("--ulog-prefix=${FIREHOL_LOG_PREFIX}LIMIT_OVERFLOW:")
-								elif [ "${FIREHOL_LOG_MODE}" = "NFLOG" ]
+									local -a logopts_arg=("--ulog-prefix=${SANEWALL_LOG_PREFIX}LIMIT_OVERFLOW:")
+								elif [ "${SANEWALL_LOG_MODE}" = "NFLOG" ]
 								then
-									local -a logopts_arg=("--nflog-prefix=${FIREHOL_LOG_PREFIX}LIMIT_OVERFLOW:")
+									local -a logopts_arg=("--nflog-prefix=${SANEWALL_LOG_PREFIX}LIMIT_OVERFLOW:")
 								else
-									local -a logopts_arg=("--log-level" "${FIREHOL_LOG_LEVEL}" "--log-prefix=${FIREHOL_LOG_PREFIX}LIMIT_OVERFLOW:")
+									local -a logopts_arg=("--log-level" "${SANEWALL_LOG_LEVEL}" "--log-prefix=${SANEWALL_LOG_PREFIX}LIMIT_OVERFLOW:")
 								fi
-								iptables ${table} -A "${accept_limit_chain}" -m limit --limit "${FIREHOL_LOG_FREQUENCY}" --limit-burst "${FIREHOL_LOG_BURST}" -j ${FIREHOL_LOG_MODE} ${FIREHOL_LOG_OPTIONS} "${logopts_arg[@]}"
+								iptables ${table} -A "${accept_limit_chain}" -m limit --limit "${SANEWALL_LOG_FREQUENCY}" --limit-burst "${SANEWALL_LOG_BURST}" -j ${SANEWALL_LOG_MODE} ${SANEWALL_LOG_OPTIONS} "${logopts_arg[@]}"
 								
 								# if the overflow is to be rejected is tcp, reject it with TCP-RESET
 								if [ "${overflow}" = "REJECT" ]
@@ -3837,11 +3825,11 @@ rule_action_param() {
 							local accept_recent_chain="`echo "ACCEPT RECENT $name $seconds $hits" | tr " /." "___"`"
 							
 							# does the chain we need already exist?
-							if [ ! -f "${FIREHOL_CHAINS_DIR}/${accept_recent_chain}" ]
+							if [ ! -f "${SANEWALL_CHAINS_DIR}/${accept_recent_chain}" ]
 							then
 								# the chain does not exist. create it.
 								iptables ${table} -N "${accept_recent_chain}"
-								touch "${FIREHOL_CHAINS_DIR}/${accept_recent_chain}"
+								touch "${SANEWALL_CHAINS_DIR}/${accept_recent_chain}"
 								
 								# first, if the traffic is not a NEW connection, allow it.
 								# doing this first will speed up normal traffic.
@@ -3873,11 +3861,11 @@ rule_action_param() {
 						local -a action_param=()
 						
 						# does the knock chain exists?
-						if [ ! -f "${FIREHOL_CHAINS_DIR}/${name}" ]
+						if [ ! -f "${SANEWALL_CHAINS_DIR}/${name}" ]
 						then
 							# the chain does not exist. create it.
 							iptables ${table} -N "${name}"
-							touch "${FIREHOL_CHAINS_DIR}/${name}"
+							touch "${SANEWALL_CHAINS_DIR}/${name}"
 							
 							iptables -A "${name}" -m state --state ESTABLISHED -j ACCEPT
 							
@@ -4687,7 +4675,7 @@ rule() {
 					loglevel="${2}"
 					shift 2
 				else
-					loglevel="${FIREHOL_LOG_LEVEL}"
+					loglevel="${SANEWALL_LOG_LEVEL}"
 				fi
 				;;
 				
@@ -4704,7 +4692,7 @@ rule() {
 					loglevel="${2}"
 					shift 2
 				else
-					loglevel="${FIREHOL_LOG_LEVEL}"
+					loglevel="${SANEWALL_LOG_LEVEL}"
 				fi
 				;;
 				
@@ -4842,8 +4830,8 @@ rule() {
 			# In this case, bellow we add after all negatives, the original
 			# action of the rule.
 			
-			local negative_chain="${chain}.${FIREHOL_DYNAMIC_CHAIN_COUNTER}"
-			FIREHOL_DYNAMIC_CHAIN_COUNTER="$[FIREHOL_DYNAMIC_CHAIN_COUNTER + 1]"
+			local negative_chain="${chain}.${SANEWALL_DYNAMIC_CHAIN_COUNTER}"
+			SANEWALL_DYNAMIC_CHAIN_COUNTER="$[SANEWALL_DYNAMIC_CHAIN_COUNTER + 1]"
 			
 			iptables ${table} -N "${negative_chain}"
 			local negative_action="${action}"
@@ -5418,14 +5406,14 @@ rule() {
 	
 	# log mode selection
 	local -a logopts_arg=()
-	if [ "${FIREHOL_LOG_MODE}" = "ULOG" ]
+	if [ "${SANEWALL_LOG_MODE}" = "ULOG" ]
 	then
-		local -a logopts_arg=("--ulog-prefix=${FIREHOL_LOG_PREFIX}${logtxt}:")
-	elif [ "${FIREHOL_LOG_MODE}" = "NFLOG" ]
+		local -a logopts_arg=("--ulog-prefix=${SANEWALL_LOG_PREFIX}${logtxt}:")
+	elif [ "${SANEWALL_LOG_MODE}" = "NFLOG" ]
 	then
-		local -a logopts_arg=("--nflog-prefix=${FIREHOL_LOG_PREFIX}${logtxt}:")
+		local -a logopts_arg=("--nflog-prefix=${SANEWALL_LOG_PREFIX}${logtxt}:")
 	else
-		local -a logopts_arg=("--log-level" "${loglevel}" "--log-prefix=${FIREHOL_LOG_PREFIX}${logtxt}:")
+		local -a logopts_arg=("--log-level" "${loglevel}" "--log-prefix=${SANEWALL_LOG_PREFIX}${logtxt}:")
 	fi
 	
 	# log / loglimit
@@ -5434,11 +5422,11 @@ rule() {
 			;;
 		
 		limit)
-			iptables ${table} -A "${chain}" "${basecmd[@]}" ${custom} -m limit --limit "${FIREHOL_LOG_FREQUENCY}" --limit-burst "${FIREHOL_LOG_BURST}" -j ${FIREHOL_LOG_MODE} ${FIREHOL_LOG_OPTIONS} "${logopts_arg[@]}"
+			iptables ${table} -A "${chain}" "${basecmd[@]}" ${custom} -m limit --limit "${SANEWALL_LOG_FREQUENCY}" --limit-burst "${SANEWALL_LOG_BURST}" -j ${SANEWALL_LOG_MODE} ${SANEWALL_LOG_OPTIONS} "${logopts_arg[@]}"
 			;;
 			
 		normal)
-			iptables ${table} -A "${chain}" "${basecmd[@]}" ${custom}  -j ${FIREHOL_LOG_MODE} ${FIREHOL_LOG_OPTIONS} "${logopts_arg[@]}"
+			iptables ${table} -A "${chain}" "${basecmd[@]}" ${custom}  -j ${SANEWALL_LOG_MODE} ${SANEWALL_LOG_OPTIONS} "${logopts_arg[@]}"
 			;;
 			
 		*)
@@ -5480,7 +5468,7 @@ softwarning() {
 	echo >&2 "WHAT   : ${work_function}"
 	echo >&2 "WHY    :" "$@"
 	printf >&2 "COMMAND: "; printf >&2 "%q " "${work_realcmd[@]}"; echo >&2
-	echo >&2 "SOURCE : line ${FIREHOL_LINEID} of ${FIREHOL_CONFIG}"
+	echo >&2 "SOURCE : line ${SANEWALL_LINEID} of ${SANEWALL_CONFIG}"
 	echo >&2
 	
 	return 0
@@ -5490,11 +5478,11 @@ softwarning() {
 # error - error reporting while still parsing the configuration file
 # WHY:
 # This is the error handler that presents to the user detected errors during
-# processing FireHOL's configuration file.
-# This command is directly called by other functions of FireHOL.
+# processing sanewall's configuration file.
+# This command is directly called by other functions of sanewall.
 
 error() {
-	test "${FIREHOL_MODE}" = "START" && syslog err "Error '${@}' when '${work_function}' at ${FIREHOL_CONFIG} line ${FIREHOL_LINEID}"
+	test "${SANEWALL_MODE}" = "START" && syslog err "Error '${@}' when '${work_function}' at ${SANEWALL_CONFIG} line ${SANEWALL_LINEID}"
 	
 	work_error=$[work_error + 1]
 	echo >&2
@@ -5503,7 +5491,7 @@ error() {
 	echo >&2 "WHAT   : ${work_function}"
 	echo >&2 "WHY    :" "$@"
 	printf >&2 "COMMAND: "; printf >&2 "%q " "${work_realcmd[@]}"; echo >&2
-	echo >&2 "SOURCE : line ${FIREHOL_LINEID} of ${FIREHOL_CONFIG}"
+	echo >&2 "SOURCE : line ${SANEWALL_LINEID} of ${SANEWALL_CONFIG}"
 	echo >&2
 	
 	return 0
@@ -5549,20 +5537,20 @@ runtime_error() {
 	local ret="${1}"; shift
 	local line="${1}"; shift
 	
-	syslog err "Runtime ${type} '${id}'. Source ${FIREHOL_CONFIG} line ${line}"
+	syslog err "Runtime ${type} '${id}'. Source ${SANEWALL_CONFIG} line ${line}"
 	
 	echo >&2
 	echo >&2
 	echo >&2 "--------------------------------------------------------------------------------"
 	echo >&2 "${type} : ${id}"
 	echo >&2 "WHAT    : A runtime command failed to execute (returned error ${ret})."
-	echo >&2 "SOURCE  : line ${line} of ${FIREHOL_CONFIG}"
+	echo >&2 "SOURCE  : line ${line} of ${SANEWALL_CONFIG}"
 	printf >&2 "COMMAND : "
 	printf >&2 "%q " "$@"
 	printf >&2 "\n"
 	echo >&2 "OUTPUT  : "
 	echo >&2
-	${CAT_CMD} ${FIREHOL_OUTPUT}.log
+	${CAT_CMD} ${SANEWALL_OUTPUT}.log
 	echo >&2
 	
 	return 0
@@ -5573,13 +5561,13 @@ runtime_error() {
 # chain_exists - find if chain name has already being specified
 # WHY:
 # We have to make sure each service gets its own chain.
-# Although FireHOL chain naming makes chains with unique names, this is just
+# Although sanewall chain naming makes chains with unique names, this is just
 # an extra sanity check.
 
 chain_exists() {
 	local chain="${1}"
 	
-	test -f "${FIREHOL_CHAINS_DIR}/${chain}" && return 1
+	test -f "${SANEWALL_CHAINS_DIR}/${chain}" && return 1
 	return 0
 }
 
@@ -5603,7 +5591,7 @@ create_chain() {
 	test $? -eq 1 && error "Chain '${newchain}' already exists." && return 1
 	
 	iptables -t ${table} -N "${newchain}" || return 1
-	${TOUCH_CMD} "${FIREHOL_CHAINS_DIR}/${newchain}"
+	${TOUCH_CMD} "${SANEWALL_CHAINS_DIR}/${newchain}"
 	
 	if [ ! -z "${oldchain}" ]
 	then
@@ -5617,7 +5605,7 @@ create_chain() {
 # ------------------------------------------------------------------------------
 # smart_function - find the valid service definition for a service
 # WHY:
-# FireHOL supports simple and complex services. This function first tries to
+# Sanewall supports simple and complex services. This function first tries to
 # detect if there are the proper variables set for a simple service, and if
 # they do not exist, it then tries to find the complex function definition for
 # the service.
@@ -5743,7 +5731,7 @@ simple_service() {
 		require_kernel_module $x || return 1
 	done
 	
-	if [ ${FIREHOL_NAT} -eq 1 ]
+	if [ ${SANEWALL_NAT} -eq 1 ]
 	then
 		local varname="require_${server}_nat_modules"
 		eval local value="\$${varname}"
@@ -5764,7 +5752,7 @@ simple_service() {
 					;;
 		esac
 		
-		if [ ${FIREHOL_NAT} -eq 1 ]
+		if [ ${SANEWALL_NAT} -eq 1 ]
 		then
 			case "${x}" in
 				netbios_ns|netlink|sane)
@@ -5784,12 +5772,12 @@ simple_service() {
 }
 
 show_work_realcmd() {
-	test "${FIREHOL_MODE}" = "EXPLAIN" && return 0
+	test "${SANEWALL_MODE}" = "EXPLAIN" && return 0
 	
 	(
 		printf "\n\n"
 		printf "# === CONFIGURATION STATEMENT =================================================\n"
-		printf "# CONF:%3s>>>	" ${FIREHOL_LINEID}
+		printf "# CONF:%3s>>>	" ${SANEWALL_LINEID}
 		
 		case $1 in
 			2)	printf "	"
@@ -5799,22 +5787,22 @@ show_work_realcmd() {
 		
 		printf "%q " "${work_realcmd[@]}"
 		printf "\n\n"
-	) >>${FIREHOL_OUTPUT}
+	) >>${SANEWALL_OUTPUT}
 }
 
 work_realcmd_primary() {
 	work_realcmd=("$@")
-	test ${FIREHOL_CONF_SHOW} -eq 1 && show_work_realcmd 1
+	test ${SANEWALL_CONF_SHOW} -eq 1 && show_work_realcmd 1
 }
 
 work_realcmd_secondary() {
 	work_realcmd=("$@")
-	test ${FIREHOL_CONF_SHOW} -eq 1 && show_work_realcmd 2
+	test ${SANEWALL_CONF_SHOW} -eq 1 && show_work_realcmd 2
 }
 
 work_realcmd_helper() {	
 	work_realcmd=("$@")
-	test ${FIREHOL_CONF_SHOW} -eq 1 && show_work_realcmd 3
+	test ${SANEWALL_CONF_SHOW} -eq 1 && show_work_realcmd 3
 }
 
 wait_for_interface() {
@@ -5880,11 +5868,11 @@ KERNELMAJ=`${UNAME_CMD} -r | ${SED_CMD}                   -e 's,\..*,,'`
 KERNELMIN=`${UNAME_CMD} -r | ${SED_CMD} -e 's,[^\.]*\.,,' -e 's,[.-].*,,'`
 
 if [ "$KERNELMAJ" -lt 2 ] ; then
-	echo >&2 "FireHOL requires a kernel version higher than 2.3."
+	echo >&2 "Sanewall requires a kernel version higher than 2.3."
 	exit 0
 fi
 if [ "$KERNELMAJ" -eq 2 -a "$KERNELMIN" -lt 3 ] ; then
-	echo >&2 "FireHOL requires a kernel version higher than 2.3."
+	echo >&2 "Sanewall requires a kernel version higher than 2.3."
 	exit 0
 fi
 
@@ -5911,34 +5899,34 @@ shift
 case "${arg}" in
 	explain)
 		test ! -z "${1}" && softwarning "Arguments after parameter '${arg}' are ignored."
-		FIREHOL_MODE="EXPLAIN"
+		SANEWALL_MODE="EXPLAIN"
 		;;
 	
 	helpme|wizard)
 		test ! -z "${1}" && softwarning "Arguments after parameter '${arg}' are ignored."
-		FIREHOL_MODE="WIZARD"
+		SANEWALL_MODE="WIZARD"
 		;;
 	
 	try)
 		test ! -z "${1}" && softwarning "Arguments after parameter '${arg}' are ignored."
-		FIREHOL_MODE="START"
-		FIREHOL_TRY=1
+		SANEWALL_MODE="START"
+		SANEWALL_TRY=1
 		;;
 	
 	start)
 		test ! -z "${1}" && softwarning "Arguments after parameter '${arg}' are ignored."
-		FIREHOL_MODE="START"
-		FIREHOL_TRY=0
+		SANEWALL_MODE="START"
+		SANEWALL_TRY=0
 		;;
 	
 	stop)
-		FIREHOL_MODE="STOP"
+		SANEWALL_MODE="STOP"
 		test ! -z "${1}" && softwarning "Arguments after parameter '${arg}' are ignored."
 		
-		test -f "${FIREHOL_LOCK_DIR}/firehol" && ${RM_CMD} -f "${FIREHOL_LOCK_DIR}/firehol"
-		test -f "${FIREHOL_LOCK_DIR}/iptables" && ${RM_CMD} -f "${FIREHOL_LOCK_DIR}/iptables"
+		test -f "${SANEWALL_LOCK_DIR}/sanewall" && ${RM_CMD} -f "${SANEWALL_LOCK_DIR}/sanewall"
+		test -f "${SANEWALL_LOCK_DIR}/iptables" && ${RM_CMD} -f "${SANEWALL_LOCK_DIR}/iptables"
 		
-		echo -n $"FireHOL: Clearing Firewall:"
+		echo -n $"Sanewall: Clearing Firewall:"
 		load_kernel_module ip_tables
 		tables=`${CAT_CMD} /proc/net/ip_tables_names`
 		for t in ${tables}
@@ -5954,7 +5942,7 @@ case "${arg}" in
 				iptables_cmd -t "${t}" -P "${c}" ACCEPT
 			done
 		done
-		success $"FireHOL: Clearing Firewall:"
+		success $"Sanewall: Clearing Firewall:"
 		echo
 		
 		exit 0
@@ -5962,13 +5950,13 @@ case "${arg}" in
 	
 	restart|force-reload)
 		test ! -z "${1}" && softwarning "Arguments after parameter '${arg}' are ignored."
-		FIREHOL_MODE="START"
+		SANEWALL_MODE="START"
 		;;
 	
 	condrestart)
 		test ! -z "${1}" && softwarning "Arguments after parameter '${arg}' are ignored."
-		test -f "${FIREHOL_LOCK_DIR}/firehol" && exit 0
-		FIREHOL_MODE="START"
+		test -f "${SANEWALL_LOCK_DIR}/sanewall" && exit 0
+		SANEWALL_MODE="START"
 		;;
 	
 	status)
@@ -5995,7 +5983,7 @@ case "${arg}" in
 		;;
 	
 	panic)
-		FIREHOL_MODE="PANIC"
+		SANEWALL_MODE="PANIC"
 		ssh_src=
 		ssh_sport="0:65535"
 		ssh_dport="0:65535"
@@ -6011,7 +5999,7 @@ case "${arg}" in
 		fi
 		
 		syslog info "Starting PANIC mode (SSH SOURCE_IP=${ssh_src} SOURCE_PORTS=${ssh_sport} DESTINATION_PORTS=${ssh_dport})"
-		echo -n $"FireHOL: Blocking all communications:"
+		echo -n $"Sanewall: Blocking all communications:"
 		load_kernel_module ip_tables
 		tables=`${CAT_CMD} /proc/net/ip_tables_names`
 		for t in ${tables}
@@ -6034,7 +6022,7 @@ case "${arg}" in
 				iptables_cmd -t "${t}" -A "${c}" -j DROP
 			done
 		done
-		success $"FireHOL: Blocking all communications:"
+		success $"Sanewall: Blocking all communications:"
 		echo
 		
 		exit 0
@@ -6042,36 +6030,36 @@ case "${arg}" in
 	
 	save)
 		test ! -z "${1}" && softwarning "Arguments after parameter '${arg}' are ignored."
-		FIREHOL_MODE="START"
-		FIREHOL_SAVE=1
+		SANEWALL_MODE="START"
+		SANEWALL_SAVE=1
 		;;
 		
 	debug)
 		test ! -z "${1}" && softwarning "Arguments after parameter '${arg}' are ignored."
-		FIREHOL_MODE="DEBUG"
+		SANEWALL_MODE="DEBUG"
 		;;
 	
 	*)	if [ ! -z "${arg}" -a -f "${arg}" ]
 		then
-			FIREHOL_MODE="START"
-			FIREHOL_TRY=1
-			FIREHOL_CONFIG="${arg}"
+			SANEWALL_MODE="START"
+			SANEWALL_TRY=1
+			SANEWALL_CONFIG="${arg}"
 			arg="${1}"
 			test "${arg}" = "--" && arg="" && shift
 			test -z "${arg}" && arg="try"
 			
 			case "${arg}" in
 				start)
-					FIREHOL_TRY=0
+					SANEWALL_TRY=0
 					;;
 					
 				try)
-					FIREHOL_TRY=1
+					SANEWALL_TRY=1
 					;;
 					
 				debug)
-					FIREHOL_MODE="DEBUG"
-					FIREHOL_TRY=0
+					SANEWALL_MODE="DEBUG"
+					SANEWALL_TRY=0
 					;;
 				
 				*)
@@ -6081,18 +6069,19 @@ case "${arg}" in
 			esac
 		else
 		${CAT_CMD} <<EOF
-$Id$
+Sanewall version $VERSION
+(C) Copyright 2012, Phil Whineray <phil.whineray@gmail.com>
 (C) Copyright 2002-2007, Costa Tsaousis <costa@tsaousis.gr>
-FireHOL is distributed under GPL.
+Sanewall is distributed under the GPL v2+.
 
 EOF
 
 		${CAT_CMD} <<EOF
-FireHOL supports the following command line arguments (only one of them):
+Sanewall supports the following command line arguments (only one of them):
 
 	start		to activate the firewall configuration.
 			The configuration is expected to be found in
-			${FIREHOL_CONFIG_DIR}/firehol.conf
+			${SANEWALL_CONFIG_DIR}/sanewall.conf
 			
 	try		to activate the firewall, but wait until
 			the user types the word "commit". If this word
@@ -6129,9 +6118,9 @@ FireHOL supports the following command line arguments (only one of them):
 			directives. It also gives the iptables commands
 			for each directive together with reasoning.
 			
-	helpme	or	to enter a wizard mode where FireHOL will try
+	helpme	or	to enter a wizard mode where sanewall will try
 	wizard		to figure out the configuration you need.
-			You can redirect the standard output of FireHOL to
+			You can redirect the standard output of sanewall to
 			a file to get the config to this file.
 			
 	<a filename>	a different configuration file.
@@ -6143,7 +6132,7 @@ FireHOL supports the following command line arguments (only one of them):
 
 -------------------------------------------------------------------------
 
-FireHOL supports the following services (sorted by name):
+Sanewall supports the following services (sorted by name):
 EOF
 
 
@@ -6208,23 +6197,23 @@ Please note that the service:
 		server custom imap tcp/143 default accept
 
 
-For more information about FireHOL, please refer to:
+For more information about sanewall, please refer to:
 
-		http://firehol.sourceforge.net
+		http://www.sanewall.org
 
 -------------------------------------------------------------------------
-FireHOL controls your firewall. You should want to get updates quickly.
+Sanewall controls your firewall. You should want to get updates quickly.
 Subscribe (at the home page) to get notified of new releases.
 -------------------------------------------------------------------------
 
-YOU DO NOT KNOW WHAT TO DO? FireHOL can help you! Just run it with the
+YOU DO NOT KNOW WHAT TO DO? Sanewall can help you! Just run it with the
 argument 'helpme' and it will generate its configuration file for this
 machine. Your running firewall will not be altered or stopped, and no
 systems settings will be modified. Just run:
 
-${FIREHOL_FILE} helpme >/tmp/firehol.conf
+${SANEWALL_FILE} helpme >/tmp/sanewall.conf
 
-and you will get the configuration written to /tmp/firehol.conf
+and you will get the configuration written to /tmp/sanewall.conf
 
 EOF
 		exit 1
@@ -6236,12 +6225,12 @@ esac
 # Remove the next arg if it is --
 test "${1}" = "--" && shift
 
-if [ "${FIREHOL_MODE}" = "START" -o "${FIREHOL_MODE}" = "DEBUG" ]
+if [ "${SANEWALL_MODE}" = "START" -o "${SANEWALL_MODE}" = "DEBUG" ]
 then
-	if [ ! -f "${FIREHOL_CONFIG}" ]
+	if [ ! -f "${SANEWALL_CONFIG}" ]
 	then
-		echo -n $"FireHOL config ${FIREHOL_CONFIG} not found:"
-		failure $"FireHOL config ${FIREHOL_CONFIG} not found:"
+		echo -n $"Sanewall config ${SANEWALL_CONFIG} not found:"
+		failure $"Sanewall config ${SANEWALL_CONFIG} not found:"
 		echo
 		exit 1
 	fi
@@ -6258,36 +6247,37 @@ fi
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 # ------------------------------------------------------------------------------
 
-if [ "${FIREHOL_MODE}" = "EXPLAIN" ]
+if [ "${SANEWALL_MODE}" = "EXPLAIN" ]
 then
-	FIREHOL_CONFIG="Interactive User Input"
-	FIREHOL_LINEID="1"
+	SANEWALL_CONFIG="Interactive User Input"
+	SANEWALL_LINEID="1"
 	
-	FIREHOL_TEMP_CONFIG="${FIREHOL_DIR}/firehol.conf"
+	SANEWALL_TEMP_CONFIG="${SANEWALL_DIR}/sanewall.conf"
 	
-	echo "version ${FIREHOL_VERSION}" >"${FIREHOL_TEMP_CONFIG}"
-	version ${FIREHOL_VERSION}
+	echo "version ${SANEWALL_CONFIG_VERSION}" >"${SANEWALL_TEMP_CONFIG}"
+	version ${SANEWALL_CONFIG_VERSION}
 	
 	${CAT_CMD} <<EOF
 
-$Id$
+Sanewall version $VERSION
+(C) Copyright 2012, Phil Whineray <phil.whineray@gmail.com>
 (C) Copyright 2003, Costa Tsaousis <costa@tsaousis.gr>
-FireHOL is distributed under GPL.
-Home Page: http://firehol.sourceforge.net
+Sanewall is distributed under the GPL v2+.
+Home Page: http://www.sanewall.org
 
 --------------------------------------------------------------------------------
-FireHOL controls your firewall. You should want to get updates quickly.
+Sanewall controls your firewall. You should want to get updates quickly.
 Subscribe (at the home page) to get notified of new releases.
 --------------------------------------------------------------------------------
 
-You can now start typing FireHOL configuration directives.
+You can now start typing sanewall configuration directives.
 Special interactive commands: help, show, quit
 
 EOF
 	
 	while [ 1 = 1 ]
 	do
-		read -p "# FireHOL [${work_cmd}:${work_name}] > " -e -r
+		read -p "# Sanewall [${work_cmd}:${work_name}] > " -e -r
 		test -z "${REPLY}" && continue
 		
 		set_work_function -ne "Executing user input"
@@ -6300,7 +6290,7 @@ EOF
 		case "${1}" in
 			help)
 				${CAT_CMD} <<EOF
-You can use anything a FireHOL configuration file accepts, including variables,
+You can use anything a sanewall configuration file accepts, including variables,
 loops, etc. Take only care to write loops in one row.
 
 Additionaly, you can use the following commands:
@@ -6323,14 +6313,14 @@ EOF
 				
 			show)
 				echo
-				${CAT_CMD} "${FIREHOL_TEMP_CONFIG}"
+				${CAT_CMD} "${SANEWALL_TEMP_CONFIG}"
 				echo
 				break
 				;;
 				
 			quit)
 				echo
-				${CAT_CMD} "${FIREHOL_TEMP_CONFIG}"
+				${CAT_CMD} "${SANEWALL_TEMP_CONFIG}"
 				echo
 				exit 1
 				;;
@@ -6344,7 +6334,7 @@ EOF
 				${CAT_CMD} <<EOF
 
 # \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-# Cmd Line : ${FIREHOL_LINEID}
+# Cmd Line : ${SANEWALL_LINEID}
 # Command  : ${REPLY}
 EOF
 				eval "$@"
@@ -6354,14 +6344,14 @@ EOF
 				else
 					if [ "${1}" = "interface" -o "${1}" = "router" ]
 					then
-						echo >>"${FIREHOL_TEMP_CONFIG}"
+						echo >>"${SANEWALL_TEMP_CONFIG}"
 					else
-						printf "	" >>"${FIREHOL_TEMP_CONFIG}"
+						printf "	" >>"${SANEWALL_TEMP_CONFIG}"
 					fi
 					
-					printf "%s\n" "${REPLY}" >>"${FIREHOL_TEMP_CONFIG}"
+					printf "%s\n" "${REPLY}" >>"${SANEWALL_TEMP_CONFIG}"
 					
-					FIREHOL_LINEID=$[FIREHOL_LINEID + 1]
+					SANEWALL_LINEID=$[SANEWALL_LINEID + 1]
 					
 					printf "\n# > OK <\n"
 				fi
@@ -6387,7 +6377,7 @@ fi
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 # ------------------------------------------------------------------------------
 
-if [ "${FIREHOL_MODE}" = "WIZARD" ]
+if [ "${SANEWALL_MODE}" = "WIZARD" ]
 then
 	# require commands for wizard mode
 	require_cmd ip
@@ -6566,7 +6556,7 @@ then
 		) | ${SORT_CMD} | ${UNIQ_CMD} | ${TR_CMD} "\n" " "
 	}
 	
-	cd "${FIREHOL_DIR}"
+	cd "${SANEWALL_DIR}"
 	"${MKDIR_CMD}" ports
 	"${MKDIR_CMD}" keys
 	cd ports
@@ -6575,17 +6565,18 @@ then
 	
 	"${CAT_CMD}" >&2 <<EOF
 
-$Id$
+Sanewall version $VERSION
+(C) Copyright 2012, Phil Whineray <phil.whineray@gmail.com>
 (C) Copyright 2003, Costa Tsaousis <costa@tsaousis.gr>
-FireHOL is distributed under GPL.
-Home Page: http://firehol.sourceforge.net
+Sanewall is distributed under the GPL v2+.
+Home Page: http://www.sanewall.org
 
 --------------------------------------------------------------------------------
-FireHOL controls your firewall. You should want to get updates quickly.
+Sanewall controls your firewall. You should want to get updates quickly.
 Subscribe (at the home page) to get notified of new releases.
 --------------------------------------------------------------------------------
 
-FireHOL will now try to figure out its configuration file on this system.
+Sanewall will now try to figure out its configuration file on this system.
 Please have all the services and network interfaces on this system running.
 
 Your running firewall will not be stopped or altered.
@@ -6594,7 +6585,7 @@ You can re-run the same command with output redirection to get the config
 to a file. Example:
 
 EOF
-	echo >&2 "${FIREHOL_FILE} helpme >/tmp/firehol.conf"
+	echo >&2 "${SANEWALL_FILE} helpme >/tmp/sanewall.conf"
 	echo >&2 
 	echo >&2 
 		
@@ -6652,7 +6643,7 @@ EOF
 	echo >&2 
 	
 	${CAT_CMD} <<EOF
-#!${FIREHOL_FILE}
+#!${SANEWALL_FILE}
 # $Id$
 # 
 # This config will have the same effect as NO PROTECTION!
@@ -6754,7 +6745,7 @@ EOF
 		) | ${SORT_CMD} | ${UNIQ_CMD}
 		
 		echo
-		echo "	# The following ${iface} services are not known by FireHOL:"
+		echo "	# The following ${iface} services are not known by sanewall:"
 		${CAT_CMD} unknown.ports | ${FOLD_CMD} -s -w 65 | ${SED_CMD} "s|^ *|\t# |"
 		echo
 		
@@ -6936,9 +6927,9 @@ EOF
 	echo
 	echo "# The above $i interfaces were found active at this moment."
 	echo "# Add more interfaces that can potentially be activated in the future."
-	echo "# FireHOL will not complain if you setup a firewall on an interface that is"
+	echo "# Sanewall will not complain if you setup a firewall on an interface that is"
 	echo "# not active when you activate the firewall."
-	echo "# If you don't setup an interface, FireHOL will drop all traffic from or to"
+	echo "# If you don't setup an interface, sanewall will drop all traffic from or to"
 	echo "# this interface, if and when it becomes available."
 	echo "# Also, if an interface name dynamically changes (i.e. ppp0 may become ppp1)"
 	echo "# you can use the plus (+) character to match all of them (i.e. ppp+)."
@@ -6991,8 +6982,8 @@ EOF
 				
 				# Make sure this is not a duplicate router
 				key="`echo ${inface}/${src}-${outface}/${dst} | ${TR_CMD} "/ \\\$\\\"{}" "______"`"
-				test -f "${FIREHOL_DIR}/keys/${key}" && continue
-				${TOUCH_CMD} "${FIREHOL_DIR}/keys/${key}"
+				test -f "${SANEWALL_DIR}/keys/${key}" && continue
+				${TOUCH_CMD} "${SANEWALL_DIR}/keys/${key}"
 				
 				x=$[x + 1]
 				
@@ -7053,13 +7044,13 @@ fi
 # ------------------------------------------------------------------------------
 
 # make sure we are alone
-firehol_concurrent_run_lock
+sanewall_concurrent_run_lock
 
 
 # --- Initialization -----------------------------------------------------------
 
 fixed_iptables_save() {
-	local tmp="${FIREHOL_DIR}/iptables-save-$$"
+	local tmp="${SANEWALL_DIR}/iptables-save-$$"
 	local err=
 	
 	load_kernel_module ip_tables
@@ -7084,15 +7075,15 @@ fixed_iptables_save() {
 	return $err
 }
 
-echo -n $"FireHOL: Saving your old firewall to a temporary file:"
-fixed_iptables_save >${FIREHOL_SAVED}
+echo -n $"Sanewall: Saving your old firewall to a temporary file:"
+fixed_iptables_save >${SANEWALL_SAVED}
 if [ $? -eq 0 ]
 then
-	success $"FireHOL: Saving your old firewall to a temporary file:"
+	success $"Sanewall: Saving your old firewall to a temporary file:"
 	echo
 else
-	test -f "${FIREHOL_SAVED}" && ${RM_CMD} -f "${FIREHOL_SAVED}"
-	failure $"FireHOL: Saving your old firewall to a temporary file:"
+	test -f "${SANEWALL_SAVED}" && ${RM_CMD} -f "${SANEWALL_SAVED}"
+	failure $"Sanewall: Saving your old firewall to a temporary file:"
 	echo
 	exit 1
 fi
@@ -7101,7 +7092,7 @@ fi
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 # Place all the statements bellow to the beginning of the final firewall script.
-${CAT_CMD} >"${FIREHOL_OUTPUT}" <<EOF
+${CAT_CMD} >"${SANEWALL_OUTPUT}" <<EOF
 #!/bin/sh
 
 load_kernel_module ip_tables
@@ -7112,13 +7103,13 @@ tables=\`${CAT_CMD} /proc/net/ip_tables_names\`
 for t in \${tables}
 do
 	# Reset/empty this table.
-	iptables_cmd -t "\${t}" -F >${FIREHOL_OUTPUT}.log 2>&1
+	iptables_cmd -t "\${t}" -F >${SANEWALL_OUTPUT}.log 2>&1
 	r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t "\${t}" -F
 	
-	iptables_cmd -t "\${t}" -X >${FIREHOL_OUTPUT}.log 2>&1
+	iptables_cmd -t "\${t}" -X >${SANEWALL_OUTPUT}.log 2>&1
 	r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t "\${t}" -X
 	
-	iptables_cmd -t "\${t}" -Z >${FIREHOL_OUTPUT}.log 2>&1
+	iptables_cmd -t "\${t}" -Z >${SANEWALL_OUTPUT}.log 2>&1
 	r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t "\${t}" -Z
 	
 	# Find all default chains in this table.
@@ -7126,27 +7117,27 @@ do
 	
 	# If this is the 'filter' table, remember the default chains.
 	# This will be used at the end to make it DROP all packets.
-	test "\${t}" = "filter" && firehol_filter_chains="\${chains}"
+	test "\${t}" = "filter" && sanewall_filter_chains="\${chains}"
 	
 	# Set the policy to ACCEPT on all default chains.
 	for c in \${chains}
 	do
-		iptables_cmd -t "\${t}" -P "\${c}" ACCEPT >${FIREHOL_OUTPUT}.log 2>&1
+		iptables_cmd -t "\${t}" -P "\${c}" ACCEPT >${SANEWALL_OUTPUT}.log 2>&1
 		r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t "\${t}" -P "\${c}" ACCEPT
 	done
 done
 
-iptables_cmd -t filter -P INPUT "\${FIREHOL_INPUT_ACTIVATION_POLICY}" >${FIREHOL_OUTPUT}.log 2>&1
-r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t filter -P INPUT "\${FIREHOL_INPUT_ACTIVATION_POLICY}"
+iptables_cmd -t filter -P INPUT "\${SANEWALL_INPUT_ACTIVATION_POLICY}" >${SANEWALL_OUTPUT}.log 2>&1
+r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t filter -P INPUT "\${SANEWALL_INPUT_ACTIVATION_POLICY}"
 
-iptables_cmd -t filter -P OUTPUT "\${FIREHOL_OUTPUT_ACTIVATION_POLICY}" >${FIREHOL_OUTPUT}.log 2>&1
-r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t filter -P OUTPUT "\${FIREHOL_OUTPUT_ACTIVATION_POLICY}"
+iptables_cmd -t filter -P OUTPUT "\${SANEWALL_OUTPUT_ACTIVATION_POLICY}" >${SANEWALL_OUTPUT}.log 2>&1
+r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t filter -P OUTPUT "\${SANEWALL_OUTPUT_ACTIVATION_POLICY}"
 
-iptables_cmd -t filter -P FORWARD "\${FIREHOL_FORWARD_ACTIVATION_POLICY}" >${FIREHOL_OUTPUT}.log 2>&1
-r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t filter -P FORWARD "\${FIREHOL_FORWARD_ACTIVATION_POLICY}"
+iptables_cmd -t filter -P FORWARD "\${SANEWALL_FORWARD_ACTIVATION_POLICY}" >${SANEWALL_OUTPUT}.log 2>&1
+r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t filter -P FORWARD "\${SANEWALL_FORWARD_ACTIVATION_POLICY}"
 
 # Accept everything in/out the loopback device.
-if [ "\${FIREHOL_TRUST_LOOPBACK}" = "1" ]
+if [ "\${SANEWALL_TRUST_LOOPBACK}" = "1" ]
 then
 	iptables_cmd -A INPUT -i lo -j ACCEPT
 	iptables_cmd -A OUTPUT -o lo -j ACCEPT
@@ -7154,7 +7145,7 @@ fi
 
 # Drop all invalid packets.
 # Netfilter HOWTO suggests to DROP all INVALID packets.
-if [ "\${FIREHOL_DROP_INVALID}" = "1" ]
+if [ "\${SANEWALL_DROP_INVALID}" = "1" ]
 then
 	iptables_cmd -A INPUT -m state --state INVALID -j DROP
 	iptables_cmd -A OUTPUT -m state --state INVALID -j DROP
@@ -7165,7 +7156,7 @@ EOF
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-echo -n $"FireHOL: Processing file ${FIREHOL_CONFIG}:"
+echo -n $"Sanewall: Processing file ${SANEWALL_CONFIG}:"
 ret=0
 
 # ------------------------------------------------------------------------------
@@ -7173,43 +7164,43 @@ ret=0
 # just before each known directive.
 # These line numbers will be used for debugging the configuration script.
 
-${CAT_CMD} >"${FIREHOL_TMP}.awk" <<"EOF"
-/^[[:space:]]*action[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*blacklist[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*classify[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*client[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*connmark[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*dnat[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*dscp[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*ecn_shame[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*group[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*interface[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*iptables[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*mac[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*mark[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*masquerade[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*nat[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*policy[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*postprocess[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*protection[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*redirect[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*require_kernel_module[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*router[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*route[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*server[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*snat[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*tcpmss[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*tos[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*transparent_squid[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*transparent_proxy[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
-/^[[:space:]]*version[[:space:]]/ { printf "FIREHOL_LINEID=${LINENO} " }
+${CAT_CMD} >"${SANEWALL_TMP}.awk" <<"EOF"
+/^[[:space:]]*action[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*blacklist[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*classify[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*client[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*connmark[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*dnat[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*dscp[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*ecn_shame[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*group[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*interface[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*iptables[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*mac[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*mark[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*masquerade[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*nat[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*policy[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*postprocess[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*protection[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*redirect[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*require_kernel_module[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*router[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*route[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*server[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*snat[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*tcpmss[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*tos[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*transparent_squid[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*transparent_proxy[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
+/^[[:space:]]*version[[:space:]]/ { printf "SANEWALL_LINEID=${LINENO} " }
 { print }
 EOF
 
 # at the same time, replace all iptables_cmd references with just
 # the word 'iptables' to protect the currently running firewall
-${CAT_CMD} ${FIREHOL_CONFIG} | ${SED_CMD} "s|iptables_cmd|iptables|g" | gawk_cmd -f "${FIREHOL_TMP}.awk" >${FIREHOL_TMP}
-${RM_CMD} -f "${FIREHOL_TMP}.awk"
+${CAT_CMD} ${SANEWALL_CONFIG} | ${SED_CMD} "s|iptables_cmd|iptables|g" | gawk_cmd -f "${SANEWALL_TMP}.awk" >${SANEWALL_TMP}
+${RM_CMD} -f "${SANEWALL_TMP}.awk"
 
 # ------------------------------------------------------------------------------
 # Run the configuration file.
@@ -7224,8 +7215,8 @@ fi
 
 enable -n trap			# Disable the trap buildin shell command.
 enable -n exit			# Disable the exit buildin shell command.
-source ${FIREHOL_TMP} "$@"	# Run the configuration as a normal script.
-FIREHOL_LINEID="FIN"
+source ${SANEWALL_TMP} "$@"	# Run the configuration as a normal script.
+SANEWALL_LINEID="FIN"
 enable trap			# Enable the trap buildin shell command.
 enable exit			# Enable the exit buildin shell command.
 
@@ -7235,12 +7226,12 @@ close_master	|| ret=$[ret + 1]
 
 # ------------------------------------------------------------------------------
 # append commands to close the firewall according to policies
-${CAT_CMD} >>"${FIREHOL_OUTPUT}" <<EOF
+${CAT_CMD} >>"${SANEWALL_OUTPUT}" <<EOF
 
 # Make it drop everything on table 'filter'.
-for c in \${firehol_filter_chains}
+for c in \${sanewall_filter_chains}
 do
-	iptables_cmd -t filter -P "\${c}" DROP >${FIREHOL_OUTPUT}.log 2>&1
+	iptables_cmd -t filter -P "\${c}" DROP >${SANEWALL_OUTPUT}.log 2>&1
 	r=\$?; test ! \${r} -eq 0 && runtime_error error \${r} INIT iptables_cmd -t filter -P "\${c}" DROP
 done
 
@@ -7250,19 +7241,19 @@ if [ ${work_error} -gt 0 -o $ret -gt 0 ]
 then
 	echo >&2
 	echo >&2 "NOTICE: No changes made to your firewall."
-	failure $"FireHOL: Processing file ${FIREHOL_CONFIG}:"
+	failure $"Sanewall: Processing file ${SANEWALL_CONFIG}:"
 	echo
 	exit 1
 fi
 
-success $"FireHOL: Processing file ${FIREHOL_CONFIG}:"
+success $"Sanewall: Processing file ${SANEWALL_CONFIG}:"
 echo
 
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 # append commands to load the kernel modules
 
-for m in ${FIREHOL_KERNEL_MODULES}
+for m in ${SANEWALL_KERNEL_MODULES}
 do
 	postprocess -ne load_kernel_module $m
 done
@@ -7270,7 +7261,7 @@ done
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 # append command to activate routing
 
-if [ $FIREHOL_ROUTING -eq 1 ]
+if [ $SANEWALL_ROUTING -eq 1 ]
 then
 	postprocess ${SYSCTL_CMD} -w "net.ipv4.ip_forward=1"
 fi
@@ -7278,9 +7269,9 @@ fi
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 # if we just debugging things, do not proceed further
 
-if [ "${FIREHOL_MODE}" = "DEBUG" ]
+if [ "${SANEWALL_MODE}" = "DEBUG" ]
 then
-	${CAT_CMD} ${FIREHOL_OUTPUT}
+	${CAT_CMD} ${SANEWALL_OUTPUT}
 	
 	exit 1
 fi
@@ -7288,14 +7279,14 @@ fi
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-syslog info "Activating new firewall from ${FIREHOL_CONFIG} (translated to ${FIREHOL_COMMAND_COUNTER} iptables rules)."
-echo -n $"FireHOL: Activating new firewall (${FIREHOL_COMMAND_COUNTER} rules):"
+syslog info "Activating new firewall from ${SANEWALL_CONFIG} (translated to ${SANEWALL_COMMAND_COUNTER} iptables rules)."
+echo -n $"Sanewall: Activating new firewall (${SANEWALL_COMMAND_COUNTER} rules):"
 
-source ${FIREHOL_OUTPUT} "$@"
+source ${SANEWALL_OUTPUT} "$@"
 
 if [ ${work_runtime_error} -gt 0 ]
 then
-	failure $"FireHOL: Activating new firewall:"
+	failure $"Sanewall: Activating new firewall:"
 	echo
 	
 	syslog err "Activation of new firewall failed."
@@ -7303,11 +7294,11 @@ then
 	
 	exit 1
 fi
-success $"FireHOL: Activating new firewall (${FIREHOL_COMMAND_COUNTER} rules):"
+success $"Sanewall: Activating new firewall (${SANEWALL_COMMAND_COUNTER} rules):"
 echo
 syslog info "Activation of new firewall succeeded."
 
-if [ ${FIREHOL_TRY} -eq 1 ]
+if [ ${SANEWALL_TRY} -eq 1 ]
 then
 	syslog info "Waiting user to commit the new firewall."
 	read -p "Keep the firewall? (type 'commit' to accept - 30 seconds timeout) : " -t 30 -e
@@ -7320,33 +7311,33 @@ then
 		
 		exit 1
 	else
-		echo "Successfull activation of FireHOL firewall."
+		echo "Successfull activation of sanewall firewall."
 		syslog info "User committed new firewall."
 	fi
 fi
 
 # Remove the saved firewall, so that the trap will not restore it.
-${RM_CMD} -f "${FIREHOL_SAVED}"
-FIREHOL_ACTIVATED_SUCCESSFULLY=1
+${RM_CMD} -f "${SANEWALL_SAVED}"
+SANEWALL_ACTIVATED_SUCCESSFULLY=1
 
 # Startup service locking.
-if [ -d "${FIREHOL_LOCK_DIR}" ]
+if [ -d "${SANEWALL_LOCK_DIR}" ]
 then
-	${TOUCH_CMD} "${FIREHOL_LOCK_DIR}/iptables"
-	${TOUCH_CMD} "${FIREHOL_LOCK_DIR}/firehol"
+	${TOUCH_CMD} "${SANEWALL_LOCK_DIR}/iptables"
+	${TOUCH_CMD} "${SANEWALL_LOCK_DIR}/sanewall"
 fi
 
 
 # XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-if [ ${FIREHOL_SAVE} -eq 1 ]
+if [ ${SANEWALL_SAVE} -eq 1 ]
 then
-	if [ -z "${FIREHOL_AUTOSAVE}" ]
+	if [ -z "${SANEWALL_AUTOSAVE}" ]
 	then
 		if [ -d "/etc/sysconfig" ]
 		then
 			# RedHat
-			FIREHOL_AUTOSAVE="/etc/sysconfig/iptables"
+			SANEWALL_AUTOSAVE="/etc/sysconfig/iptables"
 		elif [ -d "/var/lib/iptables" ]
 		then
 			if [ -f /etc/conf.d/iptables ]
@@ -7355,50 +7346,50 @@ then
 				IPTABLES_SAVE=
 				
 				. /etc/conf.d/iptables
-				FIREHOL_AUTOSAVE="${IPTABLES_SAVE}"
+				SANEWALL_AUTOSAVE="${IPTABLES_SAVE}"
 			fi
 			
-			if [ -z "${FIREHOL_AUTOSAVE}" ]
+			if [ -z "${SANEWALL_AUTOSAVE}" ]
 			then
 				# Debian
-				FIREHOL_AUTOSAVE="/var/lib/iptables/autosave"
+				SANEWALL_AUTOSAVE="/var/lib/iptables/autosave"
 			fi
 		else
-			error "Cannot find where to save iptables file. Please set FIREHOL_AUTOSAVE."
+			error "Cannot find where to save iptables file. Please set SANEWALL_AUTOSAVE."
 			echo
 			exit 1
 		fi
 	fi
 	
-	echo -n $"FireHOL: Saving firewall to ${FIREHOL_AUTOSAVE}:"
+	echo -n $"Sanewall: Saving firewall to ${SANEWALL_AUTOSAVE}:"
 	
-	fixed_iptables_save >"${FIREHOL_AUTOSAVE}"
+	fixed_iptables_save >"${SANEWALL_AUTOSAVE}"
 	
 	if [ ! $? -eq 0 ]
 	then
-		syslog err "Failed to save new firewall to '${FIREHOL_AUTOSAVE}'."
-		failure $"FireHOL: Saving firewall to ${FIREHOL_AUTOSAVE}:"
+		syslog err "Failed to save new firewall to '${SANEWALL_AUTOSAVE}'."
+		failure $"Sanewall: Saving firewall to ${SANEWALL_AUTOSAVE}:"
 		echo
 		exit 1
 	fi
 	
-	syslog info "New firewall saved to '${FIREHOL_AUTOSAVE}'."
-	success $"FireHOL: Saving firewall to ${FIREHOL_AUTOSAVE}:"
+	syslog info "New firewall saved to '${SANEWALL_AUTOSAVE}'."
+	success $"Sanewall: Saving firewall to ${SANEWALL_AUTOSAVE}:"
 	echo
 	
 	# Save the list of modules we need to run to restore the firewall.
-	if [ -f "${FIREHOL_SPOOL_DIR}/last_save_modules.sh" ]
+	if [ -f "${SANEWALL_SPOOL_DIR}/last_save_modules.sh" ]
 	then
-		mv "${FIREHOL_SPOOL_DIR}/last_save_modules.sh" "${FIREHOL_SPOOL_DIR}/last_save_modules.sh.old"
+		mv "${SANEWALL_SPOOL_DIR}/last_save_modules.sh" "${SANEWALL_SPOOL_DIR}/last_save_modules.sh.old"
 	fi
 	
-	mv "${FIREHOL_DIR}/modules_to_load.sh" "${FIREHOL_SPOOL_DIR}/last_save_modules.sh"
+	mv "${SANEWALL_DIR}/modules_to_load.sh" "${SANEWALL_SPOOL_DIR}/last_save_modules.sh"
 	if [ $? -gt 0 ]
 	then
-		error "Cannot save modules restoration script to '${FIREHOL_SPOOL_DIR}/last_save_modules.sh'."
+		error "Cannot save modules restoration script to '${SANEWALL_SPOOL_DIR}/last_save_modules.sh'."
 	else
-		chown root:root "${FIREHOL_SPOOL_DIR}/last_save_modules.sh"
-		chmod 700 "${FIREHOL_SPOOL_DIR}/last_save_modules.sh"
+		chown root:root "${SANEWALL_SPOOL_DIR}/last_save_modules.sh"
+		chmod 700 "${SANEWALL_SPOOL_DIR}/last_save_modules.sh"
 	fi
 	
 	exit 0
