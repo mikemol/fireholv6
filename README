@@ -1,11 +1,53 @@
-$Id: README,v 1.7 2004/10/31 20:28:02 ktsaou Exp $
+              Sanewall - a firewall that won't drive you crazy
+              ************************************************
 
-FireHOL, an iptables stateful packet filtering firewall for humans!
+Sanewall is an iptables firewall builder which uses an elegant language
+allowing you to create very readable configurations even for complex
+stateful firewalls.
+
+Simple but useful firewalls need only a few lines of configuration. Very
+complex with flow control and external commands can be created by using
+bash (http://www.gnu.org/software/bash/) commands in-line with the standard
+configuration language.
+
+Sanewall can be used to produce local firewalls or router-based firewalls
+on any system that bash and iptables are available including full GNU/Linux
+servers and embedded routers such as OpenWRT (http://www.openwrt.org/).
+
+
+History
+=======
+Sanewall is a fork of FireHOL (http://firehol.sourceforge.net/) which was
+made when development of that project stalled. A great deal is owed to that
+project and Costa Tsaousis for originating it. All existing FireHOL
+definitions should be compatible with sanewall.
+
+
+Goals
+=====
+The main goals of the sanewall project are:
+  - Allow experts and non-experts alike to produce secure firewalls
+  - Simple configuration should be simple
+  - Complex configuration should be possible (and as easy as possible)
+  - Maintain compatibility with old FireHOL configurations
+  - Eliminate distinctions between IPv4 and IPv6 wherever possible
+  - Keep to a minimal set of dependencies
+
+This is achieved by providing an expressive, easy-to-read, write and
+understand configuration language geared specifically to firewalls
+(a Domain Specific Language).
+
+The language is sufficiently brief, well-structured and meaningful that
+a human can manage the firewall rules without the need for additional tools.
+The use of a simple text-file for configuration allows for optimal use
+with version control and file-comparison tools.
+
+
+License
+=======
+Copyright (C) 2012 Phil Whineray <phil.whineray@gmail.com>
 Copyright (C) 2003 Costa Tsaousis <costa@tsaousis.gr>
 
-
-LICENSE
--------
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation; either version 2 of the License, or
@@ -21,83 +63,31 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 
-DOCUMENTATION
--------------
-If you received this program in as a RPM, documentation should be
-installed at /usr/share/doc/firehol-X.XX.
-Otherwise, documentation should be available in the doc/ directory
-of the .tar.bz2 archive you received.
+Support and documentation
+=========================
+Man pages and HTML documentation are provided as part of the package and
+can be found in the tarball or in your distribution's standard locations
+(e.g. /usr/share/doc).
 
-In any case, you can also find the documentation online, at:
+Try reading the file INSTALL to get going.
 
-                     http://firehol.sf.net
+Online documentataion is available at:
+   http://www.sanewall.org/
 
+There is a forum at:
+   http://www.sanewall.org/
 
-INSTALLATION
-------------
-
-RPM
-~~~
-RPM distributions automatically install the program. After a RPM
-installation, FireHOL should be available at /etc/init.d/firehol
-and its default configuration at /etc/firehol/firehol.conf.
-Please use the chkconfig system utility to enable/disable
-firehol's activity at boot time.
-
-TAR.BZ2
-~~~~~~~
-This type of distribution includes all the files in the directory
-where you uncompress it.
-To make FireHOL start at boot time you have to add it to the startup
-procedure of your operating system.
-
-Three things are needed to start FireHOL properly:
-
-1. Move firehol.sh to the directory where your startup scripts exist
-   and rename it to firehol (i.e. remove the .sh).
-
-2. Make sure FireHOL is called with something like:
-
-         /path/to/startup/scripts/firehol start
-
-3. Make sure there is a valid configuration file in
-   /etc/firehol/firehol.conf
-
-This is it.
-
-Note, that the .tar.bz2 releases can also be used to build an .rpm
-using:
-
-rpmbuild -tb firehol-XX-YY.tar.bz2
-
-However, CVS versions - firehol.tar.gz - should not be used this way.
+Where you can post questions and ask for help.
 
 
-IMPORTANT NOTES
----------------
-If you decide to use FireHOL regularly (or permanently) you have to
-understand that it will control your firewall and therefore be a
-key point of your security. You should do something to be notified
-of bugs or other kind of problems as soon as they appear.
+Contributing
+============
+The official bug tracker is here:
+   http://www.sanewall.org/
 
-I suggest to subscribe to the notification engine of freshmeat.net
-under this project or to monitor FireHOL's file releases at
-sourceforge.net. Both of these services will keep you anonymous
-(to me) but will update you if and when new releases become available.
+The official git tree is here:
+   http://www.sanewall.org/
 
-
-CONTRIBUTING
-------------
-I'll be glad to receive your ideas, patches, case studies, service
-definitions, etc.
-
-Here is my e-mail: costa@tsaousis.gr
-
-Please note however that this is my personal e-mail that I read
-just once per day and in some cases, once every a few days. If you
-want some faster response, you can always use the mailing lists
-and forums under this project at sourceforge.
-
-Kind Regards
-Costa Tsaousis
-
+There is a low-volume mailing list; if you would like to get involved,
+please consider subscribing to it. Release announcements will also be
+posted to this list as well as to the main website.

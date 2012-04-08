@@ -42,7 +42,6 @@ binary-indep:	checkroot build
 	chmod 644 debian/tmp/etc/default/sanewall
 
 	#Copy the documentation:
-	install -m 644 debian/README.Debian debian/README.Services debian/tmp/usr/share/doc/sanewall/
 	install -m 644 ../doc/*.html ../doc/*.css debian/tmp/usr/share/doc/sanewall/html/
 	install -m 644 ../man/sanewall.1 debian/tmp/usr/share/man/man1/
 	install -m 644 ../man/get-iana.1 debian/tmp/usr/share/man/man1/
@@ -61,6 +60,7 @@ binary-indep:	checkroot build
 	gzip -9 debian/tmp/usr/share/doc/sanewall/changelog
 
 	install -m 644 ../README debian/tmp/usr/share/doc/sanewall/
+	install -m 644 ../INSTALL debian/tmp/usr/share/doc/sanewall/
 
 	#Create MD5-Sums:
 	(cd debian/tmp; find -type f | sed s#^./## | grep -v DEBIAN | xargs md5sum > DEBIAN/md5sums)

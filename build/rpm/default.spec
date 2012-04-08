@@ -93,7 +93,7 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root,-)
-%doc README COPYING ChangeLog.gz examples doc
+%doc README INSTALL COPYING ChangeLog.gz examples doc
 %dir %{_sysconfdir}/sanewall
 %config(noreplace) %{_sysconfdir}/sanewall/sanewall.conf
 %{_initrddir}/sanewall

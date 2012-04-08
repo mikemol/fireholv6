@@ -1,0 +1,94 @@
+                        Sanewall Installation
+                        ---------------------
+
+These instructions apply to packages downloaded from:
+   http://www.sanewall.org/
+
+If you have installed sanewall via your distribution, there may be
+differences.
+
+
+Installation from .deb
+======================
+Sanewall is installed as /sbin/sanewall with an init script also provided
+as /etc/init.d/sanewall.
+
+You have to enable sanewall in /etc/default/sanewall to have sanewall start.
+To enable it set START_SANEWALL to anything other than NO/no. 
+
+
+Installation from .rpm
+======================
+Sanewall is installed as /etc/init.d/sanewall
+
+You can use the chkconfig system utility to enable/disable sanewall running
+at boot time.
+
+
+Installation from .tar.gz
+=========================
+Sanewall will unpack to a tree of the form sanewall-<version>.
+
+You should install the "sanewall" program to /sbin/sanewall and create
+/etc/sanewall/sanewall.conf from an appropriate example.
+
+Arrange for sanewall to run at boot time with the argument "start". An
+LSB-compliant init-script is provided under the init.d directory which will
+help on most systems.
+
+
+Initial Setup
+=============
+When you first install the program you need to set your configuration in the
+file /etc/sanewall/sanewall.conf.
+
+Either start from one of the examples:
+  client-all.conf     -  Simplest firewall for a standalone system (installed
+                         by default)
+  lan-gateway.conf
+  server-dmz.conf
+  office.conf
+
+Alternatively, run:
+  sanewall wizard
+
+Sanewall will try to generate a configuration tailored to the machine
+it is running on.
+ 
+
+Other setup options
+===================
+
+Adding additional services
+--------------------------
+In addition to defining extra services in the sanewall.conf file, it is
+possible to define new services by putting extra config files into the
+/etc/sanewall/services directory.
+
+Every file with the ending .conf gets parsed. Config files should start
+with a special header:
+
+#FHVER: 1:213
+
+Which was originally defined within FireHOL. 1 is the API version and
+will be updated if a backwards-incompatible change is introduced. 213
+was the minimum version of FireHOL the service was expected to work with
+and is ignored in sanewall.
+
+The format for service definition is the same as for adding a service
+to the main configuration file. See here for details:
+  http://www.sanewall.org/
+
+An example is provided in bittorrent.conf in the documentation folder.
+
+Waiting for a network device
+----------------------------
+If you want to have sanewall to wait until a network device is up before
+it creates the firewall rules you can set the name of the device in
+/etc/defaults/sanewall as the value of:
+  WAIT_FOR_IFACE
+
+Sanewall will wait until the devices is up or until 60 seconds have elapsed.
+
+Note that your device does not need to be up in order to create the firewall
+so this option should only be used if you have a specific need to wait.

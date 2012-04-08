@@ -27,8 +27,10 @@ build-stamp-rpm: build-stamp-tgz
 	test -s RELEASE || sudo sed -e "s/MYRELEASE/orig/" -i rpm/tmp/$(NAME)-$(VERSION)/.spec
 	sudo sed -e "s|MYVERSION|$(VERSION)|" -e "s|MYRELEASE|$(RELEASE)|" -i rpm/tmp/$(NAME)-$(VERSION)/.spec
 	sudo tar Ccfj rpm/tmp rpm/tmp/$(NAME)-$(VERSION).tar.bz2 $(NAME)-$(VERSION)
-	rpmbuild -tb rpm/tmp/$(NAME)-$(VERSION).tar.bz2
+	rpmbuild --define "_rpmdir ." -tb rpm/tmp/$(NAME)-$(VERSION).tar.bz2
 	sudo rm -rf rpm/tmp
+	sudo mv noarch/*.rpm .
+	sudo rmdir noarch
 	touch build-stamp-rpm
 
 build-stamp-tgz:

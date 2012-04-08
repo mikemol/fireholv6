@@ -44,6 +44,7 @@ binary-indep:	checkroot build
 	install -m 644 ../ChangeLog tgz/tmp/$(TARGET)/
 	gzip -9 tgz/tmp/$(TARGET)/ChangeLog
 	install -m 644 ../README tgz/tmp/$(TARGET)/
+	install -m 644 ../INSTALL tgz/tmp/$(TARGET)/
 	install -m 644 ../COPYING tgz/tmp/$(TARGET)/
 
 	tar zcpCf tgz/tmp $(TARGET).tar.gz $(TARGET)
