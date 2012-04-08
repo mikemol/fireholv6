@@ -1,6 +1,5 @@
 GET-IANA(1)
 ===========
-Costa Tsaousis <costa@tsaousis.gr>
 
 NAME
 ----

@@ -1,0 +1,141 @@
+SANEWALL(1)
+===========
+
+NAME
+----
+sanewall - An easy to use but powerful iptables stateful firewall
+
+SYNOPSIS
+--------
+*sanewall*
+
+*sanewall* panic ['IP']
+
+*sanewall* 'COMMAND'
+
+*sanewall* 'CONFIGFILE' [start|debug|try]
+
+DESCRIPTION
+-----------
+This manual page documents the *sanewall* command.
+
+Sanewall is an iptables firewall builder which uses an elegant language
+allowing you to create very readable configurations even for complex
+stateful firewalls.
+
+Sanewall is a fork of FireHOL (<http://firehol.sourceforge.net/>).
+A great deal is owed to that project and Costa Tsaousis for originating it.
+All existing FireHOL definitions should be compatible with sanewall.
+
+Run without a 'COMMAND', sanewall will present some help on usage.
+
+When given 'CONFIGFILE', sanewall will use the named file instead of
+'/etc/sanewall/sanewall.conf' as its configuration. If no command is
+given, sanewall assumes *try*.
+
+COMMANDS
+--------
+*start*::
+  Activates the firewall configuration. The configuration is expected to
+  be found in '/etc/sanewall/sanewall.conf'.
+
+*try*::
+  Activates the firewall, waiting for the user to type the word _commit_. If
+  this word is not typed within 30 seconds, the previous firewall is restored.
+
+*stop*::
+  Stops a running iptables firewall by running
+  `/etc/init.d/iptables stop`. This will allow all traffic
+  to pass unchecked.
+
+*restart*::
+  This is an alias for start and is given for compatibility with
+  common init implementations.
+
+*condrestart*::
+  Starts the sanewall firewall only if it is not already active. It
+  does not detect a modified configuration file, only verifies that
+  sanewall has been started in the past and not stopped yet.
+
+*status*::
+  Shows the running firewall, using `/sbin/iptables -nxvL | less`
+
+*panic*::
+  Blocks all IP communication. +
+  Removes all rules from the running firewall and then DROPs all traffic
+  on all iptables tables (mangle, nat, filter) and pre-defined chains
+  (PREROUTING, INPUT, FORWARD, OUTPUT, POSTROUTING). +
+  DROPing is not done by adding one rule per table/chain to drop all
+  traffic. This allows systms which do not reset all the chains to
+  ACCEPT when starting to function correctly. +
+  When activating panic mode, sanewall checks for the existance of
+  the SSH_CLIENT shell environment variable (set by SSH). If it finds
+  this, then panic mode will allow the established SSH connection
+  specified in this variable to operate. Notice that in order for
+  this to work, you should have run `su` without the minus (-) sign, since
+  `su -` overwrites the shell variables and therefore the SSH_CLIENT
+  variable is lost. +
+  Specifying 'IP' after the panic argument allows you to give an IP
+  address for which all established connections between the IP address
+  and the host in panic will be allowed.
+
+*save*::
+  Start the firewall and then save it using `/sbin/iptables-save` to
+  '/etc/sysconfig/iptables'. +
+  Note that not all sanewall firewalls will work if restored with:
+  `/etc/init.d/iptables start` because sanewall handles kernel modules
+  and might have queried RPC servers (used by the NFS service) before
+  starting the firewall. Also, sanewall automatically checks current
+  kernel configuration for client ports range. +
+  If you restore a firewall using the iptables service your firewall
+  may not work as expected.
+
+*debug*::
+  Parses the configuration file but instead of activating it, it shows
+  the generated iptables statements.
+
+*explain*::
+  Enters an interactive mode where it accepts normal configuration
+  commands and presents the generated iptables commands for each of
+  them, together with some reasoning for its purpose. +
+  Additionally, it automatically generates a configuration script based
+  on the successfull commands given. +
+  When in explain mode, sanewall has the following special commands:
+
+  help - Present some help
+
+  show - Present the generated sanewall configuration
+
+  quit - Exit interactive mode and quit sanewall
+
+*helpme*::
+*wizard*::
+  Tries to guess the sanewall configuration needed for the current
+  machine. +
+  Sanewall will not stop or alter the running firewall. The
+  configuration file is given in the standard output of sanewall,
+  thus `/etc/init.d/sanewall helpme >/tmp/sanewall.conf`
+  will produce the output in '/tmp/sanewall.conf'. +
+  The generated sanewall configuration should and must be edited
+  before used on your systems. You are required to take many
+  decisions and the comments of the generated file will instruct you for
+  many of them.
+
+FILES
+-----
+'/etc/sanewall/sanewall.conf'
+
+
+SEE ALSO
+--------
+sanewall.conf(5), get-iana(1), iptables(8), bash(1)
+
+AUTHOR
+------
+sanewall is maintained by Phil Whineray <phil.whineray@gmail.com>
+
+It is based heavily on FireHOL <http://firehol.sourceforge.net> by
+Costa Tsaousis.
+
+Man page has been updated and reworked from an original by
+Marc Brockschmidt <marc@marcbrockschmidt.de>.

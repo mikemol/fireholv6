@@ -2,7 +2,10 @@ NAME=sanewall
 VERSION=`cat VERSION`
 RELEASE=`cat RELEASE`
 
-all: VERSION RELEASE build-stamp build-stamp-tgz build-stamp-rpm
+all: build VERSION RELEASE build-stamp build-stamp-tgz build-stamp-rpm
+
+build:
+	make -C ..
 
 VERSION: ../ChangeLog ../sanewall
 	sed -e '2,$$d' -e 's|.*[a-z][a-z]* (\([^-)]*\)-*[^-)]*).*|\1|' ../ChangeLog > VERSION.tmp
@@ -41,3 +44,4 @@ clean:
 	rm -f VERSION.script
 	sudo ./debian/rules clean
 	sudo ./tgz/rules clean
+	make -C .. clean

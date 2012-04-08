@@ -34,8 +34,8 @@ binary-indep:	checkroot build
 
 	#Copy the documentation:
 	install -m 644 ../doc/*.html ../doc/*.css tgz/tmp/$(TARGET)/doc/
-	install -m 644 ../man/*.1 tgz/tmp/$(TARGET)/man/man1/
-	install -m 644 ../man/*.5 tgz/tmp/$(TARGET)/man/man5/
+	install -m 644 ../man/man1/*.1 tgz/tmp/$(TARGET)/man/man1/
+	install -m 644 ../man/man5/*.5 tgz/tmp/$(TARGET)/man/man5/
 
 	#Copy the examples:
 	install -m 644 ../examples/*.conf tgz/tmp/$(TARGET)/examples/
