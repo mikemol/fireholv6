@@ -12,6 +12,6 @@ Replaces: firehol
 Conflicts: firehol
 Suggests: ulogd
 Description: An easy to use but powerful iptables stateful firewall
- Generates generic firewalls with an extremely simple but powerful
+ Generates firewalls using an extremely simple but powerful
  configuration language, enabling you to design any kind of local
  or routing stateful packet filtering firewall with ease.

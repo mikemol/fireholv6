@@ -32,17 +32,17 @@ Requires(postun):	initscripts
 
 
 %description
-Sanewall is a generic firewall generator, meaning that you can design any kind
-of local or routing stateful packet filtering firewalls with ease. Install
-Sanewall if you want an easy way to configure stateful packet filtering
-firewalls on Linux hosts and routers.
+Sanewall is an easy to use but powerful iptables stateful firewall generator.
+It generates firewalls using an extremely simple but powerful configuration
+language, enabling you to design any kind of local or routing stateful packet
+filtering firewall with ease.
 
-Sanewall uses an extremely simple but powerful way to define firewall rules
-which it turns into complete stateful iptables firewalls.
+The default configuration file will allow only client traffic on all
+interfaces and examples are provided for common routing and DMZ setups.
 
 You can run sanewall with the 'helpme' argument, to get a configuration file
-for the system running, which you can modify according to your needs. The
-default configuration file will allow only client traffic on all interfaces.
+appropriate for the system running, which you can modify according to your
+needs.
 
 Sanewall is a based on the FireHOL project and understands FireHOL
 configuration syntax.
