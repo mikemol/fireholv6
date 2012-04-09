@@ -30,6 +30,8 @@ Requires(preun):	chkconfig
 Requires(preun):	initscripts
 Requires(postun):	initscripts
 
+Conflicts:      firehol
+
 
 %description
 Sanewall is an easy to use but powerful iptables stateful firewall generator.
