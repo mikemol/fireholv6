@@ -1,3 +1,13 @@
+sanewall (0.9.1) unstable; urgency=low
+
+  * Improve installation
+    - Verify on Ubuntu 12.04, FC16
+    - Fix errors in README
+    - Improve instructions in INSTALL
+    - Tidy up some comments in sanewall script
+
+ -- Phil Whineray <phil@sanewall.org>  Mon,  7 May 2012 17:47:00 +0100
+
 sanewall (0.9.0) unstable; urgency=low
 
   * Based on firehol-cvs

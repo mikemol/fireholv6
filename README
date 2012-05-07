@@ -1,5 +1,5 @@
-              Sanewall - a firewall that won't drive you crazy
-              ************************************************
+               Sanewall - a firewall that will keep you sane
+               *********************************************
 
 Sanewall is an iptables firewall builder which uses an elegant language
 allowing you to create very readable configurations even for complex
@@ -69,25 +69,28 @@ Man pages and HTML documentation are provided as part of the package and
 can be found in the tarball or in your distribution's standard locations
 (e.g. /usr/share/doc).
 
-Try reading the file INSTALL to get going.
+Read the file INSTALL to get going.
 
-Online documentataion is available at:
+Currently sanewall relies on the FireHOL documentation. A mirror is at:
+   http://doc.sanewall.org/
+and will be replaced with a complete set of sanewall manuals in due course.
+
+We should have a forum soon, where you can post questions and ask for help.
+Once it is available it will be linked to from:
    http://www.sanewall.org/
-
-There is a forum at:
-   http://www.sanewall.org/
-
-Where you can post questions and ask for help.
 
 
 Contributing
 ============
 The official bug tracker is here:
-   http://www.sanewall.org/
+   http://bugs.sanewall.org/sanewall
 
-The official git tree is here:
-   http://www.sanewall.org/
+The official git trees are here:
+   http://git.sanewall.org/
 
 There is a low-volume mailing list; if you would like to get involved,
-please consider subscribing to it. Release announcements will also be
-posted to this list as well as to the main website.
+please consider subscribing to it at:
+   http://lists.sanewall.org/mailman/listinfo/sanewall-dev
+
+Release announcements will also be posted to this list as well as to the
+main website.

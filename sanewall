@@ -1,16 +1,18 @@
 #!/bin/bash
 #
-# Startup script to implement /etc/sanewall/sanewall.conf pre-defined rules.
+# Sanewall - generate stateful firewalls from /etc/sanewall/sanewall.conf
 #
-# chkconfig: - 20 80
+# Copyright (C) 2012 Phil Whineray <phil@sanewall.org>
+# Copyright (C) 2003 Costa Tsaousis <costa@tsaousis.gr>
 #
-# description: creates stateful iptables packet filtering firewalls.
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
 #
-# by Costa Tsaousis <costa@tsaousis.gr>
+# See the file COPYING for details.
 #
-# config: /etc/sanewall/sanewall.conf
-#
-VERSION=0.9.0
+VERSION=0.9.1
 
 # Make sure only root can run us.
 if [ ! "${UID}" = 0 ]
@@ -6644,7 +6646,6 @@ EOF
 	
 	${CAT_CMD} <<EOF
 #!${SANEWALL_FILE}
-# $Id$
 # 
 # This config will have the same effect as NO PROTECTION!
 # Everything that found to be running, is allowed.

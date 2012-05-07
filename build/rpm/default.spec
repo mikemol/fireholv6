@@ -18,7 +18,6 @@ Requires:	iproute >= 2.2.4
 Requires:	iptables >= 1.2.4
 Requires:	kernel >= 2.4
 Requires:	less
-Requires:	kmod
 Requires:	net-tools >= 1.57
 Requires:	sed >= 3.02
 Requires:	sh-utils >= 2.0
@@ -56,7 +55,8 @@ configuration syntax.
 
 %install
 rm -rf %{buildroot}
-install -D -p -m 755 sanewall %{buildroot}%{_initrddir}/sanewall
+install -D -p -m 755 sanewall %{buildroot}%{_sbindir}/sanewall
+install -D -p -m 755 init.d/sanewall.redhat %{buildroot}%{_initrddir}/sanewall
 install -D -p -m 640 examples/client-all.conf %{buildroot}/etc/sanewall/sanewall.conf
 
 # Install man files
@@ -98,6 +98,7 @@ rm -rf %{buildroot}
 %doc README INSTALL COPYING ChangeLog.gz examples doc
 %dir %{_sysconfdir}/sanewall
 %config(noreplace) %{_sysconfdir}/sanewall/sanewall.conf
+%{_sbindir}/sanewall
 %{_initrddir}/sanewall
 %{_libexecdir}/sanewall
 %{_mandir}/man1/*.1.gz

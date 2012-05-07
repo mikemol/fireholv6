@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# Startup script to implement /etc/sanewall/sanewall.conf pre-defined rules.
+#
+# chkconfig: - 20 80
+#
+# description: creates stateful iptables packet filtering firewalls.
+#
+# config: /etc/sanewall/sanewall.conf
+if [ -x /usr/sbin/sanewall ]
+then
+  sanewall=/usr/sbin/sanewall
+else
+  sanewall=/sbin/sanewall
+fi
+exec $sanewall "$@"

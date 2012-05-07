@@ -29,7 +29,7 @@ binary-indep:	checkroot build
 
 	#Install the scripts and the config:
 	install -m 755 ../sanewall debian/tmp/sbin/sanewall
-	install -m 755 ../init.d/sanewall debian/tmp/etc/init.d/sanewall
+	install -m 755 ../init.d/sanewall.debian debian/tmp/etc/init.d/sanewall
 	install -m 644 ../examples/client-all.conf debian/tmp/etc/sanewall/sanewall.conf
 	install -m 644 ../etc/RESERVED_IPS debian/tmp/etc/sanewall
 	install -m 755 ../admin/get-iana.sh debian/tmp/usr/sbin/get-iana
