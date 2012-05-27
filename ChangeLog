@@ -1,3 +1,10 @@
+sanewall (0.9.4) unstable; urgency=low
+
+  * Improve documentation
+    - Build PDF and manpages from docbook
+
+ -- Phil Whineray <phil@sanewall.org>  Sat, 23 Feb 2013 12:36:00 +0000
+
 sanewall (0.9.3) unstable; urgency=low
 
   * Import firehol changes up to version 1.296

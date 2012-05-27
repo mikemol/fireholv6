@@ -2,14 +2,14 @@
 ### BEGIN INIT INFO
 # Provides:          sanewall
 # Required-Start:    $network $syslog
-# Required-Stop:     $network 
-# Default-Start:     2 3 4 5 
-# Default-Stop:      0 1 6 
-# Description: Starts sanewall firewall configuration 
+# Required-Stop:     $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Description: Starts sanewall firewall configuration
 # short-description: sanewall firewall configuration
 ### END INIT INFO
 
-#includes lsb functions 
+#includes lsb functions
 . /lib/lsb/init-functions
 
 PATH=/sbin:/bin
@@ -25,7 +25,7 @@ set -e
 START_SANEWALL="$( echo $START_SANEWALL | /usr/bin/tr a-z A-Z)"
 test -n "$WAIT_FOR_IFACE" && export WAIT_FOR_IFACE
 
-COMMAND="$1" 
+COMMAND="$1"
 test -n "$1" && shift
 
 case "$COMMAND" in
@@ -34,7 +34,7 @@ case "$COMMAND" in
   	if [ "$START_SANEWALL" = "NO"  ]; then
 		log_warning_msg "$DESC disabled via /etc/default/sanewall"
 		exit 0
-	else 
+	else
 		log_daemon_msg "Starting $DESC" "$NAME"
 		/sbin/sanewall start "$@" >/dev/null || log_end_msg 1
 		log_end_msg 0
@@ -45,18 +45,18 @@ case "$COMMAND" in
 	/sbin/sanewall stop "$@" >/dev/null || log_end_msg 1
 	log_end_msg 0
 	;;
-  helpme|wizard) 
-  	log_daemon_msg  "Starting $NAME wizard" 1>&2 
+  helpme|wizard)
+	log_daemon_msg  "Starting $NAME wizard" 1>&2
 	/sbin/sanewall wizard
 	;;
   restart|force-reload)
   	if [ "$START_SANEWALL" = "NO"  ]; then
 		log_warning_msg "$DESC disabled via /etc/default/sanewall"
 		exit 0
-	else 
+	else
 		log_daemon_msg "Restarting $DESC configuration"
 		/sbin/sanewall restart "$@" >/dev/null || log_end_msg 1
-		log_action_end_msg 0 
+		log_action_end_msg 0
 	fi
 	;;
   *)

@@ -1,0 +1,79 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                         "../docbook/docbook-xml/docbookx.dtd">
+<refentry id="cmd-client">
+
+<refmeta>
+<refentrytitle>client command: sanewall-client</refentrytitle>
+<manvolnum>5</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refdescriptor>sanewall-client</refdescriptor>
+<refname>sanewall-client</refname>
+<refpurpose>accept replies from a service</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+  <cmdsynopsis>
+    <command>client</command>
+    <arg choice="plain"><replaceable>service</replaceable></arg>
+    <arg choice="plain"><replaceable>action</replaceable></arg>
+    <arg choice="opt"><replaceable>rule-params</replaceable></arg>
+  </cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1><title>Description</title>
+  <para>
+    The <command>client</command> subcommand defines a client of a service
+    on an interface or router.
+    Any <option>rule-params</option> given to a parent interface or
+    router are inherited by the client, but are reversed.
+  </para>
+  <para>
+    For <application>sanewall</application> a client is the source of
+    a request. Even though this is more complex for some multi-socket
+    services, to <application>sanewall</application> a client always initiates
+    the connection.
+  </para>
+  <para>
+    The <replaceable>service</replaceable> parameter is one of the
+    supported service names from <xref linkend="ref-services"/>. Multiple
+    services may be specified, space delimited in quotes.
+  </para>
+  <para>
+    The <replaceable>action</replaceable> can be any of the actions listed in
+    <xref linkend="ref-actions"/>.
+  </para>
+  <para>
+    The <option><replaceable>rule-params</replaceable></option> define
+    a set of rule parameters to further restrict the traffic that is
+    matched to this service.
+    See <xref linkend="rule-params"/> for more details.
+  </para>
+</refsect1>
+
+<refsect1><title>Examples</title>
+  <programlisting>
+client smtp accept
+
+client "smtp pop3" accept
+
+client smtp accept src 192.0.2.1
+
+client smtp accept log "mail packet" src 192.0.2.1
+  </programlisting>
+</refsect1>
+
+<refsect1><title>See Also</title>
+  <simplelist type="vert">
+    <member><xref linkend="sanewall"/></member>
+    <member><xref linkend="sanewall.conf"/></member>
+    <member><xref linkend="def-interface"/></member>
+    <member><xref linkend="def-router"/></member>
+    <member><xref linkend="ref-services"/></member>
+    <member><xref linkend="ref-actions"/></member>
+    <member><xref linkend="rule-params"/></member>
+  </simplelist>
+</refsect1>
+
+</refentry>

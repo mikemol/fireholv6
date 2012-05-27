@@ -102,7 +102,7 @@ To install you just need to perform the following steps:
   2. Sanewall will be set up to start at boot time. To control this
      behaviour use update-rc.d. You have to enable sanewall in
      /etc/default/sanewall to have sanewall start. To enable it set
-     START_SANEWALL to anything other than NO/no. 
+     START_SANEWALL to anything other than NO/no.
 
 Sanewall is installed as /sbin/sanewall with an init script also provided
 as /etc/init.d/sanewall.
@@ -134,7 +134,7 @@ Alternatively, run:
 
 Sanewall will try to generate a configuration tailored to the machine
 it is running on.
- 
+
 
 Other setup options
 ===================

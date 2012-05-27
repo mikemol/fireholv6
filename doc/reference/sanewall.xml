@@ -1,0 +1,327 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
+                         "../docbook/docbook-xml/docbookx.dtd">
+<refentry id="sanewall">
+
+<refentryinfo>
+  <author>
+     <authorblurb>
+       <para>Sanewall is heavily based on FireHOL by Costa Tsaouis</para>
+     </authorblurb>
+     <authorblurb>
+       <para>Original man page by Marc Brockschmidt</para>
+     </authorblurb>
+  </author>
+</refentryinfo>
+
+<refmeta>
+  <refentrytitle>sanewall program: sanewall</refentrytitle>
+  <manvolnum>1</manvolnum>
+</refmeta>
+
+<refnamediv>
+  <refdescriptor>sanewall</refdescriptor>
+  <refname>sanewall</refname>
+  <refpurpose>an easy to use but powerful iptables stateful firewall</refpurpose>
+</refnamediv>
+
+<refsynopsisdiv>
+  <cmdsynopsis>
+    <command>sanewall</command>
+  </cmdsynopsis>
+  <cmdsynopsis>
+    <command>sudo -E sanewall</command>
+    <arg choice="plain">panic</arg>
+    <arg choice="opt">
+      <option>IP</option>
+    </arg>
+  </cmdsynopsis>
+  <cmdsynopsis>
+    <command>sanewall</command>
+    <arg choice="plain"><replaceable>command</replaceable></arg>
+    <arg choice="opt">
+      --
+      <arg rep="repeat" choice="plain"><replaceable>conf-arg</replaceable></arg>
+    </arg>
+  </cmdsynopsis>
+  <cmdsynopsis>
+    <command>sanewall</command>
+    <arg choice="plain"><replaceable>CONFIGFILE</replaceable></arg>
+    <arg choice="plain">
+      <group choice="opt">
+        <arg choice="plain">start</arg>
+        <arg choice="plain">debug</arg>
+        <arg choice="plain">try</arg>
+      </group>
+    </arg>
+    <arg choice="opt">
+      --
+      <arg rep="repeat" choice="plain"><replaceable>conf-arg</replaceable></arg>
+    </arg>
+  </cmdsynopsis>
+</refsynopsisdiv>
+
+<refsect1><title>Description</title>
+  <para>
+    <command>sanewall</command> invokes <command>iptables(8)</command> to
+    manipulate your firewall.
+  </para>
+
+  <para>
+    Run without any arguments, <command>sanewall</command> will present
+    some help on usage.
+  </para>
+
+  <para>
+    When given <replaceable>CONFIGFILE</replaceable>,
+     <command>sanewall</command> will use the named file instead of
+    <filename>/etc/sanewall/sanewall.conf</filename> as its configuration.
+    If no command is given, <command>sanewall</command> assumes
+    <option>try</option>.
+  </para>
+
+  <para>
+    It is possible to pass arguments for use by the configuration file
+    separating any <replaceable>conf-arg</replaceable> values
+    from the rest of the arguments with <userinput>--</userinput>. The
+    arguments are accessible in the configuration using standard
+    <command>bash(1)</command> syntax e.g. $1, $2, etc.
+  </para>
+
+  <para>
+    <application>Sanewall</application> is a fork of
+    <ulink url="http://firehol.sourceforge.net/">FireHOL</ulink>.
+    existing <application>FireHOL</application> configurations should be
+    compatible with <application>sanewall</application>,
+    but please see <xref linkend="compatibility"/> for any differences in
+    behaviour.
+  </para>
+</refsect1>
+
+<refsect1><title>Panic</title>
+  <para>
+    To block all communication, invoke <command>sanewall</command> with
+    the <option>panic</option> command.
+  </para>
+
+  <para>
+    <application>Sanewall</application> removes all rules from the running
+    firewall and then DROPs all traffic on all iptables tables (mangle,
+    nat, filter) and pre-defined chains (PREROUTING, INPUT, FORWARD, OUTPUT,
+    POSTROUTING).
+  </para>
+
+  <para>
+    DROPing is not done by changing the default policy to DROP, but by
+    adding one rule per table/chain to drop all traffic. This allows
+    systems which do not reset all the chains to ACCEPT when starting
+    to function correctly.
+  </para>
+
+  <para>
+    When activating panic mode, <application>sanewall</application> checks
+    for the existence of the <envar>SSH_CLIENT</envar> shell environment
+    variable, which is set by <command>ssh</command>. If it finds this, then
+    panic mode will allow the established SSH connection specified in this
+    variable to operate.
+  </para>
+
+  <note><para>
+    In order for <application>sanewall</application> to see the environment
+    variable you must ensure that it is preserved. For <command>sudo</command>
+    use the <option>-E</option> and for <command>su</command> omit the
+    <option>-</option> (minus sign).
+  </para></note>
+
+  <para>
+    If <envar>SSH_CLIENT</envar> is not set, the <option>IP</option> after
+    the panic argument allows you to give an IP address for which all
+    established connections between the IP address and the host in panic
+    will be allowed to continue.
+  </para>
+</refsect1>
+
+<refsect1><title>Commands</title>
+  <variablelist>
+    <varlistentry><term>start</term>
+                  <term>restart</term>
+      <listitem>
+        <para>
+          Activates the firewall configuration from
+          <filename>/etc/sanewall/sanewall.conf</filename>.
+        </para>
+        <para>
+          Use of the term <literal>restart</literal> is allowed for
+          compatibility with common init implementations.
+        </para>
+      </listitem>
+    </varlistentry>
+    <varlistentry><term>try</term>
+      <listitem>
+        <para>
+          Activates the firewall, waiting for the user to type the word
+          <userinput>commit</userinput>. If this word is not typed within
+          30 seconds, the previous firewall is restored.
+        </para>
+      </listitem>
+    </varlistentry>
+    <varlistentry><term>stop</term>
+      <listitem>
+        <para>
+          Stops a running iptables firewall by clearing all of the
+          tables and chains and setting the default policies to ACCEPT.
+          This will allow all traffic to pass unchecked.
+        </para>
+      </listitem>
+    </varlistentry>
+    <varlistentry><term>condrestart</term>
+      <listitem>
+        <para>
+          Starts the <application>sanewall</application> firewall only if
+          it is not already active. It does not detect a modified
+          configuration file, only verifies that
+          <application>sanewall</application> has been started in the past
+          and not stopped yet.
+        </para>
+      </listitem>
+    </varlistentry>
+    <varlistentry><term>status</term>
+      <listitem>
+        <para>
+          Shows the running firewall, using
+          <command>/sbin/iptables -nxvL | less</command>.
+        </para>
+      </listitem>
+    </varlistentry>
+    <varlistentry><term>save</term>
+      <listitem>
+        <para>
+          Start the firewall and then save it using
+          <command>/sbin/iptables-save</command> to
+          <filename>/etc/sysconfig/iptables</filename>.
+        </para>
+        <para>
+          The required kernel modules are saved to an executable shell
+          script <filename>/var/spool/sanewall/last_save_modules.sh</filename>,
+          which can be called during boot if a firewall is to be restored.
+        </para>
+        <note>
+          <para>
+            External changes may cause a firewall restored after a reboot
+            to not work as intended where starting the firewall with
+            <application>sanewall</application> will work.
+          </para>
+          <para>
+            This is because as part of starting a firewall,
+            <application>sanewall</application> checks some changeable values.
+            For instance the current kernel configuration is checked
+            (for client port ranges), and RPC servers are queried
+            (to allow correct functioning of the NFS service).
+          </para>
+        </note>
+      </listitem>
+    </varlistentry>
+    <varlistentry><term>debug</term>
+      <listitem>
+        <para>
+          Parses the configuration file but instead of activating it,
+          <application>sanewall</application> shows the generated iptables
+          statements.
+        </para>
+      </listitem>
+    </varlistentry>
+    <varlistentry><term>explain</term>
+      <listitem>
+        <para>
+          Enters an interactive mode where <application>sanewall</application>
+          accepts normal configuration commands and presents the generated
+          iptables commands for each of them, together with some reasoning
+          for its purpose
+        </para>
+        <para>
+          Additionally, <application>sanewall</application> automatically
+          generates a configuration script based on the successful commands
+          given.
+        </para>
+        <para>
+          Some extra commands are available in <option>explain</option> mode.
+          <variablelist><title>Special commands in explain mode</title>
+            <varlistentry><term>help</term>
+              <listitem>
+                <para>Present some help</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry><term>show</term>
+              <listitem>
+                <para>Present the generated configuration</para>
+              </listitem>
+            </varlistentry>
+            <varlistentry><term>quit</term>
+              <listitem>
+                <para>Exit interactive mode and quit</para>
+              </listitem>
+            </varlistentry>
+          </variablelist>
+        </para>
+      </listitem>
+    </varlistentry>
+    <varlistentry><term>helpme</term>
+                  <term>wizard</term>
+      <listitem>
+        <para>
+          Tries to guess the <application>sanewall</application> configuration
+          needed for the current machine.
+        </para>
+        <para>
+          <application>Sanewall</application> will not stop or alter the
+          running firewall. The configuration file is given in the standard
+          output of <command>sanewall</command>, thus
+          <userinput>sanewall helpme > /tmp/sanewall.conf</userinput>
+          will produce the output in <filename>/tmp/sanewall.conf</filename>.
+        </para>
+        <para>
+          The generated <application>sanewall</application> configuration
+          <emphasis>must</emphasis> be edited before use on your systems.
+          You are required to take a number of decisions; the comments in
+          the generated file will instruct you in the choices you must make.
+        </para>
+      </listitem>
+    </varlistentry>
+  </variablelist>
+</refsect1>
+
+<refsect1 id="compatibility"><title>Compatibility</title>
+  <para>
+    <application>Sanewall</application> should be largely compatible with
+    all existing <application>FireHOL</application> configurations.
+  </para>
+  <para>
+    If you are using any variable starting "FIREHOL_" in your configuration,
+    you will need to rename it to "SANEWALL_". See
+    <xref linkend="sanewall-variables"/> for a list of all variables used
+    to control <application>sanewall</application>.
+  </para>
+  <para>
+    In addition the default values of SANEWALL_*_ACTIVATION_POLICY,
+    for each of INPUT, OUTPUT and FORWARD have been changed to DROP.
+    See the entries under <xref linkend="sanewall-variables"/> for details
+    and how to obtain the original behaviour.
+  </para>
+</refsect1>
+
+<refsect1><title>Files</title>
+  <simplelist type="vert">
+    <member><filename>/etc/default/sanewall</filename></member>
+    <member><filename>/etc/sanewall/sanewall.conf</filename></member>
+  </simplelist>
+</refsect1>
+
+<refsect1><title>See Also</title>
+  <simplelist type="vert">
+    <member><xref linkend="sanewall.conf"/></member>
+    <member><xref linkend="sanewall-variables"/></member>
+    <member>Sanewall Manual: sanewall-book.pdf</member>
+    <member><ulink url="http://doc.sanewall.org/">Sanewall Online Documentation</ulink></member>
+  </simplelist>
+</refsect1>
+
+</refentry>
