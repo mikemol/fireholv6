@@ -1,3 +1,11 @@
+sanewall (0.9.2) unstable; urgency=low
+
+  * Improve installation
+    - Fix location of admin scripts
+    - Move the packaging scripts to a separate repo
+
+ -- Phil Whineray <phil@sanewall.org>  Mon,  7 May 2012 17:47:00 +0100
+
 sanewall (0.9.1) unstable; urgency=low
 
   * Improve installation

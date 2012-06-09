@@ -17,8 +17,8 @@ To install you just need to perform the following steps:
        tar xvfz sanewall-x.y.z.tar.gz
        cd sanewall-x.y.z
 
-  2. Copy sanewall script to either /sbin or /usr/sbin (your choice):
-       sudo cp sanewall /sbin
+  2. Copy sanewall script to /usr/sbin:
+       sudo cp sanewall /usr/sbin
 
   3. If you are replacing FireHOL you should just be able to create the
      sanewall configuration by copying the FireHOL config:
@@ -31,9 +31,12 @@ To install you just need to perform the following steps:
        sudo cp etc/RESERVED_IPS /etc/sanewall
        sudo cp examples/client-all.conf /etc/sanewall/sanewall.conf
 
-
   4. Run sanewall to generate your new iptables firewall:
        sudo sanewall start
+
+  5. Documentation is under the doc and man directories:
+       sudo cp -r man/man* /usr/man
+       sudo cp doc /usr/share/doc/sanewall
 
 Note that you will also want to ensure that sanewall runs at boot-time. How
 you do so depends on your distribution. Some example init scripts are provided
@@ -103,6 +106,15 @@ To install you just need to perform the following steps:
 
 Sanewall is installed as /sbin/sanewall with an init script also provided
 as /etc/init.d/sanewall.
+
+
+Building/Installing from Source
+===============================
+As sanewall is a shell script there is no compilation step, however there
+is an ant script (build.xml) to build the documentation and tar-file.
+
+If you do not wish to perform these steps, you can simply copy the files
+in much the same manner as described in "Installing from the tar-file".
 
 
 Initial Setup

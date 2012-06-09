@@ -1,0 +1,142 @@
+<?xml version="1.0"?>
+<project name="docbook-src" default="all">
+  <description>
+     This Ant build.xml file is used build sanewall.tar.gz releases
+  </description>
+
+  <property name="build.dir" value="tmp"/>
+  <property name="dist.dir" value="dist"/>
+
+  <target name="all" depends="version,dist"/>
+
+  <target name="version" description="Extract top version from ChangeLog">
+    <exec outputproperty="sanewall.version"
+          executable="sed">
+      <arg value="-ne"/>
+      <arg value="1s/.*(\(.*\)).*/\1/p"/>
+      <arg value="ChangeLog"/>
+    </exec>
+    <property name="target.dir"
+             value="${build.dir}/sanewall-${sanewall.version}"/>
+    <echo message="Sanewall version: ${sanewall.version}"/>
+    <echo message="Build directory: ${target.dir}"/>
+  </target>
+
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+    <delete dir="${dist.dir}"/>
+  </target>
+
+  <target name="dist" depends="contents">
+    <mkdir dir="${dist.dir}"/>
+    <exec executable="tar">
+      <arg value="zcpCf"/>
+      <arg value="${build.dir}"/>
+      <arg value="${dist.dir}/sanewall-${sanewall.version}.tar.gz"/>
+      <arg value="sanewall-${sanewall.version}"/>
+      <arg value="--owner=root"/>
+      <arg value="--group=root"/>
+    </exec>
+    <echo message="Output: ${dist.dir}/sanewall-${sanewall.version}.tar.gz"/>
+  </target>
+
+  <target name="tree" depends="version">
+    <mkdir dir="${build.dir}"/>
+    <chmod dir="${build.dir}" perm="755"/>
+
+    <mkdir dir="${target.dir}"/>
+    <chmod dir="${target.dir}" perm="755"/>
+
+    <mkdir dir="${target.dir}/admin"/>
+    <chmod dir="${target.dir}/admin" perm="755"/>
+
+    <mkdir dir="${target.dir}/doc"/>
+    <chmod dir="${target.dir}/doc" perm="755"/>
+
+    <mkdir dir="${target.dir}/etc"/>
+    <chmod dir="${target.dir}/etc" perm="755"/>
+
+    <mkdir dir="${target.dir}/examples"/>
+    <chmod dir="${target.dir}/examples" perm="755"/>
+
+    <mkdir dir="${target.dir}/init.d"/>
+    <chmod dir="${target.dir}/init.d" perm="755"/>
+
+    <mkdir dir="${target.dir}/man"/>
+    <chmod dir="${target.dir}/man" perm="755"/>
+
+    <mkdir dir="${target.dir}/man/man1"/>
+    <chmod dir="${target.dir}/man/man1" perm="755"/>
+
+    <mkdir dir="${target.dir}/man/man5"/>
+    <chmod dir="${target.dir}/man/man5" perm="755"/>
+  </target>
+
+  <target name="contents" depends="tree,doc">
+    <copy todir="${target.dir}" file="sanewall"/>
+    <chmod file="${target.dir}/sanewall" perm="755"/>
+
+    <copy todir="${target.dir}" file="README"/>
+    <chmod file="${target.dir}/README" perm="644"/>
+    <copy todir="${target.dir}" file="INSTALL"/>
+    <chmod file="${target.dir}/INSTALL" perm="644"/>
+    <copy todir="${target.dir}" file="COPYING"/>
+    <chmod file="${target.dir}/COPYING" perm="644"/>
+
+    <gzip destfile="${target.dir}/ChangeLog.gz" src="ChangeLog"/>
+    <chmod file="${target.dir}/ChangeLog.gz" perm="644"/>
+
+    <copy todir="${target.dir}/admin">
+      <fileset dir="admin">
+         <include name="*.sh"/>
+      </fileset>
+    </copy>
+    <chmod  dir="${target.dir}/admin" includes="**/*.sh" perm="755"/>
+
+    <copy todir="${target.dir}/init.d">
+      <fileset dir="init.d">
+         <include name="sanewall.*"/>
+      </fileset>
+    </copy>
+    <chmod  dir="${target.dir}/init.d" includes="**/sanewall.*" perm="755"/>
+
+    <copy todir="${target.dir}/etc" file="etc/RESERVED_IPS"/>
+    <chmod file="${target.dir}/etc/RESERVED_IPS" perm="644"/>
+
+
+    <copy todir="${target.dir}/examples">
+      <fileset dir="examples">
+         <include name="*.conf"/>
+      </fileset>
+    </copy>
+    <chmod  dir="${target.dir}/examples" includes="**/*.conf" perm="644"/>
+  </target>
+
+  <target name="doc" depends="tree">
+    <copy todir="${target.dir}/doc">
+      <fileset dir="doc">
+         <include name="*.html"/>
+         <include name="*.css"/>
+      </fileset>
+    </copy>
+    <chmod  dir="${target.dir}/doc" includes="**/*.html" perm="644"/>
+    <chmod  dir="${target.dir}/doc" includes="**/*.css" perm="644"/>
+
+    <exec executable="a2x">
+      <arg value="-f"/>
+      <arg value="manpage"/>
+      <arg value="man/get-iana.1.txt"/>
+      <arg value="-D"/>
+      <arg value="${target.dir}/man/man1"/>
+    </exec>
+    <exec executable="a2x">
+      <arg value="-f"/>
+      <arg value="manpage"/>
+      <arg value="man/sanewall.1.txt"/>
+      <arg value="-D"/>
+      <arg value="${target.dir}/man/man1"/>
+    </exec>
+    <copy todir="${target.dir}/man/man5" file="man/sanewall.conf.5"/>
+    <chmod  dir="${target.dir}/man" includes="**/*.*" perm="644"/>
+  </target>
+</project>
