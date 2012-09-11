@@ -5904,13 +5904,13 @@ case "${arg}" in
 		;;
 	
 	try)
-		test ! -z "${1}" && softwarning "Arguments after parameter '${arg}' are ignored."
+		test ! -z "${1}" && test ${1} != "--" && softwarning "Arguments after parameter '${arg}' are ignored."
 		SANEWALL_MODE="START"
 		SANEWALL_TRY=1
 		;;
 	
 	start)
-		test ! -z "${1}" && softwarning "Arguments after parameter '${arg}' are ignored."
+		test ! -z "${1}" && test ${1} != "--" && softwarning "Arguments after parameter '${arg}' are ignored."
 		SANEWALL_MODE="START"
 		SANEWALL_TRY=0
 		;;
@@ -5945,12 +5945,12 @@ case "${arg}" in
 		;;
 	
 	restart|force-reload)
-		test ! -z "${1}" && softwarning "Arguments after parameter '${arg}' are ignored."
+		test ! -z "${1}" && test ${1} != "--" && softwarning "Arguments after parameter '${arg}' are ignored."
 		SANEWALL_MODE="START"
 		;;
 	
 	condrestart)
-		test ! -z "${1}" && softwarning "Arguments after parameter '${arg}' are ignored."
+		test ! -z "${1}" && test ${1} != "--" && softwarning "Arguments after parameter '${arg}' are ignored."
 		test -f "${SANEWALL_LOCK_DIR}/sanewall" && exit 0
 		SANEWALL_MODE="START"
 		;;
@@ -6025,13 +6025,13 @@ case "${arg}" in
 		;;
 	
 	save)
-		test ! -z "${1}" && softwarning "Arguments after parameter '${arg}' are ignored."
+		test ! -z "${1}" && test ${1} != "--" && softwarning "Arguments after parameter '${arg}' are ignored."
 		SANEWALL_MODE="START"
 		SANEWALL_SAVE=1
 		;;
 		
 	debug)
-		test ! -z "${1}" && softwarning "Arguments after parameter '${arg}' are ignored."
+		test ! -z "${1}" && test ${1} != "--" && softwarning "Arguments after parameter '${arg}' are ignored."
 		SANEWALL_MODE="DEBUG"
 		;;
 	
