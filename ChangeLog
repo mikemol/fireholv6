@@ -6,6 +6,8 @@ sanewall (0.9.3) unstable; urgency=low
       an internal host is trying to reach a blacklisted host.
     - Stop checking RESERVED_IPS date
 
+ -- Phil Whineray <phil@sanewall.org>  Sat, 16 Feb 2013 11:50:00 +0000
+
 sanewall (0.9.2) unstable; urgency=low
 
   * Improve installation
