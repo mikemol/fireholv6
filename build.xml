@@ -125,13 +125,6 @@
     <exec executable="a2x">
       <arg value="-f"/>
       <arg value="manpage"/>
-      <arg value="man/get-iana.1.txt"/>
-      <arg value="-D"/>
-      <arg value="${target.dir}/man/man1"/>
-    </exec>
-    <exec executable="a2x">
-      <arg value="-f"/>
-      <arg value="manpage"/>
       <arg value="man/sanewall.1.txt"/>
       <arg value="-D"/>
       <arg value="${target.dir}/man/man1"/>

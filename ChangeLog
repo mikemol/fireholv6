@@ -1,3 +1,11 @@
+sanewall (0.9.3) unstable; urgency=low
+
+  * Import firehol changes up to version 1.296
+    - Removed get-iana.sh and check-iana.sh altogether
+    - Updated blackist command so that it does not lead to timeouts when
+      an internal host is trying to reach a blacklisted host.
+    - Stop checking RESERVED_IPS date
+
 sanewall (0.9.2) unstable; urgency=low
 
   * Improve installation

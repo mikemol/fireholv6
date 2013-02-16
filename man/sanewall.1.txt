@@ -128,7 +128,7 @@ FILES
 
 SEE ALSO
 --------
-sanewall.conf(5), get-iana(1), iptables(8), bash(1)
+sanewall.conf(5), iptables(8), bash(1)
 
 AUTHOR
 ------

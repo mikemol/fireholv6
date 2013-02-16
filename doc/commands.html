@@ -1830,7 +1830,6 @@ about optional rule parameters that should not be used in certain commands.
 	This variable includes all the IP addresses defined as <b>IANA - Reserved</b> by <a href="http://www.iana.org">IANA</a>.
 	You can overwrite the internal default definion of this variable by creating a file with same name in /etc/sanewall.
 	This file accepts an IP definition per line.
-	The supplied <b>get-iana.sh</b> script creates this file by directly fetching <a href="http://www.iana.org/assignments/ipv4-address-space">this</a> document.
 	<p>
 	Example: <b>interface eth0 internet src not "${RESERVED_IPS}"</b>
 	<p>
