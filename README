@@ -1,8 +1,8 @@
-               Sanewall - a firewall that will keep you sane
-               *********************************************
+                 Sanewall - making sense of firewalling
+                 **************************************
 
-Sanewall is an iptables firewall builder which uses an elegant language
-allowing you to create very readable configurations even for complex
+Sanewall is an firewall builder for iptables which uses an elegant language.
+It allows you to create very readable configurations even for complex
 stateful firewalls.
 
 Simple but useful firewalls need only a few lines of configuration. Very
