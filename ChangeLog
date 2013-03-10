@@ -1,3 +1,18 @@
+sanewall (0.9.5) unstable; urgency=low
+
+  * Rename service webcache to httpalt
+    - http_alt is preferred name for port 8080, since many things use it
+    - Added alias webcache for httpalt
+    - Added alias tomcat for httpalt
+
+  * Improve service documentation
+    - More links to wikipedia and home pages
+    - More complete titles
+    - Add a link to wikipedia at top of service list
+    - Fix filename reporting when script detects errors
+
+ -- Phil Whineray <phil@sanewall.org>  Sun, 10 Mar 2013 21:31:00 +0000
+
 sanewall (0.9.4) unstable; urgency=low
 
   * Improve documentation
