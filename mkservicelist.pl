@@ -133,6 +133,7 @@ my %multi_cmd = (
                  );
 
 # Extract service information from database
+$filename = $ARGV[2];
 $fh = open_file($ARGV[2]);
 my %db = ();
 my %dbalias = ();
