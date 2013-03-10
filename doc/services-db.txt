@@ -14,7 +14,7 @@
 # \tALIAS <alternative-name>
 # \tWIKI <wikipedia-link>
 # \tCPORT <client-ports>
-# \tSPORT <client-ports>
+# \tSPORT <server-ports>
 # \tMOD <netfilter-module>
 # \tMODNAT <netfilter-nat-module>
 # \tEXAMPLE
@@ -23,6 +23,9 @@
 # \tNOTES
 # \t\tmultiline
 # \t\tstrings
+#
+# CPORT and SPORT may be slightly confusing... SPORT is the destination port
+# when defining the server-side of a service.
 #
 
 SERVICE AH
@@ -33,16 +36,17 @@ SERVICE AH
 	NOTES
 		For more information see this
 		<ulink url="http://web.archive.org/web/20100918134143/http://www.freeswan.org/freeswan_trees/freeswan-1.99/doc/ipsec.html#AH.ipsec">Archive of the FreeS/WAN documentation</ulink>
-		and <ulink url="http://www.ietf.org/rfc/rfc2402.txt?number=2402">RFC 2402</ulink>.
+		and <ulink url="http://www.ietf.org/rfc/rfc2402.txt">RFC 2402</ulink>.
 
 SERVICE ESP
 	NAME IPSec Encapsulated Security Payload (ESP)
 	EXAMPLE
 		server ESP accept
+	WIKI http://en.wikipedia.org/wiki/IPsec#Encapsulating_Security_Payload
 	NOTES
 		For more information see this
 		<ulink url="http://web.archive.org/web/20100918134143/http://www.freeswan.org/freeswan_trees/freeswan-1.99/doc/ipsec.html#ESP.ipsec">Archive of the FreeS/WAN documentation</ulink>
-		<ulink url="http://www.ietf.org/rfc/rfc2406.txt?number=2406">RFC 2406</ulink>.
+		<ulink url="http://www.ietf.org/rfc/rfc2406.txt">RFC 2406</ulink>.
 
 SERVICE GRE
 	NAME Generic Routing Encapsulation
@@ -52,7 +56,7 @@ SERVICE GRE
 	NOTES
 		Protocol No 47.
 		-
-		For more information see RFC <ulink url="http://www.ietf.org/rfc/rfc2784.txt?number=2784">RFC 2784</ulink>.
+		For more information see RFC <ulink url="http://www.ietf.org/rfc/rfc2784.txt">RFC 2784</ulink>.
 
 SERVICE OSPF
 	NAME Open Shortest Path First
@@ -216,9 +220,9 @@ SERVICE dcc
 	NAME Distributed Checksum Clearinghouse
 	EXAMPLE
 		server dcc accept
+	WIKI http://en.wikipedia.org/wiki/Distributed_Checksum_Clearinghouse
 	NOTES
-		See <ulink url="http://wiki.apache.org/spamassassin/UsingDcc">SpamAssassin with DCC</ulink>
-		and this
+		See also this
 		<ulink url="http://www.rhyolite.com/anti-spam/dcc/FAQ.html#firewall-ports">DCC FAQ</ulink>.
 
 SERVICE dcpp
@@ -271,6 +275,7 @@ SERVICE dhcprelay
 	NAME DHCP Relay
 	EXAMPLE
 		server dhcprelay accept
+	WIKI http://en.wikipedia.org/wiki/Dynamic_Host_Configuration_Protocol#DHCP_relaying
 	NOTES
 		From RFC 1812 section 9.1.2:
 		-
@@ -284,9 +289,9 @@ SERVICE dhcprelay
 		instead.
 		-
 		For more information about DHCP Relay see section 9.1.2 of
-		<ulink url="http://www.ietf.org/rfc/rfc1812.txt?number=1812">RFC 1812</ulink>
+		<ulink url="http://www.ietf.org/rfc/rfc1812.txt">RFC 1812</ulink>
 		and section 4 of
-		<ulink url="http://www.ietf.org/rfc/rfc1542.txt?number=1542">RFC 1542</ulink>
+		<ulink url="http://www.ietf.org/rfc/rfc1542.txt">RFC 1542</ulink>
 
 SERVICE dict
 	NAME Dictionary Server Protocol
@@ -295,7 +300,7 @@ SERVICE dict
 		server dict accept
 	NOTES
 		See
-		<ulink url="http://www.ietf.org/rfc/rfc2229.txt?number=2229">RFC2229</ulink>.
+		<ulink url="http://www.ietf.org/rfc/rfc2229.txt">RFC2229</ulink>.
 
 SERVICE distcc
 	NAME Distributed CC
@@ -431,6 +436,18 @@ SERVICE http
 	EXAMPLE
 		server http accept
 
+SERVICE httpalt
+	WIKI  http://en.wikipedia.org/wiki/Http
+	ALIAS webcache
+	ALIAS tomcat
+	NAME HTTP alternate port
+	EXAMPLE
+		server httpalt accept
+	NOTES
+		This port is commonly used by web servers, web proxies
+		and caches where the standard <xref linkend="service-http"/>
+		port is not available or can or should not be used.
+
 SERVICE https
 	NAME Secure Hypertext Transfer Protocol
 	WIKI  http://en.wikipedia.org/wiki/Https
@@ -438,7 +455,7 @@ SERVICE https
 		server https accept
 
 SERVICE hylafax
-	NAME hylafax
+	NAME HylaFAX
 	HOME  http://www.hylafax.org
 	WIKI  http://en.wikipedia.org/wiki/Hylafax
 	CPORT many
@@ -483,13 +500,13 @@ SERVICE icmp
 
 SERVICE icp
 	NAME Internet Cache Protocol
-	WIKI  http://en.wikipedia.org/wiki/Internet_Cache_Protocol
+	WIKI http://en.wikipedia.org/wiki/Internet_Cache_Protocol
 	EXAMPLE
 		server icp accept
 
 SERVICE ident
-	NAME ident
-	WIKI  http://en.wikipedia.org/wiki/Ident
+	NAME Identification Protocol
+	WIKI http://en.wikipedia.org/wiki/Ident_protocol
 	EXAMPLE
 		server ident reject with tcp-reset
 
@@ -567,7 +584,7 @@ SERVICE lpd
 		server lpd accept
 	NOTES
 		LPD is documented in
-		<ulink url="http://www.ietf.org/rfc/rfc1179.txt?number=1179">RFC 1179</ulink>.
+		<ulink url="http://www.ietf.org/rfc/rfc1179.txt">RFC 1179</ulink>.
 		-
 		Since many operating systems incorrectly use the non-default
 		client ports for LPD access, this definition allows any
@@ -608,9 +625,6 @@ SERVICE mms
 		to transfer unicast data in Windows Media Services
 		(previously called NetShow Services).
 
-SERVICE ms_ds
-	NAME ms_ds
-
 SERVICE msn
 	NAME Microsoft MSN Messenger Service
 	EXAMPLE
@@ -623,7 +637,7 @@ SERVICE msnp
 		server msnp accept
 
 SERVICE multicast
-	NAME multicast
+	NAME Multicast
 	WIKI  http://en.wikipedia.org/wiki/Multicast
 	CPORT N/A
 	SPORT N/A
@@ -929,7 +943,7 @@ SERVICE rndc
 		server rndc accept
 
 SERVICE rsync
-	NAME rsync
+	NAME rsync protocol
 	HOME  http://rsync.samba.org/
 	WIKI  http://en.wikipedia.org/wiki/Rsync
 	EXAMPLE
@@ -948,6 +962,8 @@ SERVICE samba
 	NAME Samba
 	CPORT default
 	SPORT many
+	HOME http://www.samba.org/
+	WIKI http://en.wikipedia.org/wiki/Samba_(software)
 	EXAMPLE
 		server samba accept
 	NOTES
@@ -980,12 +996,14 @@ SERVICE samba
 
 SERVICE sane
 	NAME SANE Scanner service
+	HOME http://www.sane-project.org/
 	MODNAT N/A
 
 SERVICE sip
 	NAME Session Initiation Protocol
 	EXAMPLE
 		server sip accept
+	WIKI http://en.wikipedia.org/wiki/Session_Initiation_Protocol
 	NOTES
 		<ulink url="http://www.voip-info.org/wiki-SIP">SIP</ulink> is an IETF
 		standard protocol (RFC 2543) for initiating interactive user
@@ -995,82 +1013,105 @@ SERVICE sip
 
 SERVICE smtp
 	NAME Simple Mail Transport Protocol
+	WIKI http://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol
 	EXAMPLE
 		server smtp accept
 
 SERVICE smtps
 	NAME Secure Simple Mail Transport Protocol
+	WIKI http://en.wikipedia.org/wiki/SMTPS
 	EXAMPLE
 		server smtps accept
 
 SERVICE snmp
-	NAME snmp
+	NAME Simple Network Management Protocol
+	WIKI http://en.wikipedia.org/wiki/Simple_Network_Management_Protocol
 	EXAMPLE
 		server snmp accept
 
 SERVICE snmptrap
-	NAME snmptrap
+	NAME SNMP Trap
+	WIKI http://en.wikipedia.org/wiki/Simple_Network_Management_Protocol#Trap
 	EXAMPLE
 		server snmptrap accept
+	NOTES
+		An SNMP trap is a notification from an agent to a manager.
 
 SERVICE socks
-	NAME socks
+	NAME SOCKet Secure
+	WIKI http://en.wikipedia.org/wiki/SOCKS
 	EXAMPLE
 		server socks accept
+	NOTES
+		See also <ulink url="http://www.ietf.org/rfc/rfc1928.txt">RFC 1928</ulink>.
 
 SERVICE squid
-	NAME squid
+	NAME Squid Web Cache
+	HOME http://www.squid-cache.org/
+	WIKI http://en.wikipedia.org/wiki/Squid_(software)
 	EXAMPLE
 		server squid accept
 
 SERVICE ssh
 	NAME Secure Shell Protocol
+	WIKI http://en.wikipedia.org/wiki/Secure_Shell
 	EXAMPLE
 		server ssh accept
 
 SERVICE stun
-	NAME STUN
+	NAME Session Traversal Utilities for NAT
+	WIKI http://en.wikipedia.org/wiki/STUN
 	EXAMPLE
 		server stun accept
 	NOTES
-		<ulink url="http://www.voip-info.org/wiki-STUN">STUN</ulink> is a
-		protocol for assisting devices behind a NAT firewall or
+		<ulink url="http://www.voip-info.org/wiki-STUN">STUN</ulink>
+		is a protocol for assisting devices behind a NAT firewall or
 		router with their packet routing.
 
 SERVICE submission
 	NAME SMTP over SSL/TLS submission
+	WIKI http://en.wikipedia.org/wiki/Simple_Mail_Transfer_Protocol
 	EXAMPLE
 		server submission accept
+	NOTES
+		Submission is essentially normal SMTP with an SSL/TLS
+		negotation.
 
 SERVICE swat
-	NAME swat
+	NAME Samba Web Administration Tool
+	HOME http://www.samba.org/samba/docs/man/Samba-HOWTO-Collection/SWAT.html
 	EXAMPLE
 		server swat accept
 
 SERVICE syslog
-	NAME syslog
+	NAME Syslog Remote Logging Protocol
+	WIKI http://en.wikipedia.org/wiki/Syslog
 	EXAMPLE
 		server syslog accept
 
 SERVICE telnet
-	NAME telnet
+	NAME Telnet
+	WIKI http://en.wikipedia.org/wiki/Telnet
 	EXAMPLE
 		server telnet accept
 
 SERVICE tftp
-	NAME TFTP
+	NAME Trivial File Transfer Protocol
+	WIKI http://en.wikipedia.org/wiki/Trivial_File_Transfer_Protocol
 	EXAMPLE
 		server tftp accept
 
 SERVICE time
-	NAME time
+	NAME Time Protocol
+	WIKI http://en.wikipedia.org/wiki/Time_Protocol
 	EXAMPLE
 		server time accept
 
 SERVICE timestamp
-	NAME timestamp
+	NAME ICMP Timestamp
 	CPORT N/A
 	SPORT N/A
+	WIKI http://en.wikipedia.org/wiki/Internet_Control_Message_Protocol#Timestamp
 	EXAMPLE
 		server timestamp accept
 	NOTES
@@ -1085,12 +1126,14 @@ SERVICE upnp
 	EXAMPLE
 		server upnp accept
 	HOME http://upnp.sourceforge.net/
+	WIKI http://en.wikipedia.org/wiki/Universal_Plug_and_Play
 	NOTES
 		For a Linux implementation see:
 		<ulink url="http://linux-igd.sourceforge.net/">Linux IGD</ulink>.
 
 SERVICE uucp
-	NAME uucp
+	NAME Unix-to-Unix Copy
+	WIKI http://en.wikipedia.org/wiki/UUCP
 	EXAMPLE
 		server uucp accept
 
@@ -1098,47 +1141,63 @@ SERVICE vmware
 	NAME vmware
 	EXAMPLE
 		server vmware accept
+	NOTES
+		Used from VMWare 1 and up. See the
+		<ulink url="http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=1012382">VMWare KnowledgeBase</ulink>.
 
 SERVICE vmwareauth
 	NAME vmwareauth
 	EXAMPLE
 		server vmwareauth accept
+	NOTES
+		Used from VMWare 1 and up. See the
+		<ulink url="http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=1012382">VMWare KnowledgeBase</ulink>.
 
 SERVICE vmwareweb
 	NAME vmwareweb
 	EXAMPLE
 		server vmwareweb accept
+	NOTES
+		Used from VMWare 2 and up. See
+		<ulink url="http://www.vmware.com/support/server2/doc/releasenotes_vmserver2.html">VMWare Server 2.0 release notes</ulink>
+		and the
+		<ulink url="http://kb.vmware.com/selfservice/microsites/search.do?language=en_US&cmd=displayKC&externalId=1012382">VMWare KnowledgeBase</ulink>.
 
 SERVICE vnc
-	NAME vnc
+	NAME Virtual Network Computing
+	WIKI http://en.wikipedia.org/wiki/Virtual_Network_Computing
 	EXAMPLE
 		server vnc accept
-
-SERVICE webcache
-	NAME webcache
-	EXAMPLE
-		server webcache accept
-
+	NOTES
+		VNC is a graphical desktop sharing protocol.
 SERVICE webmin
-	NAME webmin
+	NAME Webmin Administration System
 	HOME http://www.webmin.com/
 	EXAMPLE
 		server webmin accept
 
 SERVICE whois
-	NAME whois
+	NAME WHOIS Protocol
+	WIKI http://en.wikipedia.org/wiki/Whois
 	EXAMPLE
 		server whois accept
 
 SERVICE xbox
-	NAME xbox
+	CPORT default
+	SPORT many
+	NAME Xbox Live
 	EXAMPLE
-		server xbox accept
+		client xbox accept
+	NOTES
+		Complex service definition for the Xbox live service.
+		-
+		See program source for contributor details.
 
 SERVICE xdmcp
 	NAME X Display Manager Control Protocol
 	EXAMPLE
 		server xdmcp accept
+	WIKI http://en.wikipedia.org/wiki/X_display_manager_(program_type)#X_Display_Manager_Control_Protocol
 	NOTES
 		See <ulink url="http://www.jirka.org/gdm-documentation/x70.html">Gnome Display Manager</ulink>
 		for a discussion about XDMCP and firewalls (Gnome Display
