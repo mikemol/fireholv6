@@ -792,6 +792,7 @@ SERVICE nntps
 
 SERVICE nrpe
 	NAME Nagios NRPE
+	WIKI http://en.wikipedia.org/wiki/Nagios#NRPE
 
 SERVICE ntp
 	NAME Network Time Protocol
@@ -828,6 +829,8 @@ SERVICE nxserver
 
 SERVICE openvpn
 	NAME OpenVPN
+	HOME http://openvpn.net/
+	WIKI http://en.wikipedia.org/wiki/OpenVPN
 
 SERVICE oracle
 	NAME Oracle Database
