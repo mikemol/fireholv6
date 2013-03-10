@@ -265,6 +265,9 @@ open O, ">$ARGV[0]" or die;
 print O '<!DOCTYPE refsect1 PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"' . "\n";
 print O '                          "docbook/docbook-xml/docbookx.dtd">' . "\n";
 print O "<refsect1><title>Services</title>\n";
+print O "  <para>\n";
+print O "    This <ulink url=\"http://en.wikipedia.org/wiki/List_of_TCP_and_UDP_port_numbers\">Wikipedia list of ports</ulink> may be helpful if you need to define a new service.\n";
+print O "  </para>\n";
 my @keys = sort { return uc($a) cmp uc($b) } keys(%servs);
 foreach my $k (@keys) {
   my $name = $db{$k}{"name"};
