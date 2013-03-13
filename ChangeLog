@@ -1,3 +1,11 @@
+sanewall (0.9.6) unstable; urgency=low
+
+  * Remove RESERVED_IPS file
+    - Default values are very unlikely to need changing
+    - Removed from INSTALL documentation
+
+ -- Phil Whineray <phil@sanewall.org>  Wed, 13 Mar 2013 20:16:00 +0000
+
 sanewall (0.9.5) unstable; urgency=low
 
   * Rename service webcache to httpalt

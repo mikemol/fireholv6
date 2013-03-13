@@ -28,7 +28,6 @@ To install you just need to perform the following steps:
      Otherwise, create a default configuration if this is your first
      installation:
        sudo mkdir /etc/sanewall
-       sudo cp etc/RESERVED_IPS /etc/sanewall
        sudo cp examples/client-all.conf /etc/sanewall/sanewall.conf
 
   4. Run sanewall to generate your new iptables firewall:

@@ -71,9 +71,6 @@
     <mkdir dir="${target.dir}/doc"/>
     <chmod dir="${target.dir}/doc" perm="755"/>
 
-    <mkdir dir="${target.dir}/etc"/>
-    <chmod dir="${target.dir}/etc" perm="755"/>
-
     <mkdir dir="${target.dir}/examples"/>
     <chmod dir="${target.dir}/examples" perm="755"/>
 
@@ -123,10 +120,6 @@
       </fileset>
     </copy>
     <chmod  dir="${target.dir}/init.d" includes="**/sanewall.*" perm="755"/>
-
-    <copy todir="${target.dir}/etc" file="etc/RESERVED_IPS"/>
-    <chmod file="${target.dir}/etc/RESERVED_IPS" perm="644"/>
-
 
     <copy todir="${target.dir}/examples">
       <fileset dir="examples">
