@@ -96,7 +96,7 @@ To install you just need to perform the following steps:
      and turned into a Sanewall configuration.
 
      The FireHOL commands will be removed if they are present and
-     replaced with the sanewall equvalents.
+     replaced with the sanewall equivalents.
 
   2. Sanewall will be set up to start at boot time. To control this
      behaviour use update-rc.d. You have to enable sanewall in
@@ -109,11 +109,25 @@ as /etc/init.d/sanewall.
 
 Building/Installing from Source
 ===============================
-As sanewall is a shell script there is no compilation step, however there
-is an ant script (build.xml) to build the documentation and tar-file.
+As sanewall is a shell script there is no compilation step as such, however
+there is a Makefile which stamps the version into the file, builds the
+documentation and creates the final tar-file.
 
-If you do not wish to perform these steps, you can simply copy the files
-in much the same manner as described in "Installing from the tar-file".
+To perform a build you will need the following packages:
+   perl
+   xmllint
+   xsltproc
+   docbook-xml
+   docbook-xsl
+   fop
+
+The Makefile has the following editable variables at the top:
+  DB_XSL_BASE   -   path to docbook-xsl stylesheets
+  PAPERTYPE     -   paper type for PDF (e.g. A4, letter)
+
+If you do not wish to build the documentation or the non-source tar-file,
+you can simply copy the files in much the same manner as described in
+"Installing from the tar-file".
 
 
 Initial Setup

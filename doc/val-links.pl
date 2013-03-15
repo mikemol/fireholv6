@@ -4,6 +4,11 @@ use strict;
 use LWP::Simple;
 use Data::Dumper;
 
+if (@ARGV < 1) {
+  print STDERR "Usage: val-links.pl services-db.txt\n";
+  exit 1;
+}
+
 my %urls = ();
 
 while (<>) {

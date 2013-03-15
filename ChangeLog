@@ -4,7 +4,10 @@ sanewall (0.9.6) unstable; urgency=low
     - Default values are very unlikely to need changing
     - Removed from INSTALL documentation
 
- -- Phil Whineray <phil@sanewall.org>  Wed, 13 Mar 2013 20:16:00 +0000
+  * Replaced ant build mechanism with GNU Make
+    - New dependencies listed in INSTALL file
+
+ -- Phil Whineray <phil@sanewall.org>  Fri, 15 Mar 2013 21:55:00 +0000
 
 sanewall (0.9.5) unstable; urgency=low
 
