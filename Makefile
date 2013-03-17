@@ -1,8 +1,10 @@
 DB_XSL_BASE=/usr/share/xml/docbook/stylesheet/docbook-xsl
+DB_DTD_BASE=/usr/share/xml/docbook/schema/dtd/4.5
 PAPERTYPE=A4
 
 VERSION=$(shell ./get-version.sh ChangeLog)
 
+DB_SCHEMA_DTD=$(DB_DTD_BASE)/docbookx.dtd
 DB_TITLE_XSL=$(DB_XSL_BASE)/template/titlepage.xsl
 DB_MAN_XSL=$(DB_XSL_BASE)/manpages/docbook.xsl
 DB_FO_XSL=$(DB_XSL_BASE)/fo/docbook.xsl
@@ -63,7 +65,7 @@ doc/manual-info.xml: doc/manual-info.txt ChangeLog
 	doc/mkbookinfo.pl doc/manual-info.xml ChangeLog doc/manual-info.txt
 
 build/tmp/db-valid: $(DBSRC) $(DBGEN)
-	xmllint --noout --postvalid --xinclude doc/sanewall-manual.xml
+	xmllint --noout --postvalid --xinclude doc/sanewall-manual.xml --dtdvalid $(DB_SCHEMA_DTD)
 	touch build/tmp/db-valid
 
 $(OUT)/man/man1/sanewall.1: build/tmp/db-valid $(OUT)/sanewall
