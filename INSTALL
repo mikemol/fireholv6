@@ -7,6 +7,9 @@ These instructions apply to packages downloaded from:
 If you have installed sanewall via your distribution, there may be some
 differences.
 
+Once you have installed sanewall, read the Getting Started section of
+the README.
+
 Installing from the tar-file
 ============================
 Obtain the distribution file. It will look something like:
@@ -38,8 +41,10 @@ To install you just need to perform the following steps:
        sudo cp doc /usr/share/doc/sanewall
 
 Note that you will also want to ensure that sanewall runs at boot-time. How
-you do so depends on your distribution. Some example init scripts are provided
-in the init.d directory.
+you do so depends on your distribution. The binary can be used directly in
+/etc/init.d on many systems. In addition, some example init scripts are
+available here:
+  http://bugs.sanewall.org/wiki/Init_Scripts
 
 
 Installing from the rpm-file
@@ -99,11 +104,15 @@ To install you just need to perform the following steps:
      replaced with the sanewall equivalents.
 
   2. Sanewall will be set up to start at boot time. To control this
-     behaviour use update-rc.d. You have to enable sanewall in
+     behaviour use update-rc.d. You also have to enable sanewall in
      /etc/default/sanewall to have sanewall start. To enable it set
      START_SANEWALL to anything other than NO/no.
 
-Sanewall is installed as /sbin/sanewall with an init script also provided
+     You can also put a WAIT_FOR_IFACE entry in this file, which will
+     set up the appropriate environment variable whilst running
+     sanewall during startup.
+
+Sanewall is installed as /usr/sbin/sanewall with an init script also provided
 as /etc/init.d/sanewall.
 
 
@@ -128,60 +137,3 @@ The Makefile has the following editable variables at the top:
 If you do not wish to build the documentation or the non-source tar-file,
 you can simply copy the files in much the same manner as described in
 "Installing from the tar-file".
-
-
-Initial Setup
-=============
-When you first install the program you need to set your configuration in the
-file /etc/sanewall/sanewall.conf.
-
-Either start from one of the examples:
-  client-all.conf     -  Simplest firewall for a standalone system (installed
-                         by default)
-  lan-gateway.conf
-  server-dmz.conf
-  office.conf
-
-Alternatively, run:
-  sanewall wizard
-
-Sanewall will try to generate a configuration tailored to the machine
-it is running on.
-
-
-Other setup options
-===================
-
-Adding additional services
---------------------------
-In addition to defining extra services in the sanewall.conf file, it is
-possible to define new services by putting extra config files into the
-/etc/sanewall/services directory.
-
-Every file with the ending .conf gets parsed. Config files should start
-with a special header:
-
-#FHVER: 1:213
-
-Which was originally defined within FireHOL. 1 is the API version and
-will be updated if a backwards-incompatible change is introduced. 213
-was the minimum version of FireHOL the service was expected to work with
-and is ignored in sanewall.
-
-The format for service definition is the same as for adding a service
-to the main configuration file. See here for details:
-  http://www.sanewall.org/
-
-An example is provided in bittorrent.conf in the documentation folder.
-
-Waiting for a network device
-----------------------------
-If you want to have sanewall to wait until a network device is up before
-it creates the firewall rules you can set the name of the device in
-/etc/defaults/sanewall as the value of:
-  WAIT_FOR_IFACE
-
-Sanewall will wait until the devices is up or until 60 seconds have elapsed.
-
-Note that your device does not need to be up in order to create the firewall
-so this option should only be used if you have a specific need to wait.

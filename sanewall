@@ -6008,7 +6008,7 @@ case "${arg}" in
 		else
 		${CAT_CMD} <<EOF
 Sanewall version $VERSION
-(C) Copyright 2012, Phil Whineray <phil.whineray@gmail.com>
+(C) Copyright 2012, Phil Whineray <philsanewall.org>
 (C) Copyright 2002-2007, Costa Tsaousis <costa@tsaousis.gr>
 Sanewall is distributed under the GPL v2+.
 
@@ -6198,7 +6198,7 @@ then
 	${CAT_CMD} <<EOF
 
 Sanewall version $VERSION
-(C) Copyright 2012, Phil Whineray <phil.whineray@gmail.com>
+(C) Copyright 2012, Phil Whineray <philsanewall.org>
 (C) Copyright 2003, Costa Tsaousis <costa@tsaousis.gr>
 Sanewall is distributed under the GPL v2+.
 Home Page: http://www.sanewall.org
@@ -6504,7 +6504,7 @@ then
 	"${CAT_CMD}" >&2 <<EOF
 
 Sanewall version $VERSION
-(C) Copyright 2012, Phil Whineray <phil.whineray@gmail.com>
+(C) Copyright 2012, Phil Whineray <philsanewall.org>
 (C) Copyright 2003, Costa Tsaousis <costa@tsaousis.gr>
 Sanewall is distributed under the GPL v2+.
 Home Page: http://www.sanewall.org

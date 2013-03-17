@@ -1,3 +1,20 @@
+sanewall (0.9.7) unstable; urgency=low
+
+  * Improve docbook validation
+
+  * Remove init.d directory
+    - These files belong in downstream packages
+    - Added a link to their location on website
+
+  * Update email address in copyright, contact info
+    - Please use phil@sanewall.org for all project-related contact
+
+  * Update README and INSTALL documents
+    - Move getting started documents from INSTALL to README
+    - Rearrange README
+
+ -- Phil Whineray <phil@sanewall.org>  Sun, 17 Mar 2013 23:06:00 +0000
+
 sanewall (0.9.6) unstable; urgency=low
 
   * Remove RESERVED_IPS file

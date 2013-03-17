@@ -40,13 +40,11 @@ $(OUT)/sanewall: $(BASEFILES)
 	install -m 755 -d $(OUT)/admin
 	install -m 755 -d $(OUT)/doc
 	install -m 755 -d $(OUT)/examples
-	install -m 755 -d $(OUT)/init.d
 	install -m 755 -d $(OUT)/man
 	install -m 755 -d $(OUT)/man/man1
 	install -m 755 -d $(OUT)/man/man5
 	install -m 644 admin/* $(OUT)/admin
 	install -m 644 examples/* $(OUT)/examples
-	install -m 644 init.d/* $(OUT)/init.d
 	install -m 644 INSTALL $(OUT)
 	install -m 644 README $(OUT)
 	install -m 644 COPYING $(OUT)

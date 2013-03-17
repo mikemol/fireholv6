@@ -1,5 +1,7 @@
-                 Sanewall - making sense of firewalling
-                 **************************************
+                  Sanewall - making sense of firewalling
+                  **************************************
+                       http://www.sanewall.org/
+                       ************************
 
 Sanewall is a firewall builder for iptables which uses an elegant language.
 It allows you to create very readable configurations even for complex
@@ -13,14 +15,6 @@ configuration language.
 Sanewall can be used to produce local firewalls or router-based firewalls
 on any system that bash and iptables are available including full GNU/Linux
 servers and embedded routers such as OpenWRT (http://www.openwrt.org/).
-
-
-History
-=======
-Sanewall is a fork of FireHOL (http://firehol.sourceforge.net/) which was
-made when development of that project stalled. A great deal is owed to that
-project and Costa Tsaousis for originating it. All existing FireHOL
-definitions should be compatible with sanewall.
 
 
 Goals
@@ -43,24 +37,57 @@ The use of a simple text-file for configuration allows for optimal use
 with version control and file-comparison tools.
 
 
-License
-=======
-Copyright (C) 2012,2013 Phil Whineray <phil.whineray@gmail.com>
-Copyright (C) 2003-2013 Costa Tsaousis <costa@tsaousis.gr>
+Getting Started
+===============
+If you want to install the package from source or the tar-file from the
+website, please read the file INSTALL first.
 
-This program is free software; you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation; either version 2 of the License, or
-(at your option) any later version.
+When you first install the program you need to set your configuration in
+the file /etc/sanewall/sanewall.conf. Either start from an examples:
+  client-all.conf     -  Simplest firewall for a standalone system (installed
+                         by default)
+  lan-gateway.conf
+  server-dmz.conf
+  office.conf
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+Alternatively, run:
+  sanewall wizard
 
-You should have received a copy of the GNU General Public License
-along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+Sanewall will try to generate a configuration tailored to the machine
+it is running on.
+
+Adding additional services
+--------------------------
+In addition to defining extra services in the sanewall.conf file, it is
+possible to define new services by putting extra config files into the
+/etc/sanewall/services directory.
+
+Every file with the ending .conf gets parsed. Config files should start
+with a special header:
+
+#FHVER: 1:213
+
+Which was originally defined within FireHOL. 1 is the API version and
+will be updated if a backwards-incompatible change is introduced. 213
+was the minimum version of FireHOL the service was expected to work with
+and is ignored in sanewall.
+
+The format for service definition is the same as for adding a service
+to the main configuration file. See here for details:
+  http://www.sanewall.org/
+
+An example is provided in bittorrent.conf in the documentation folder.
+
+Waiting for a network device
+----------------------------
+If you want to have sanewall to wait until a network device is up before
+it creates the firewall rules you can set the name of the device in the
+environment variable WAIT_FOR_IFACE.
+
+Sanewall will wait until the devices is up or until 60 seconds have elapsed.
+
+Note that your device does not need to be up in order to create the firewall
+so this option should only be used if you have a specific need to wait.
 
 
 Support and documentation
@@ -70,7 +97,13 @@ The main website is here:
 
 Man pages, PDF and HTML documentation are provided as part of the package
 and can be found in the tarball or in your distribution's standard locations
-(e.g. /usr/share/doc).
+(e.g. /usr/share/doc). The latest manual is always available as PDF and
+online HTML here:
+   http://download.sanewall.org/releases/latest/sanewall-manual.pdf
+   http://download.sanewall.org/releases/latest/sanewall-manual.html
+
+along with a list of all services supported "out of the box":
+   http://download.sanewall.org/releases/latest/sanewall-services.html
 
 For tutorial and guided learning the best place currently is still the
 FireHOL documentation, here:
@@ -86,11 +119,43 @@ low volume and everyone is friendly.
 
 Contributing
 ============
+The wiki page for contributors and potential contributors is here:
+   http://bugs.sanewall.org/wiki/Getting_Involved
+
 The official bug tracker is here:
    http://bugs.sanewall.org/sanewall
 
 The official git trees are here:
    http://git.sanewall.org/
 
-If you would like to get involved, please subscribing to the mailing list:
+If you would like to get involved, please consider subscribing to the
+mailing list:
    http://lists.sanewall.org/mailman/listinfo/sanewall-dev
+
+
+History
+=======
+Sanewall is a fork of FireHOL (http://firehol.sourceforge.net/) which was
+made when development of that project stalled. A great deal is owed to that
+project and Costa Tsaousis for originating it. All existing FireHOL
+definitions should be compatible with sanewall.
+
+
+License
+=======
+Copyright (C) 2012,2013 Phil Whineray <phil@sanewall.org>
+Copyright (C) 2003-2013 Costa Tsaousis <costa@tsaousis.gr>
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
