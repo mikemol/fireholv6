@@ -61,9 +61,12 @@ To perform a build you will need the following packages:
    docbook-xsl
    fop
 
-The Makefile has the following editable variables at the top:
-  DB_XSL_BASE   -   path to docbook-xsl stylesheets
+The Makefile has the following editable variable at the top:
   PAPERTYPE     -   paper type for PDF (e.g. A4, letter)
+
+The build system relies on a correctly set-up XML catalog to work
+(e.g. /etc/xml/catalog) and all commands use --nonet to prevent fetching
+over the network.
 
 If you do not wish to build the documentation or the non-source tar-file,
 you can simply copy the files in much the same manner as described in

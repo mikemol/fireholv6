@@ -1,13 +1,10 @@
-DB_XSL_BASE=/usr/share/xml/docbook/stylesheet/docbook-xsl
-DB_DTD_BASE=/usr/share/xml/docbook/schema/dtd/4.5
 PAPERTYPE=A4
 
 VERSION=$(shell ./get-version.sh ChangeLog)
 
-DB_SCHEMA_DTD=$(DB_DTD_BASE)/docbookx.dtd
+DB_XSL_BASE=http://docbook.sourceforge.net/release/xsl/current
 DB_TITLE_XSL=$(DB_XSL_BASE)/template/titlepage.xsl
 DB_MAN_XSL=$(DB_XSL_BASE)/manpages/docbook.xsl
-DB_FO_XSL=$(DB_XSL_BASE)/fo/docbook.xsl
 DB_HTML_XSL=$(DB_XSL_BASE)/html/docbook.xsl
 
 DBSRC=doc/chapter-intro.xml doc/chapter-language.xml doc/chapter-security.xml \
@@ -54,7 +51,7 @@ $(OUT)/sanewall: $(BASEFILES)
 	install -m 755 build/tmp/sanewall $(OUT)/sanewall
 
 build/tmp/titlepage-fo.xsl: $(OUT)/sanewall doc/titlepage-fo.xml
-	xsltproc --stringparam ns http://www.w3.org/1999/XSL/Format --output build/tmp/titlepage-fo.xsl $(DB_TITLE_XSL) doc/titlepage-fo.xml
+	xsltproc --nonet --stringparam ns http://www.w3.org/1999/XSL/Format --output build/tmp/titlepage-fo.xsl $(DB_TITLE_XSL) doc/titlepage-fo.xml
 
 doc/services-list.xml: doc/services-db.txt $(OUT)/sanewall
 	doc/mkservicelist.pl doc/services-list.xml $(OUT)/sanewall doc/services-db.txt
@@ -63,7 +60,7 @@ doc/manual-info.xml: doc/manual-info.txt ChangeLog
 	doc/mkbookinfo.pl doc/manual-info.xml ChangeLog doc/manual-info.txt
 
 build/tmp/db-valid: $(DBSRC) $(DBGEN)
-	xmllint --noout --postvalid --xinclude doc/sanewall-manual.xml --dtdvalid $(DB_SCHEMA_DTD)
+	xmllint --nonet --noout --postvalid --xinclude doc/sanewall-manual.xml
 	touch build/tmp/db-valid
 
 $(OUT)/man/man1/sanewall.1: build/tmp/db-valid $(OUT)/sanewall
@@ -85,8 +82,7 @@ $(OUT)/doc/sanewall-manual.html: build/tmp/db-valid $(OUT)/sanewall
 	chmod 644 $(OUT)/doc/sanewall-manual.html
 
 build/tmp/sanewall-manual.fo: build/tmp/db-valid $(OUT)/sanewall build/tmp/titlepage-fo.xsl doc/pdf.xsl
-	sed -e "s:IMPORTXSL:$(DB_FO_XSL):" doc/pdf.xsl > build/tmp/pdf.xsl
-	xsltproc --nonet --xinclude --stringparam paper.type $(PAPERTYPE) -o build/tmp/sanewall-manual.fo build/tmp/pdf.xsl doc/sanewall-manual.xml
+	xsltproc --nonet --xinclude --stringparam paper.type $(PAPERTYPE) -o build/tmp/sanewall-manual.fo doc/pdf.xsl doc/sanewall-manual.xml
 
 $(OUT)/doc/sanewall-manual.pdf: build/tmp/sanewall-manual.fo
 	fop build/tmp/sanewall-manual.fo -pdf $(OUT)/doc/sanewall-manual.pdf
