@@ -1,5 +1,8 @@
 sanewall (0.9.7) unstable; urgency=low
 
+  * Use "ss" in place of "netstat"
+    - As suggested here https://bugzilla.redhat.com/show_bug.cgi?id=784520
+
   * Improve docbook validation
 
   * Remove init.d directory
@@ -13,7 +16,7 @@ sanewall (0.9.7) unstable; urgency=low
     - Move getting started documents from INSTALL to README
     - Rearrange README
 
- -- Phil Whineray <phil@sanewall.org>  Sun, 17 Mar 2013 23:06:00 +0000
+ -- Phil Whineray <phil@sanewall.org>  Fri, 22 Mar 2013 21:33:00 +0000
 
 sanewall (0.9.6) unstable; urgency=low
 
