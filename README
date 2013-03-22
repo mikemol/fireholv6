@@ -95,6 +95,9 @@ Support and documentation
 The main website is here:
    http://www.sanewall.org/
 
+To ask questions please sign up to the list:
+   http://lists.sanewall.org/mailman/listinfo/sanewall-users
+
 Man pages, PDF and HTML documentation are provided as part of the package
 and can be found in the tarball or in your distribution's standard locations
 (e.g. /usr/share/doc). The latest manual is always available as PDF and
@@ -105,16 +108,13 @@ online HTML here:
 along with a list of all services supported "out of the box":
    http://download.sanewall.org/releases/latest/sanewall-services.html
 
-For tutorial and guided learning the best place currently is still the
+For further help and advice the sanewall-users mailing list archive is
+fully searchable:
+   http://lists.sanewall.org/pipermail/sanewall-users/
+
+For tutorials and guided learning the best place currently is still the
 FireHOL documentation, here:
    http://firehol.sourceforge.net/
-
-Until forum software is established, the best place to post questions and
-ask for help is the mailing list:
-   http://lists.sanewall.org/mailman/listinfo/sanewall-dev
-
-Don't worry if you're not interested in developing sanewall, the list is
-low volume and everyone is friendly.
 
 
 Contributing
@@ -129,7 +129,7 @@ The official git trees are here:
    http://git.sanewall.org/
 
 If you would like to get involved, please consider subscribing to the
-mailing list:
+development mailing list:
    http://lists.sanewall.org/mailman/listinfo/sanewall-dev
 
 
