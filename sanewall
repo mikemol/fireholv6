@@ -5963,7 +5963,9 @@ case "${arg}" in
 					iptables_cmd -t "${t}" -A "${c}" -p tcp -s "${ssh_src}" --sport "${ssh_sport}" --dport "${ssh_dport}" -m state --state ESTABLISHED -j ACCEPT
 					iptables_cmd -t "${t}" -A "${c}" -p tcp -d "${ssh_src}" --dport "${ssh_sport}" --sport "${ssh_dport}" -m state --state ESTABLISHED -j ACCEPT
 				fi
-				iptables_cmd -t "${t}" -A "${c}" -j DROP
+				if [ "${t}" != "nat" ] ; then
+					iptables_cmd -t "${t}" -A "${c}" -j DROP
+				fi
 			done
 		done
 		success $"Sanewall: Blocking all communications:"
