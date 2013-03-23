@@ -1,3 +1,10 @@
+sanewall (0.9.8) unstable; urgency=low
+
+  * Handle parse errors in generated script more gracefully
+    - See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=703341
+
+ -- Phil Whineray <phil@sanewall.org>  Sat, 23 Mar 2013 16:23:00 +0000
+
 sanewall (0.9.7) unstable; urgency=low
 
   * Use "ss" in place of "netstat"
