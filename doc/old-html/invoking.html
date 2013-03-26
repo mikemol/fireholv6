@@ -4,6 +4,7 @@
 <link rel="stylesheet" type="text/css" href="css.css">
 <TITLE>Sanewall, How to start sanewall.</TITLE>
 <meta name="author" content="Costa Tsaousis">
+<meta name="robots" content="noindex">
 <meta name="description" content="
 
 Home for sanewall, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
@@ -105,7 +106,7 @@ Sanewall has been designed to be a startup service. As such, sanewall accepts al
 		executable shell script in /var/spool/sanewall/last_save_modules.sh.
 		This script can be called during boot to restore the required kernel
 		modules for the firewall saved using this command.
-		
+
 	</td>
 	</tr>
 <tr>	<td valign=top><b>debug</td>
@@ -168,49 +169,49 @@ command line argument to sanewall and then just give parameters to be passed to 
 
 Sanewall is a <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> script.
 To run its configuration file, sanewall
-first defines a set of functions and variables and then it &quot;sources&quot; 
+first defines a set of functions and variables and then it &quot;sources&quot;
 (runs inline) its configuration file to be executed by <a href="http://www.gnu.org/software/bash/bash.html">BASH</a>.</p>
 <p>
 The keywords <b>interface</b>, <b>client</b>, <b>server</b>, <b>
-router</b>, etc. are all <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> functions that are executed by <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> when 
-and if they appear in the configuration file. Using shared variables 
-these functions share some state information that allows them to know, 
-for example, that a <b>client</b> command appears within an <b>interface</b> 
+router</b>, etc. are all <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> functions that are executed by <a href="http://www.gnu.org/software/bash/bash.html">BASH</a> when
+and if they appear in the configuration file. Using shared variables
+these functions share some state information that allows them to know,
+for example, that a <b>client</b> command appears within an <b>interface</b>
 and not within a <b>router</b> and that the name given to an <b>
 interface</b> has not been used before.
 <p>
-Instead of running iptables commands directly, each of these 
-functions (i.e. sanewall) just writes the generated iptables commands to 
-a temporary file. This is done to prevent altering a running firewall 
-before ensuring that the syntax of the configuration file is correct. 
-So, a complete run of the configuration file actually produces all the 
-iptables commands for the firewall, written to a temporary file 
-(script).&nbsp; Even the <b>iptables</b> commands given within the 
-configuration file use the same concept (they just generate iptables 
+Instead of running iptables commands directly, each of these
+functions (i.e. sanewall) just writes the generated iptables commands to
+a temporary file. This is done to prevent altering a running firewall
+before ensuring that the syntax of the configuration file is correct.
+So, a complete run of the configuration file actually produces all the
+iptables commands for the firewall, written to a temporary file
+(script).&nbsp; Even the <b>iptables</b> commands given within the
+configuration file use the same concept (they just generate iptables
 commands in this script).
 <p>
-Finally, this script (the generated iptables commands) has to be run, 
-but before doing so, sanewall saves the running firewall to another 
-temporary file. The saved firewall will be automatically restored if 
+Finally, this script (the generated iptables commands) has to be run,
+but before doing so, sanewall saves the running firewall to another
+temporary file. The saved firewall will be automatically restored if
 some of the generated iptables commands produces an error.
-Such an error 
-is possible when for example, you specify an invalid IP address or 
-hostname, or an invalid argument to some&nbsp; parameter that gets passed to 
+Such an error
+is possible when for example, you specify an invalid IP address or
+hostname, or an invalid argument to some&nbsp; parameter that gets passed to
 iptables as-is.
 <p>
-It is important to understand that <b>during the run of the generated 
-iptables script (including the possible restoration of the old 
-firewall), sanewall allows all traffic to reach its destination</b>. This 
-has been done to prevent a possible lock-out situation where you are 
-SSHing to the server to alter its firewall, and suddenly you loose the 
-connection (although this can still happen if your new firewall doesn't 
+It is important to understand that <b>during the run of the generated
+iptables script (including the possible restoration of the old
+firewall), sanewall allows all traffic to reach its destination</b>. This
+has been done to prevent a possible lock-out situation where you are
+SSHing to the server to alter its firewall, and suddenly you loose the
+connection (although this can still happen if your new firewall doesn't
 allow the connection).
 <p>
-If no error has been seen, sanewall deletes all temporary files 
+If no error has been seen, sanewall deletes all temporary files
 generated and exits.
 <p>
-In case there was an error, sanewall will make the most to restore 
-your previous firewall and will present you details about the error and 
+In case there was an error, sanewall will make the most to restore
+your previous firewall and will present you details about the error and
 its line number in the original configuration file.
 
 

@@ -7,6 +7,7 @@
 
   <title>Sanewall, a Linux iptables packet filtering firewall builder for humans...</title>
   <meta name="author" content="Costa Tsaousis">
+<meta name="robots" content="noindex">
 
   <meta name="description" content="Home for sanewall, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
 supporting NAT, SNAT, DNAT, REDIRECT, MASQUERADE, DMZ, dual-homed, multi-homed and router setups,
@@ -45,11 +46,6 @@ automatically. Sanewall is extremely easy to understand, configure and audit.">
       <br>
 
       <b>April 2, 2012</b> Sanewall project starts.<br>
-      <b>Jan 07, 2013</b> FireHOL R5 v1.296 released.<br>
-	<font color="#555555">
-Added support for NFLOG. Firehol now syslogs all important actions. Updated services amanda, ftp, pptp, tftp, h323, GRE, sip. Added support for CONNMARK and CLASSIFY. Fixed several issues.<br>
-	<br>
-	<hr noshade="noshade">
 
       <font color="#555555">Fork from <a href="http://firehol.sourceforge.net/">FireHOL</a>.<br>
 
@@ -256,7 +252,7 @@ If you don't believe it is simple, consider this example:</p>
 			&nbsp;
 			</li>
 
-		
+
       </ul>
 
 		</td>
@@ -265,7 +261,7 @@ If you don't believe it is simple, consider this example:</p>
 		<b></b>
       <pre><b><font color="red">
 interface eth0 lan
-		
+
 interface ppp+ internet
 		</font></b></pre>
 
@@ -276,7 +272,7 @@ interface ppp+ internet
     <tr bgcolor="#f0f0f0">
 
 	<td>	To the <b>internet</b> my Linux provides:
-		
+
       <ul>
 
 			<li>a MAIL server
@@ -295,7 +291,7 @@ interface ppp+ internet
 			&nbsp;
 			</li>
 
-		
+
       </ul>
 
 		</td>
@@ -344,13 +340,13 @@ interface ppp+ internet<font color="red">
 		<b><font color="gray"></font></b>
       <pre><b><font color="gray">office="my-office-pc.example.com"<br><br>interface eth0 lan<font color="red">
 	policy accept</font>
-	
+
 interface ppp+ internet
 	server smtp accept
 	server http accept
 	server ftp  accept
 	server ssh  accept src "$office"
-	
+
 	client all  accept
 		</font></b></pre>
 
@@ -421,15 +417,15 @@ The complete configuration file (a little bit enriched) of the above example cou
       <pre>	<font color="gray"># Require release 5 of sanewall configuration directives</font>
 	<a href="commands.html#version">version</a> 5<br>	<br>	<font color="gray"># A space separated list of all the IPs on the internet, I trust</font>
 	office="my-office-pc.example.com"
-	
+
 	<font color="gray"># The IP address of this Linux and LAN for the rest of the world</font>
 	public_ip="1.2.3.4"
-	
-	
+
+
 	<font color="gray"># My LAN. Everything is allowed here.</font>
 	<a href="commands.html#interface">interface</a> eth0 lan<br>		<a href="commands.html#policy">policy</a> accept	<font color="gray"># The default is 'drop'.</font>
-	
-	
+
+
 	<font color="gray"># Make sure the traffic coming in, comes from valid Internet IPs,<br>	# and that is targeting my public IP</font>
 	<a href="commands.html#interface">interface</a> ppp+ internet <a href="commands.html#src">src</a> not "$<a href="commands.html#UNROUTABLE_IPS">UNROUTABLE_IPS</a>" <a href="commands.html#dst">dst</a> "$public_ip"<br>		<font color="gray"># Protect me from various kinds of attacks.</font>
 		<a href="commands.html#protection">protection</a> strong<br>		<br>		<font color="gray"># Public servers.</font>
@@ -438,7 +434,7 @@ The complete configuration file (a little bit enriched) of the above example cou
 		<a href="commands.html#client">client</a> <a href="services.html#all">all</a>  accept<br>		<br>	<br>	<font color="gray"># Route the LAN requests to the internet.</font>
 	<a href="commands.html#router">router</a> lan2internet <a href="commands.html#inface">inface</a> eth0 <a href="commands.html#outface">outface</a> ppp+<br>		<br>		<font color="gray"># Masquerading on outface.</font>
 		<a href="commands.html#masquerade">masquerade</a>
-		
+
 		<font color="gray"># Route all requests from inface to outface<br>		# and their replies back.</font>
 		<a href="commands.html#route">route</a> <a href="services.html#all">all</a>  accept</pre>
       </b>
@@ -465,19 +461,19 @@ configuration you wish using simple <a href="commands.html">commands</a>.
 
 <br>
 
-As an IT executive, responsible for many dozens of Linux systems, I 
-needed a firewalling solution that would allow me and my team to have a 
-clear and simple view of what is happening on each server, as far as 
-firewalling is concerned. I also needed a solution that will allow my 
-team members to produce high quality and homogeneous firewalls 
-independently of their security skills and knowledge. After searching 
-for such a tool, I quickly concluded that no tool is flexible, open, 
+As an IT executive, responsible for many dozens of Linux systems, I
+needed a firewalling solution that would allow me and my team to have a
+clear and simple view of what is happening on each server, as far as
+firewalling is concerned. I also needed a solution that will allow my
+team members to produce high quality and homogeneous firewalls
+independently of their security skills and knowledge. After searching
+for such a tool, I quickly concluded that no tool is flexible, open,
 easy, and simple enough for what I needed.</p>
 
-<p>I decided to write sanewall in a way that will allow me, or anyone 
-else, to view, verify and audit the firewall of any linux server or 
-linux router <b>in seconds</b>. Sanewall's configuration is extremely 
-simple... you don't have to be an expert to design a complicated but 
+<p>I decided to write sanewall in a way that will allow me, or anyone
+else, to view, verify and audit the firewall of any linux server or
+linux router <b>in seconds</b>. Sanewall's configuration is extremely
+simple... you don't have to be an expert to design a complicated but
 secure firewall.
 
 </p>
@@ -493,10 +489,10 @@ secure firewall.
 
 <br>
 
-Sanewall handles firewalls protecting one host on all its interfaces 
-and any combination of stateful firewalls routing traffic from one 
-interface to another. There are no limitations on the number of 
-interfaces or on the number of routing routes (except the ones iptables 
+Sanewall handles firewalls protecting one host on all its interfaces
+and any combination of stateful firewalls routing traffic from one
+interface to another. There are no limitations on the number of
+interfaces or on the number of routing routes (except the ones iptables
 has, if any).
 </p>
 <p>Sanewall still lacks a few features: QoS for example is not supported directly.
@@ -506,13 +502,13 @@ configuration to do whatever iptables supports.</p>
 
 
 <p>
-Since sanewall produces stateful commands, for every supported service 
-it needs to know the flow of requests and replies. Today sanewall 
+Since sanewall produces stateful commands, for every supported service
+it needs to know the flow of requests and replies. Today sanewall
 supports the following services:</p>
 
 <ul>
 
-  <li>Many single socket protocols, such as HTTP, NNTP, SMTP, POP3, 
+  <li>Many single socket protocols, such as HTTP, NNTP, SMTP, POP3,
   IMAP4, RADIUS, SSH, LDAP, MySQL, Telnet, NTP, DNS, etc.
   There are a few dozens of such services defined in sanewall. Check <a href="services.html">this list.</a>
   Even if something is missing, you can <a href="adding.html">define it</a>.
@@ -521,10 +517,10 @@ supports the following services:</p>
 
 <ul>
 
-  <li>Many complex protocols, such as FTP, NFS, SAMBA, PPTP, etc. 
-  If you need some complex protocol that is not present, you will have 
-  to program it (in simple BASH scripting - there are many commented 
-  examples on how this is done). Again, you will just create one BASH 
+  <li>Many complex protocols, such as FTP, NFS, SAMBA, PPTP, etc.
+  If you need some complex protocol that is not present, you will have
+  to program it (in simple BASH scripting - there are many commented
+  examples on how this is done). Again, you will just create one BASH
   function with the rules of the protocol, and sanewall will turn it to
   a client, a server or a router.</li>
 

@@ -4,6 +4,7 @@
 <link rel="stylesheet" type="text/css" href="css.css">
 <TITLE>Sanewall, Frequently Asked Questions</TITLE>
 <meta name="author" content="Costa Tsaousis">
+<meta name="robots" content="noindex">
 <meta name="description" content="
 
 Home for sanewall, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
@@ -33,7 +34,7 @@ automatically. Sanewall is extremely easy to understand, configure and audit.
 		</ul>
 		&nbsp;
 		</li>
-		
+
 	<li>Installation
 	<ul>
 		<li><A HREF="#install">I installed sanewall but where is it located? I cannot run it!</a></li>
@@ -41,7 +42,7 @@ automatically. Sanewall is extremely easy to understand, configure and audit.
 		</ul>
 		&nbsp;
 		</li>
-	
+
 	<li>Configuration
 	<ul>
 		<li><A HREF="#help">I really need help designing the configuration. Could you help?</a></li>
@@ -50,7 +51,7 @@ automatically. Sanewall is extremely easy to understand, configure and audit.
 		</ul>
 		&nbsp;
 		</li>
-	
+
 	</ul>
 <p>
 
@@ -68,19 +69,19 @@ of all those you have to find solutions so that:
 		Iptables is not easy, it provides many alternatives for doing the job and each engineer knows or likes
 		just a few of them.
 		<br>&nbsp;</li>
-		
+
 	<li>	<b>Each member of your team knows exactly how each service operates, which ports it needs, how to
 		prevent various attacks, etc.</b> Again this is not easy stuff. Some techies are more experienced than
 		others and many have very limited knowledge of the underlying stuff. To see the complication, if I tell
 		you to setup a firewall for an FTP server supporting active and passive mode, how much time do you need
 		to find the exact iptables rules and successfully configure the firewall?
 		<br>&nbsp;</li>
-		
+
 	<li>	<b>Each member of your team can examine and modify the firewalling rules that another member build some time ago.</b>
 		This is really nightmare. If I give you 200 iptables rules, how much time do you need to figure out what
 		is happening and make a few changes?
 		<br>&nbsp;</li>
-		
+
 	<li>	<b>For Quality Assurance, ensure that there is an easy way for auditing the firewall quickly.</b>
 		This is very important. Firewalling is the place that tells you exactly what is allowed and what is not.
 		</li>
@@ -96,7 +97,7 @@ But consider the following:
 		for iptables. Sanewall takes care of this detail, so the engineers can focus on what they already know:
 		The machine runs a FTP server.
 		<br>&nbsp;</li>
-		
+
 	<li>	<b>Sanewall minimizes the configuration directives.</b>
 		Do you know how many iptables statements is this:
 		<p>
@@ -105,7 +106,7 @@ But consider the following:
 		It is <b>92</b> iptables statements and it would be more than 1000 if in the clients list there was the
 		<A HREF="commands.html#UNROUTABLE_IPS">UNROUTABLE_IPS</a> variable!!!
 		</li>
-		
+
 	<li>	<b>The sanewall configuration file is the best place to look for what a server does.</b>
 		This is actually the first thing I use to audit the configuration of my servers.
 		I just take a look at the firewall configuration. Even if something more is running, I am sure that

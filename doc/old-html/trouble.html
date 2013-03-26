@@ -3,6 +3,7 @@
 <link rel="stylesheet" type="text/css" href="css.css">
 <TITLE>Sanewall, Troubleshooting the firewall.</TITLE>
 <meta name="author" content="Costa Tsaousis">
+<meta name="robots" content="noindex">
 <meta name="description" content="
 
 Home for sanewall, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
@@ -36,13 +37,13 @@ The frequency packets are logged is controlled by the same means the optional ru
 In the system log you will find entries that look like:
 <small><pre>
 Dec 21 20:01:07 gateway kernel: IN-internet:IN=ppp0 OUT= MAC= SRC=200.75.88.187 DST=195.97.5.193 \
-	LEN=78 TOS=0x00 PREC=0x00 TTL=111 ID=63816 PROTO=UDP SPT=34165 DPT=137 LEN=58 
+	LEN=78 TOS=0x00 PREC=0x00 TTL=111 ID=63816 PROTO=UDP SPT=34165 DPT=137 LEN=58
 
 Dec 21 22:25:39 gateway kernel: OUT-unknown:IN= OUT=ppp0 SRC=195.97.5.193 DST=192.168.23.1 \
-	LEN=48 TOS=0x00 PREC=0x00 TTL=64 ID=0 DF PROTO=TCP SPT=139 DPT=1255 WINDOW=2128 RES=0x00 ACK SYN URGP=0 
-	
+	LEN=48 TOS=0x00 PREC=0x00 TTL=64 ID=0 DF PROTO=TCP SPT=139 DPT=1255 WINDOW=2128 RES=0x00 ACK SYN URGP=0
+
 Dec 21 20:01:07 gateway kernel: PASS-unknown:IN=ppp0 OUT=eth0 SRC=200.75.88.187 DST=195.97.5.194 \
-	LEN=78 TOS=0x00 PREC=0x00 TTL=110 ID=64840 PROTO=UDP SPT=34132 DPT=137 LEN=58 
+	LEN=78 TOS=0x00 PREC=0x00 TTL=110 ID=64840 PROTO=UDP SPT=34132 DPT=137 LEN=58
 </pre></small>
 Each of such lines represent one packet that did not satisfy the requirements of the configuration file rules.
 <p>
@@ -61,7 +62,7 @@ The important things to look in these logs are:
 		in sanewall's configuration file.
 		<br>&nbsp;
 		</li>
-		
+
 		<li><b>OUT-name</b> matches packets that dropped at the end of the interface's <b>name</b> output.
 		These are packets the host tried to send (it is not traffic routed).
 		<br>
@@ -71,9 +72,9 @@ The important things to look in these logs are:
 		in sanewall's configuration file.
 		<br>&nbsp;
 		</li>
-		
+
 		<li><b>PASS-unknown</b> matches packets that dropped at the end of all
-		<a href="commands.html#router">routers</a>. 
+		<a href="commands.html#router">routers</a>.
 		This matches forwarded traffic.
 		<br>
 		There is no <b>name</b> here, since all sanewall <a href="commands.html#router">routers</a>
@@ -83,19 +84,19 @@ The important things to look in these logs are:
 		</li>
 	</ul>
 	</li>
-	
+
 	<li><b>IN=</b> gives the real network interface name the packet came in from.
 	<br>
 	It can be empty when the packet was generated locally.
 	<br>&nbsp;
 	</li>
-	
+
 	<li><b>OUT=</b> gives the real network interface name the packet tried to use to go out of this host.
 	<br>
 	It can be empty when the packet was to be received by the firewall host.
 	<br>&nbsp;
 	</li>
-	
+
 	<li><b>SRC=</b> gives the IP address of the sender.
 	<br>&nbsp;
 	</li>

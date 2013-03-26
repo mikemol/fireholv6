@@ -3,6 +3,7 @@
 <link rel="stylesheet" type="text/css" href="css.css">
 <TITLE>Sanewall, Adding new services to sanewall.</TITLE>
 <meta name="author" content="Costa Tsaousis">
+<meta name="robots" content="noindex">
 <meta name="description" content="
 
 Home for sanewall, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
@@ -45,7 +46,7 @@ For example the following:
 Where:
 <ul>
 	<li><b>myservice</b> is the name of the service,<br>&nbsp;</li>
-	<li><b>proto</b> is either <b>tcp</b>, <b>udp</b>, <b>icmp</b> - or whatever else iptables accepts 
+	<li><b>proto</b> is either <b>tcp</b>, <b>udp</b>, <b>icmp</b> - or whatever else iptables accepts
 	as protocol, including numeric representations of protocols<br>&nbsp;</li>
 	<li><b>sports</b> is the port number (or port name or port range) the server is listening at.
 	To specify port ranges use the iptables syntax: i.e. 1000:1010 will match all ports from
@@ -84,7 +85,7 @@ Just the above two lines will allow you to use (for example):
 	interface eth0 internet
 		server myservice accept
 		client myservice reject
-	
+
 	router myrouter
 		route myservice drop
 </pre></b>
@@ -99,16 +100,16 @@ As an example, assuming that the IMAP4 service was not defined in sanewall you w
 <tr><td bgcolor="#F0F0F0">
 <b><pre>
 	version 5
-	
+
 	server_imap_ports="tcp/143"
 	client_imap_ports="default"
-	
+
 	interface eth0 lan0
 		server imap accept
-	
+
 	interface eth1 lan1
 		client imap reject
-	
+
 	router lan2lan inface eth0 outface eth1
 		route imap accept
 </pre></b>
@@ -139,13 +140,13 @@ The IMAP4 service example above, now becomes:
 <tr><td bgcolor="#F0F0F0">
 <b><pre>
 	version 5
-	
+
 	interface eth0 lan0
 		server custom imap tcp/143 default accept
-	
+
 	interface eth1 lan1
 		client custom imap tcp/143 default reject
-	
+
 	router lan2lan inface eth0 outface eth1
 		route custom imap tcp/143 default accept
 </pre></b>
@@ -174,16 +175,16 @@ To define this service you will have to write:
 <tr><td bgcolor="#F0F0F0">
 <b><pre>
 	version 5
-	
+
 	server_serveme_ports="tcp/1234 udp/1234"
 	client_serveme_ports="default 1234"
-		
+
 	interface eth0 lan0
 		server serveme accept
-	
+
 	interface eth1 lan1
 		client serveme reject
-	
+
 	router lan2lan inface eth0 outface eth1
 		route serveme accept
 </pre></b>
@@ -221,10 +222,10 @@ As an example you can see the complete IRC definition within sanewall:
 <b><pre>
 	server_irc_ports="tcp/ircd"
 	client_irc_ports="default"
-	
+
 	require_irc_modules="ip_conntrack_irc"
 	require_irc_nat_modules="ip_nat_irc"
-	
+
 	ALL_SHOULD_ALSO_RUN="${ALL_SHOULD_ALSO_RUN} irc"
 </pre></b>
 </td></tr>

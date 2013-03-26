@@ -4,6 +4,7 @@
 <link rel="stylesheet" type="text/css" href="css.css">
 <TITLE>Sanewall, Configuration tutorial</TITLE>
 <meta name="author" content="Costa Tsaousis">
+<meta name="robots" content="noindex">
 <meta name="description" content="
 
 Home for sanewall, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
@@ -164,13 +165,13 @@ First write one interface statement for each network interface you identified ab
 <tr><td bgcolor="#F0F0F0">
 <b><pre><font color="red">
 	version 5
-	
+
 	interface eth0 home
-	
-	
+
+
 	interface ppp+ internet
-	
-	
+
+
 </font></pre></b>
 </td></tr>
 </table>
@@ -182,7 +183,7 @@ Now, we can add the servers for each interface (based on the table above). Remem
 <tr><td bgcolor="#F0F0F0">
 <b><pre><font color="gray">
 	version 5
-	
+
 	interface eth0 home<font color="red">
 		server dns	accept
 		server ftp	accept
@@ -208,7 +209,7 @@ Now, we can add the clients for each interface. Remember that these clients are 
 <tr><td bgcolor="#F0F0F0">
 <b><pre><font color="gray">
 	version 5
-	
+
 	interface eth0 home
 		server dns	accept
 		server ftp	accept
@@ -222,7 +223,7 @@ Now, we can add the clients for each interface. Remember that these clients are 
 		client samba	accept
 		client icmp	accept
 		</font>
-	
+
 	interface ppp+ internet
 		server smtp	accept
 		server http	accept
@@ -248,7 +249,7 @@ so on.
 <tr><td bgcolor="#F0F0F0">
 <b><pre><font color="gray">
 	version 5
-	
+
 	interface eth0 home
 		server dns	accept
 		server ftp	accept
@@ -258,24 +259,24 @@ so on.
 		server http	accept
 		server ssh	accept
 		server icmp	accept
-		
+
 		client samba	accept
 		client icmp	accept
-	
-	
+
+
 	interface ppp+ internet
 		server smtp	accept
 		server http	accept
 		server ftp	accept
-		
+
 		client all	accept
-	
+
 	<font color="red">
 	router home2internet inface eth0 outface ppp+
-	
-	
+
+
 	router internet2home inface ppp+ outface eth0
-	
+
 	</font>
 </font></pre></b>
 </td></tr>
@@ -294,7 +295,7 @@ ppp+, and do not route any request coming from the internet and going out to the
 <tr><td bgcolor="#F0F0F0">
 <b><pre><font color="gray">
 	version 5
-	
+
 	interface eth0 home
 		server dns	accept
 		server ftp	accept
@@ -304,26 +305,26 @@ ppp+, and do not route any request coming from the internet and going out to the
 		server http	accept
 		server ssh	accept
 		server icmp	accept
-		
+
 		client samba	accept
 		client icmp	accept
-	
-	
+
+
 	interface ppp+ internet
 		server smtp	accept
 		server http	accept
 		server ftp	accept
-		
+
 		client all	accept
-	
-	
+
+
 	router home2internet inface eth0 outface ppp+
 		<font color="red">route all accept</font>
-	
-	
+
+
 	router internet2home inface ppp+ outface eth0
-	
-	
+
+
 </font></pre></b>
 </td></tr>
 </table>
@@ -340,17 +341,17 @@ To save typing time, you can use this:
 <tr><td bgcolor="#F0F0F0">
 <b><pre><font color="gray">
 	version 5
-	
+
 	interface eth0 home<font color="red">
 		server "dns ftp samba squid dhcp http ssh icmp"	accept
 		client "samba icmp"				accept
 	</font>
-	
+
 	interface ppp+ internet<font color="red">
 		server "smtp http ftp"	accept</font>
 		client all		accept
-	
-	
+
+
 	router home2internet inface eth0 outface ppp+
 		route all accept
 </font></pre></b>
@@ -374,13 +375,13 @@ We might want to have extra checks on each interface to prevent spoofing. To fin
 	interface eth0 home <font color="red">src "${home_ips}"</font>
 		server "dns ftp samba squid dhcp http ssh icmp"	accept
 		client "samba icmp"				accept
-	
-	
+
+
 	interface ppp+ internet <font color="red">src not "${home_ips} ${UNROUTABLE_IPS}"</font>
 		server "smtp http ftp"	accept
 		client all		accept
-	
-	
+
+
 	router home2internet inface eth0 outface ppp+
 		route all accept
 </font></pre></b>
@@ -397,20 +398,20 @@ router:
 <tr><td bgcolor="#F0F0F0">
 <b><pre><font color="gray">
 	version 5
-	
+
 	# The network of our eth0 LAN.
 	home_ips="195.97.5.192/28"
-	
+
 	interface eth0 home src "${home_ips}"
 		server "dns ftp samba squid dhcp http ssh icmp"	accept
 		client "samba icmp"				accept
-	
-	
+
+
 	interface ppp+ internet src not "${home_ips} ${UNROUTABLE_IPS}"
 		server "smtp http ftp"	accept
 		client all		accept
-	
-	
+
+
 	router home2internet inface eth0 outface ppp+
 		<font color="red">masquerade</font>
 		route all accept
@@ -426,21 +427,21 @@ We can now protect our ppp interface even further. For this we use the <a href="
 <tr><td bgcolor="#F0F0F0">
 <b><pre><font color="gray">
 	version 5
-	
+
 	# The network of our eth0 LAN.
 	home_ips="195.97.5.192/28"
-	
+
 	interface eth0 home src "${home_ips}"
 		server "dns ftp samba squid dhcp http ssh icmp"	accept
 		client "samba icmp"				accept
-	
-	
+
+
 	interface ppp+ internet src not "${home_ips} ${UNROUTABLE_IPS}"
 		<font color="red">protection strong 10/sec 10</font>
 		server "smtp http ftp"	accept
 		client all		accept
-	
-	
+
+
 	router home2internet inface eth0 outface ppp+
 		masquerade
 		route all accept
@@ -457,22 +458,22 @@ command:
 <tr><td bgcolor="#F0F0F0">
 <b><pre><font color="gray">
 	version 5
-	
+
 	# The network of our eth0 LAN.
 	home_ips="195.97.5.192/28"
-	
+
 	interface eth0 home src "${home_ips}"
 		<font color="red">policy reject</font>
 		server "dns ftp samba squid dhcp http ssh icmp"	accept
 		client "samba icmp"				accept
-	
-	
+
+
 	interface ppp+ internet src not "${home_ips} ${UNROUTABLE_IPS}"
 		protection strong 10/sec 10
 		server "smtp http ftp"	accept
 		client all		accept
-	
-	
+
+
 	router home2internet inface eth0 outface ppp+
 		masquerade
 		route all accept
@@ -488,29 +489,29 @@ With our current firewall, such servers will have to timeout before accepting ou
 <tr><td bgcolor="#F0F0F0">
 <b><pre><font color="gray">
 	version 5
-	
+
 	# The network of our eth0 LAN.
 	home_ips="195.97.5.192/28"
-	
+
 	interface eth0 home src "${home_ips}"
 		policy reject
 		server "dns ftp samba squid dhcp http ssh icmp"	accept
 		client "samba icmp"				accept
-	
-	
+
+
 	interface ppp+ internet src not "${home_ips} ${UNROUTABLE_IPS}"
 		protection strong 10/sec 10
 		server "smtp http ftp"	accept
-		
+
 		<font color="red">server ident reject with tcp-reset</font>
-		
+
 		client all		accept
-	
-	
+
+
 	router home2internet inface eth0 outface ppp+
 		masquerade
 		route all accept
-	
+
 	<font color="red">
 	router internet2home inface ppp+ outface eth0
 		route ident reject with tcp-reset
@@ -526,24 +527,24 @@ The whole routing schema could be rewritten as:
 <tr><td bgcolor="#F0F0F0">
 <b><pre><font color="gray">
 	version 5
-	
+
 	# The network of our eth0 LAN.
 	home_ips="195.97.5.192/28"
-	
+
 	interface eth0 home src "${home_ips}"
 		policy reject
 		server "dns ftp samba squid dhcp http ssh icmp"	accept
 		client "samba icmp"				accept
-		
-	
+
+
 	interface ppp+ internet src not "${home_ips} ${UNROUTABLE_IPS}"
 		protection strong 10/sec 10
 		server "smtp http ftp"	accept
-		
+
 		server ident reject with tcp-reset
-		
+
 		client all		accept
-	
+
 	<font color="red">
 	router internet2home inface ppp+ outface eth0
 		masquerade reverse

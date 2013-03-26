@@ -4,6 +4,7 @@
 <link rel="stylesheet" type="text/css" href="css.css">
 <TITLE>Sanewall, Configuration commands</TITLE>
 <meta name="author" content="Costa Tsaousis">
+<meta name="robots" content="noindex">
 <meta name="description" content="
 
 Home for sanewall, an iptables stateful packet filtering firewall builder for Linux (kernel 2.4),
@@ -115,7 +116,7 @@ automatically. Sanewall is extremely easy to understand, configure and audit.
 			<li><a href="#mark_param">mark</a>, match the MARK ID of packets.</li>
 			<li><a href="#tos_param">tos</a>, match the Type of Service (TOS) of packets.</li>
 			<li><a href="#dscp_param">dscp</a>, match the DSCP raw value or DiffServ class value of packets.</li>
-			
+
 		</ul>
 		&nbsp;
 	</li>
@@ -160,7 +161,7 @@ The optional rule parameters given to the primary commands are <b>indirectly</b>
 			<br>You should not use the same name more than once in sanewall primary commands.
 			<br>&nbsp;
 			</li>
-			
+
 		<li>	<b>optional rule parameters</b> is a set of rules that allow further restriction of the traffic that
 			gets matched for this interface. See <a href="#parameters">Optional Rules Parameters</a> for more information.
 			<br>Example 1: <b>interface eth0 intranet src 10.0.0.0/16</b>
@@ -199,13 +200,13 @@ The optional rule parameters given to the primary commands are <b>indirectly</b>
 			<br>The same restrictions of <b>interface</b> names apply here too.
 			<br>&nbsp;
 			</li>
-			
+
 		<li>	<b>optional rule parameters</b> is a set of rules that allow further restriction of the traffic that
 			gets matched for this router. See <a href="#parameters">Optional Rules Parameters</a> for more information.
 			<br>&nbsp;
 			</li>
 		</ul>
-	
+
 	Router statements produce similar iptables commands the interface statements produce.
 	For each router statement an <b>in_<font color="red">&lt;name&gt;</font></b> and an
 	<b>out_<font color="red">&lt;name&gt;</font></b> chain are produced to match the traffic
@@ -346,7 +347,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="server"><h3><b>server</b> <font color="red">&lt;service&gt;</font> <font color="red">&lt;action&gt;</font> [optional rule parameters]</h3></a>
 	<H4>Description</H4>
 	The <b>server</b> subcommand defines a server of a service. For sanewall a server is the destination of a request,
@@ -370,7 +371,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 			<p>Sanewall supports the actions defined in the section <a href="#actions">Actions</a>.
 			<br>&nbsp;
 			</li>
-			
+
 		<li>	<b>optional rule parameters</b> is a set of rules that allow further restriction of the traffic that
 			gets matched by this rule. See <a href="#parameters">Optional Rules Parameters</a> for more information.
 			<br>Example 1: <b>server smtp accept src 1.2.3.4</b>
@@ -379,9 +380,9 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 			</li>
 		</ul>
 	<p>
-	
+
 <hr noshade size=1 width="100%">
-	
+
 	<a name="client"><h3><b>client</b> <font color="red">&lt;service&gt;</font> <font color="red">&lt;action&gt;</font> [optional rule parameters]</h3></a>
 	The <b>client</b> subcommand defines a client of a service. For sanewall a client is the source of a request.
 	Sanewall follows this simple rule even on multi-socket complex protocols, so that <u>for sanewall a client always sends requests</u>.
@@ -394,16 +395,16 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="route"><h3><b>route</b> <font color="red">&lt;service&gt;</font> <font color="red">&lt;action&gt;</font> [optional rule parameters]</h3></a>
 	The <b>route</b> subcommand is an alias for the <b>server</b> command that can be used only on routers, not interfaces.
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="group_cmd"><h3><b>group</b> with [optional rule parameters]</h3>
 	<h3><b>group</b> end</h3></a>
-	
+
 	The <b>group</b> subcommand allows grouping for <a href="#server">server</a> and <a href="#client">client</a>
 	subcommands that share common optional rule parameters.
 	<p>
@@ -418,13 +419,13 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 
 	interface any world
 		server http accept
-		
+
 		# trusted services
 		group with src "1.2.3.4 5.6.7.8"
 			server ssh	accept
 			server telnet	accept
 		group end
-		
+
 		client all accept
 </pre></b>
 </td></tr>
@@ -455,7 +456,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 		</li>
 		<p>
 	</ul>
-	
+
 	Example 1:
 	<p>
 	At the top of sanewall.conf, create the action ACT1:
@@ -483,9 +484,9 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 	Example 2: <b>action chain "ACT1 ACT2 ACT3" accept chain "ACT4 ACT5 ACT6" drop</b> # will create 6 actions, ACT1, ACT2, ACT3 with ACCEPT and ACT4, ACT5, ACT6 with DROP<br>
 	<p>
-	
+
 <hr noshade size=1 width="100%">
-	
+
 	<a name="blacklist"><h3><b>blacklist</b> [option] <font color="red">&lt;IPs&gt;</font></h3></a>
 	The <b>blacklist</b> helper creates a blacklist for the <b>IP</b> addresses given. It supports two modes of operation
 	based on the option given (or the absence of it).
@@ -505,16 +506,16 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	The blacklist helper affects both interfaces and routers and can be used as many times as needed, but before the first interface statement.
 	The blacklist helper accepts multiple IPs both as one quoted and space separated list and as separate arguments.
 	<p>
-	
+
 	Example 1: <b>blacklist this "195.97.5.202 10.1.1.1"</b> # please note the quotes<br>
 	Example 2: <b>blacklist full 195.97.5.202 10.1.1.1</b> # please note the absence of quotes<br>
 	<p>
-	
+
 <hr noshade size=1 width="100%">
-	
+
 	<a name="classify"><h3><b>classify</b> <font color="red">&lt;CLASS&gt;</font> [optional rule parameters]</h3></a>
 	The <b>classify</b> helper classifies the traffic into a specific traffic shapping class.
-	
+
 	<H4>Parameters</H4>
 	<ul>
 		<li>	<b>CLASS</b> is a class, as accepted by iptables (i.e. MAJOR:MINOR).
@@ -530,10 +531,10 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="connmark"><h3><b>connmark</b> <font color="red">&lt;VALUE&gt;</font> <font color="red">&lt;WHERE&gt;</font> [optional rule parameters]</h3></a>
 	The <b>connmark</b> helper is used to set a mark on a whole connection in both directions of the traffic automatically. The difference with <a href="#mark">mark</a> is that the later just marks the packets matched by the optional rule parameters, while connmark marks the whole statefull connection.
-	
+
 	<H4>Parameters</H4>
 	<ul>
 		<li>	<b>VALUE</b> can be a mark value to set, or the words <b>save</b> to convert the existing mark of the packets to connmark, or <b>restore</b> to convert the existing connmark of the connection to a mark on the packets.
@@ -545,34 +546,34 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 			(for example: INPUT, FORWARD, OUTPUT, PREROUTING, POSTROUTING - case does matter here).
 			<br>&nbsp;
 			</li>
-			
+
 		<li>	<b>optional rule parameters</b> is a set of rules that allow further restriction of the traffic that
 			gets matched by this rule. See <a href="#parameters">Optional Rules Parameters</a> for more information.
 			<br>&nbsp;
 			</li>
 		</ul>
-	
+
 	<p>
 	Example 1: Let's say that you have 3 ethernet interfaces: eth0, eth1 and eth2. eth0 connects you to the LAN, while eth1 and eth2 connect you to the internet via 2 different service providers.
 	You want to guarrantee that when a connection is coming from provider 1 (eth1) will go back through this provider and the same for provider 2 (eth2).
-	
+
 	<p>	Step 1: You mark the connections when they enter the firewall host from the provider interfaces:
 	<br>	connmark 1 PREROUTING inface eth1
 	<br>	connmark 2 PREROUTING inface eth2
-	
+
 	<p>	Step 2: You restore the mark (from the connmark) when the packets come in from the LAN:
 	<br>	connmark restore OUTPUT
 	<br>	connmark restore PREROUTING inface eth0
-	
+
 	<p>	Now you can use iproute2 to pick the right routing table (eth1 or eth2 and the default gateway) based on the MARK of the packets.
-	
+
 	<br>
 	<br>Example 2: <b>connmark 1 PREROUTING inface eth1</b>, Set the CONNMARK 1 to all packets coming in from eth1.
 	<br>Example 3: <b>connmark save PREROUTING inface eth1</b>, Save the MARK value to the CONNMARK value on all packets coming in from eth1.
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="dnat"><h3><b>dnat</b> [to] <font color="red">&lt;target&gt;</font> [optional rule parameters]</h3></a>
 	The <b>dnat</b> helper sets up a Destination NAT rule for routed traffic, by calling<br>
 	<b>nat to-destination &lt;target&gt [optional rule parameters]</b>
@@ -581,13 +582,13 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 	Example: <b>dnat to 1.1.1.1 inface eth0 src 2.2.2.2 dst 3.3.3.3</b>
 	<p>
-	
+
 <hr noshade size=1 width="100%">
-	
+
 	<a name="dscp"><h3><b>dscp</b> <font color="red">&lt;NUMBER&gt;</font> <font color="red">&lt;WHERE&gt;</font> [optional rule parameters]</h3>
 	<br><h3><b>dscp</b> class <font color="red">&lt;CLASSID&gt;</font> <font color="red">&lt;WHERE&gt;</font> [optional rule parameters]</h3></a>
 	The <b>dscp</b> helper sets the DSCP field in the header of the packets matching the optional rule parameters.
-	
+
 	<H4>Parameters</H4>
 	<ul>
 		<li>	<b>NUMBER</b> is a decimal or hex (0xNN) number to set the DSCP field to.
@@ -603,7 +604,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 			(for example: INPUT, FORWARD, OUTPUT, PREROUTING, POSTROUTING - case does matter here).
 			<br>&nbsp;
 			</li>
-			
+
 		<li>	<b>optional rule parameters</b> is a set of rules that allow further restriction of the traffic that
 			gets matched by this rule. See <a href="#parameters">Optional Rules Parameters</a> for more information.
 			<br>&nbsp;
@@ -616,14 +617,14 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="ecn_shame"><h3><b>ecn_shame</b></h3></a>
 	The <b>ecn_shame</b> helper checks if <a href="http://urchin.earth.li/ecn/">Explicit Congestion Notification (ECN)</a> is enabled in the kernel, and if it is, it fetches
 	the <a href="http://urchin.earth.li/cgi-bin/ecn.pl?output=ip">ECN Hall of Shame</a> list and disables ECN for all hosts present in the list.
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="iptables"><h3><b>iptables</b> <font color="red">&lt;arguments&gt;</font></h3></a>
 	<H4>Description</H4>
 	The <b>iptables</b> command passes all its arguments to the real iptables command, during run-time.
@@ -637,7 +638,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="mac"><h3><b>mac</b> <font color="red">&lt;IP&gt;</font> <font color="red">&lt;MAC&gt;</font></h3></a>
 	The <b>mac</b> helper verifies that all traffic <b>comming in</b> with source the <b>IP</b> address, comes from the
 	<b>MAC</b> address. The helper applies its rules to filter/INPUT and filter/FORWARD and checks the source IP address
@@ -655,11 +656,11 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="mark"><h3><b>mark</b> <font color="red">&lt;NUMBER&gt;</font> <font color="red">&lt;WHERE&gt;</font> [optional rule parameters]</h3></a>
 	The <b>mark</b> helper marks the traffic with a specific mark NUMBER that can be matched by traffic shapping tools
 	for controlling the traffic.
-	
+
 	<H4>Parameters</H4>
 	<ul>
 		<li>	<b>NUMBER</b> is a number to mark the packets with.
@@ -671,15 +672,15 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 			(for example: INPUT, FORWARD, OUTPUT, PREROUTING, POSTROUTING - case does matter here).
 			<br>&nbsp;
 			</li>
-			
+
 		<li>	<b>optional rule parameters</b> is a set of rules that allow further restriction of the traffic that
 			gets matched by this rule. See <a href="#parameters">Optional Rules Parameters</a> for more information.
 			<br>&nbsp;
 			</li>
 		</ul>
-	
+
 	Keep in mind that if you need to do policy based routing based on iptables marks, you should disable the Root Path Filtering on the interfaces involved (rp_filter in sysctl).
-	
+
 	<br>Example 1: <b>mark 1 OUTPUT</b>, will mark with 1 all packets send by the local machine.
 	<br>Example 2: <b>mark 2 FORWARD</b>, will mark with 2 all packets passing through the local machine.
 	<br>Example 3: <b>mark 3 FORWARD proto tcp dport 25 dst 1.1.1.1 src 2.2.2.2</b>, will match with 3
@@ -687,7 +688,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="masquerade"><h3><b>masquerade</b> [reverse | interface] [optional rule parameters]</h3></a>
 	Masquerading is a special from of SNAT (Source NAT) that changes the source of requests when they go out and replaces their original source when replies come in.
 	This way a Linux box can become an internet router for a LAN of clients having unroutable IP addresses. Masquerading takes care to re-map IP addresses and ports as
@@ -718,9 +719,9 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<br>Example 2: within an interface: <b>masquerade</b>, to masquerade on the output of this interface
 	<br>Example 3: within a router: <b>masquerade reverse</b>, to masquerade on the output of the router's inface.
 	<p>
-	
+
 <hr noshade size=1 width="100%">
-	
+
 	<a name="nat"><h3><b>nat</b> <font color="red">&lt;type&gt; &lt;target&gt;</font> [optional rule parameters]</h3></a>
 	The <b>nat</b> helper sets up a NAT rule for routed traffic.
 	<p>
@@ -803,7 +804,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<br>Example 2: <b>nat to-destination 4.4.4.4 inface eth0 src 5.5.5.5 dst 6.6.6.6</b>
 	<br>Example 3: <b>nat redirect-to 8080 inface eth0 src 2.2.2.0/24 proto tcp dport 80</b>
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="redirect"><h3><b>redirect</b> [to] <font color="red">&lt;target&gt;</font> [optional rule parameters]</h3></a>
@@ -817,7 +818,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="snat"><h3><b>snat</b> [to] <font color="red">&lt;target&gt;</font> [optional rule parameters]</h3></a>
 	The <b>snat</b> helper sets up a Source NAT rule for routed traffic, by calling<br>
 	<b>nat to-source &lt;target&gt [optional rule parameters]</b>
@@ -826,9 +827,9 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 	Example: <b>snat to 1.1.1.1 outface eth0 src 2.2.2.2 dst 3.3.3.3</b>
 	<p>
-	
+
 <hr noshade size=1 width="100%">
-	
+
 	<a name="tcpmss"><h3><b>tcpmss</b> <font color="red">&lt;what&gt;</font></h3></a>
 	The <b>tcpmss</b> helper sets the MSS (Maximum Segment Size) of TCP SYN packets routed through the firewall.
 	Its purpose is to overcome situations where Path MTU Discovery is not working and packet
@@ -851,10 +852,10 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="tos"><h3><b>tos</b> <font color="red">&lt;NUMBER&gt;</font> <font color="red">&lt;WHERE&gt;</font> [optional rule parameters]</h3></a>
 	The <b>tos</b> helper sets the Type of Service (TOS) in packets.
-	
+
 	<H4>Parameters</H4>
 	<ul>
 		<li>	<b>NUMBER</b> is a number to set TOS to. Sanewall supports decimal numbers, hex numbers and the
@@ -867,7 +868,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 			(for example: INPUT, FORWARD, OUTPUT, PREROUTING, POSTROUTING - case does matter here).
 			<br>&nbsp;
 			</li>
-			
+
 		<li>	<b>optional rule parameters</b> is a set of rules that allow further restriction of the traffic that
 			gets matched by this rule. See <a href="#parameters">Optional Rules Parameters</a> for more information.
 			<br>&nbsp;
@@ -880,7 +881,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="tosfix"><h3><b>tosfix</b></h3></a>
 	The <b>tosfix</b> helper is based on the suggestions given by Erik Hensema for iptables and tc shapping tricks (check the source <a href="http://www.docum.org/docum.org/faq/cache/49.html">here</a>).
 	It does:
@@ -888,7 +889,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 		<li>	All TCP ACK packets with length less than 128 bytes are assigned the Minimize-Delay TOS, while bigger ones are assigned the Maximize-Throughput.
 			<br>&nbsp;
 			</li>
-			
+
 		<li>	All packets with TOS Minimize-Delay, that are bigger than 512 bytes are set to Maximize-Throughput, except for short bursts of 2 packets per second.
 			<br>&nbsp;
 			</li>
@@ -896,7 +897,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="transparent_proxy"><h3><b>transparent_proxy</b> <font color="red">&lt;service&gt; &lt;port&gt; &lt;user&gt;</font> [optional rule parameters]</h3></a>
 	The <b>transparent_proxy</b> helper sets up trasparent proxy server for TCP traffic.
 	The proxy is assumed to be running on the firewall host at port <b>port</b>, with the credentials of the local user <b>user</b> serving TCP port's <b>service</b> requests.
@@ -937,20 +938,20 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="transparent_squid"><h3><b>transparent_squid</b> <font color="red">&lt;port&gt; &lt;user&gt;</font> [optional rule parameters]</h3></a>
 	The <b>transparent_squid</b> helper sets up trasparent caching for HTTP traffic.
 	It is equivalent to:<p>
-	
+
 	<a href="#transparent_proxy">transparent_proxy</a> 80 &lt;port&gt; &lt;user&gt; [optional rule parameters]
-	
-	<p>     
+
+	<p>
 	Example 1: <b>transparent_squid 3128 squid inface eth0 src 10.0.0.0/8</b>
 	<br>Example 2: <b>transparent_squid 8080 "squid privoxy root bin" inface not "ppp+ ipsec+" dst not "a.not.proxied.server"</b>
 	<p>
 
 <hr noshade size=1 width="100%">
-	
+
 	<a name="version"><h3><b>version</b> <font color="red">&lt;number&gt;</font></h3></a>
 	<H4>Description</H4>
 	The <b>version</b> command states the sanewall <u>release</u> the configuration file was
@@ -969,7 +970,7 @@ Subcommands must be given within <a href="#primary_commands">Primary commands</a
 	<p>
 	Since sanewall v1.67 <b>version</b> is not required to be present in every configuration file.
 	<p>
-	
+
 <table border=0 cellpadding=10 cellspacing=0 width="100%"><tr bgcolor="#777777"><td align=center><font color="white"><b><big><a name="actions">Actions</a></td</tr></table>
 <small>
 Actions are the actions to be taken on services and traffic described by other commands and functions.
@@ -1141,7 +1142,7 @@ multiple iptables statements to achieve both the logging and the action.
 	<br>Example 2: <b>server ident reject with tcp-reset</b>
 	<br>Example 3: <b>UNMATCHED_INPUT_POLICY="reject with host-prohib"</b>
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="drop"><h3><b>drop</b></h3></a>
@@ -1151,7 +1152,7 @@ multiple iptables statements to achieve both the logging and the action.
 	<p>
 	Example: <b>server smtp drop</b>, to silently discard SMTP requests and their replies.
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="deny"><h3><b>deny</b></h3></a>
@@ -1179,7 +1180,7 @@ multiple iptables statements to achieve both the logging and the action.
 	Example: <b>policy return</b>, to have traffic not matched by any rule within an <a href="#interface">interface</a> to continue traveling through the
 	firewall and possibly matched by other <a href="#interface">interfaces</a> bellow.
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="mirror"><h3><b>mirror</b></h3></a>
@@ -1188,7 +1189,7 @@ multiple iptables statements to achieve both the logging and the action.
 	Keep also in mind that sanewall will apply this action to both requests and replies comming in or passing through,
 	and will replace it with REJECT for traffic generated by the local host.
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="redirect"><h3><b>redirect</b> [to-port port]</h3></a>
@@ -1242,7 +1243,7 @@ about optional rule parameters that should not be used in certain commands.
 	<p>
 	<b>dst</b> accepts the same parameters as <b>src</b>
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="srctype"><h3><b>srctype</b> [not] <font color="red">&lt;type&gt;</font></h3></a>
@@ -1268,14 +1269,14 @@ about optional rule parameters that should not be used in certain commands.
 	<p>
 	For more information check: <b>iptables -m addrtype --help</b> (or <b>man iptables</b>).
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="dsttype"><h3><b>dsttype</b> [not] <font color="red">&lt;type&gt;</font></h3></a>
 	<H4>Description</H4>
 	<b>dsttype</b> defines the destination IP address type. This parameter has the same rules with <a href="#srctype">srctype</a>.
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="inface"><h3><b>inface</b> [not] <font color="red">&lt;interface&gt;</font></h3></a>
@@ -1367,7 +1368,7 @@ about optional rule parameters that should not be used in certain commands.
 	<p>
 	In most kernels klogd is by default configured to log everything, so if you don't also change <b>klogd</b>'s -c option,
 	the --log-level setting of iptables has no effect. Use the table bellow to match klogd options with --log-level options:
-	
+
 	<center>
 	<table border=0 cellpadding=3 cellspacing=5 width="70%">
 	<tr><th bgcolor="#000000"><font color="white">Priority</th><th bgcolor="#000000"><font color="white">klogd</th><th bgcolor="#000000"><font color="white">iptables</th><th bgcolor="#000000"><font color="white">Description</th></tr>
@@ -1418,7 +1419,7 @@ about optional rule parameters that should not be used in certain commands.
 	On <a href="http://www.redhat.com">RedHat</a> systems, you can configure <b>klogd</b> by changing
 	<b>/etc/sysconfig/syslog</b> and adding to <b>KLOGD_OPTIONS</b> the required -c level.
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="loglimit"><h3><b>loglimit</b> <font color="red">"&lt;some text&gt;"</font></h3></a>
@@ -1479,7 +1480,7 @@ about optional rule parameters that should not be used in certain commands.
 	<br>Example 2: <b>server http accept user apache</b>
 	<br>The above will allow all HTTP to reach the local http server, but only if the web server is running as user apache the replies will be send back to the HTTP client.
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="gid"><h3><b>gid</b> <font color="red">&lt;group&gt;</font></h3></a>
@@ -1491,7 +1492,7 @@ about optional rule parameters that should not be used in certain commands.
 	Sanewall is "smart" enough to apply this parameter only to traffic send by the localhost, i.e. the replies of <a href="#server">servers</a> and requests of <a href="#clients">clients</a>.
 	It is not possible, and sanewall will simply ignore this parameter, on traffic coming in or passign through the firewall host.
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="pid"><h3><b>pid</b> <font color="red">&lt;process&gt;</font></h3></a>
@@ -1636,7 +1637,7 @@ about optional rule parameters that should not be used in certain commands.
 	Example: <b>UNMATCHED_OUTPUT_POLICY="REJECT"</b><br>
 	Example: <b>UNMATCHED_ROUTER_POLICY="REJECT"</b>
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="SANEWALL_INPUT_ACTIVATION_POLICY"><h3><b>SANEWALL_INPUT_ACTIVATION_POLICY</b></h3></a>
@@ -1663,7 +1664,7 @@ about optional rule parameters that should not be used in certain commands.
 	Example: <b>SANEWALL_OUTPUT_ACTIVATION_POLICY="REJECT"</b><br>
 	Example: <b>SANEWALL_FORWARD_ACTIVATION_POLICY="REJECT"</b>
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="SANEWALL_LOG_MODE"><h3><b>SANEWALL_LOG_MODE</b></h3></a>
@@ -1687,7 +1688,7 @@ about optional rule parameters that should not be used in certain commands.
 	rule will write packets to the syslog. SANEWALL_LOG_FREQUENCY is set to the maximum average
 	frequency and SANEWALL_LOG_BURST specifies the maximum initial number of packets to match.
 	<p>
-	SANEWALL_LOG_PREFIX adds its contents to every log line, so that sanewall logs can easily be detected in the 
+	SANEWALL_LOG_PREFIX adds its contents to every log line, so that sanewall logs can easily be detected in the
 	system log. By default it is empty.
 	<p>
 	Default: <b>SANEWALL_LOG_MODE="LOG"</b><br>
@@ -1705,7 +1706,7 @@ about optional rule parameters that should not be used in certain commands.
 	To see what iptables accepts as frequencies and bursts run, <b>/sbin/iptables -m limit --help</b></br>
 	You can also check <b>man iptables</b>.
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="SANEWALL_DROP_INVALID"><h3><b>SANEWALL_DROP_INVALID</b></h3></a>
@@ -1830,10 +1831,11 @@ about optional rule parameters that should not be used in certain commands.
 	This variable includes all the IP addresses defined as <b>IANA - Reserved</b> by <a href="http://www.iana.org">IANA</a>.
 	You can overwrite the internal default definion of this variable by creating a file with same name in /etc/sanewall.
 	This file accepts an IP definition per line.
+	The supplied <b>get-iana.sh</b> script creates this file by directly fetching <a href="http://www.iana.org/assignments/ipv4-address-space">this</a> document.
 	<p>
 	Example: <b>interface eth0 internet src not "${RESERVED_IPS}"</b>
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="PRIVATE_IPS"><h3><b>PRIVATE_IPS</b></h3></a>
@@ -1844,7 +1846,7 @@ about optional rule parameters that should not be used in certain commands.
 	<p>
 	Example: <b>interface eth0 internet src not "${PRIVATE_IPS}"</b>
 	<p>
-	
+
 <hr noshade size=1 width="100%">
 
 	<a name="UNROUTABLE_IPS"><h3><b>UNROUTABLE_IPS</b></h3></a>
@@ -1856,7 +1858,7 @@ about optional rule parameters that should not be used in certain commands.
 	<p>
 	Example: <b>interface eth0 internet src not "${UNROUTABLE_IPS}"</b>
 	<p>
-	
+
 
 <hr noshade size=1 width="100%">
 
@@ -1867,7 +1869,7 @@ about optional rule parameters that should not be used in certain commands.
 	<p>
 	Example: <b>interface eth0 internet src not "${MULTICAST_IPS}"</b>
 	<p>
-	
+
 
 <p>
 <hr noshade size=1>
