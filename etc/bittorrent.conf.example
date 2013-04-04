@@ -1,6 +1,6 @@
 #FHVER: 1:213
 #
-# This file can be installed in /etc/sanewall/services
+# Add a "torrent" definition to that can be used in sanewall.conf
 #
 server_torrent_ports="tcp/6881:6999"
 client_torrent_ports="default"

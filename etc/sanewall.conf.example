@@ -1,0 +1,21 @@
+#
+# This configuration file will allow all requests originating from the
+# local machine to be send through all network interfaces.
+#
+# No requests are allowed to come from the network. The host will be
+# completely stealthed! It will not respond to anything, and it will
+# not be pingable, although it will be able to originate anything
+# (even pings to other hosts).
+#
+
+#
+# The default value is 1, which will allow pre-established traffic
+# to continue whilst the firewall is activated.
+#
+SANEWALL_ESTABLISHED_ACTIVATION_ACCEPT=0
+
+version 5
+
+# Accept all client traffic on any interface
+interface any world
+	client all accept

@@ -2,8 +2,9 @@
                  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
 <bookinfo>
   <title>Sanewall Manual</title>
+  <subtitle>Making sense of firewalling using Sanewall</subtitle>
   <productname>Sanewall</productname>
   <corpauthor>Sanewall Team</corpauthor>
-  <date>Built DATE</date>
-  <releaseinfo>Sanewall VERSION</releaseinfo>
+  <date>Built @PACKAGE_BUILT_DATE@</date>
+  <releaseinfo>@PACKAGE_VERSION@</releaseinfo>
 </bookinfo>

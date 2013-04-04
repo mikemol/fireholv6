@@ -77,7 +77,7 @@ sub open_file {
 }
 
 if (@ARGV != 3) {
-  print STDERR "Usage: mkservicedoc.pl output.xml sanewall-script services-data.txt\n";
+  print STDERR "Usage: mkservicedoc output.xml sanewall-script services-data.txt\n";
   exit 1;
 }
 

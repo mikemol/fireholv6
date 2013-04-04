@@ -2,7 +2,7 @@
 #
 # Sanewall - generate stateful firewalls from /etc/sanewall/sanewall.conf
 #
-# Copyright (C) 2012 Phil Whineray <phil@sanewall.org>
+# Copyright (C) 2012-2013 Phil Whineray <phil@sanewall.org>
 # Copyright (C) 2003 Costa Tsaousis <costa@tsaousis.gr>
 #
 # This program is free software; you can redistribute it and/or modify
@@ -14,7 +14,9 @@
 #
 
 # See ChangeLog for details
-VERSION=DEVELOPMENT
+VERSION=@PACKAGE_VERSION@
+prefix="@prefix@"
+SANEWALL_CONFIG_DIR="@sysconfdir@/sanewall"
 
 # Make sure only root can run us.
 if [ ! "${UID}" = 0 ]
@@ -384,9 +386,7 @@ else
 	SANEWALL_SPOOL_DIR="/tmp/sanewall"
 fi
 
-# The default configuration file
-# It can be changed on the command line
-SANEWALL_CONFIG_DIR="/etc/sanewall"
+# The default configuration file, it can be changed on the command line
 SANEWALL_CONFIG="${SANEWALL_CONFIG_DIR}/sanewall.conf"
 
 # Where /etc/init.d/iptables expects its configuration?
@@ -491,38 +491,14 @@ trap sanewall_exit SIGHUP
 
 if [ ! -d "${SANEWALL_CONFIG_DIR}" ]
 then
-	"${MKDIR_CMD}" "${SANEWALL_CONFIG_DIR}"			|| exit 1
-	"${CHOWN_CMD}" root:root "${SANEWALL_CONFIG_DIR}"	|| exit 1
-	"${CHMOD_CMD}" 700 "${SANEWALL_CONFIG_DIR}"		|| exit 1
-
-	if [ -f /etc/sanewall.conf ]
-	then
-		"${MV_CMD}" /etc/sanewall.conf "${SANEWALL_CONFIG}"	|| exit 1
-
-		echo >&2
-		echo >&2
-		echo >&2 "NOTICE: Your config file /etc/sanewall.conf has been moved to ${SANEWALL_CONFIG}"
-		echo >&2
-		sleep 5
-	fi
+	echo >&2 "ERROR: Missing ${SANEWALL_CONFIG_DIR}"
+	exit 1
 fi
 
-# Externally defined services can be placed in "${SANEWALL_CONFIG_DIR}/services/"
 if [ ! -d "${SANEWALL_CONFIG_DIR}/services" ]
 then
-	"${MKDIR_CMD}" "${SANEWALL_CONFIG_DIR}/services"
-	if [ $? -ne 0 ]
-	then
-		echo >&2
-		echo >&2
-		echo >&2 "Sanewall needs to create the directory '${SANEWALL_CONFIG_DIR}/services', but it cannot."
-		echo >&2 "Possibly you have a file with this name, or something else is happening."
-		echo >&2 "Please solve this issue and retry".
-		echo >&2
-		exit 1
-	fi
-	"${CHOWN_CMD}" root:root "${SANEWALL_CONFIG_DIR}/services"
-	"${CHMOD_CMD}" 700 "${SANEWALL_CONFIG_DIR}/services"
+	echo >&2 "ERROR: Missing ${SANEWALL_CONFIG_DIR}/services"
+	exit 1
 fi
 
 "${MKDIR_CMD}" "${SANEWALL_CHAINS_DIR}"			|| exit 1

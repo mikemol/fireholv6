@@ -77,7 +77,7 @@ sub open_file {
 }
 
 if (@ARGV != 2) {
-  print STDERR "Usage: mkhtmlindex.pl output.html sanewall-script\n";
+  print STDERR "Usage: mkhtmlindex output.html sanewall-script\n";
   exit 1;
 }
 

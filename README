@@ -39,22 +39,40 @@ with version control and file-comparison tools.
 
 Getting Started
 ===============
-If you want to install the package from source or the tar-file from the
-website, please read the file INSTALL first.
+If you want to install the package from the source tar-files found here:
+   http://download.sanewall.org/releases
+please read the file INSTALL first. Sanewall uses the GNU Autotools so
+you can get away with:
+  ./configure && make && make install
 
 When you first install the program you need to set your configuration in
-the file /etc/sanewall/sanewall.conf. Either start from an examples:
-  client-all.conf     -  Simplest firewall for a standalone system (installed
-                         by default)
-  lan-gateway.conf
-  server-dmz.conf
-  office.conf
+the file /etc/sanewall/sanewall.conf. You have three choices:
 
-Alternatively, run:
-  sanewall wizard
+  1. If you are replacing FireHOL you should just be able to create the
+     sanewall configuration by copying the FireHOL config:
+       sudo mkdir -p /etc/sanewall
+       sudo cp -rp /etc/firehol/* /etc/sanewall/.
+       sudo mv /etc/sanewall/firehol.conf /etc/sanewall/sanewall.conf
 
-Sanewall will try to generate a configuration tailored to the machine
-it is running on.
+     you also need to check for variable names starting FIREHOL_ and
+     change them to SANEWALL_.
+
+  2. Start from an example configuration:
+       client-all.conf     -  Simplest firewall for a standalone system
+       lan-gateway.conf
+       server-dmz.conf
+       office.conf
+
+  3. Have sanewall try to generate a configuration tailored to the machine
+     automatically by running:
+       sanewall wizard
+
+Finally, you will also want to ensure that sanewall runs at boot-time. If you
+installed from an official package this will be configured in the usual way.
+For a source installation, the binary can be used directly in /etc/init.d
+for many systems. In addition, some example init scripts are available here:
+  http://bugs.sanewall.org/wiki/Init_Scripts
+
 
 Adding additional services
 --------------------------
@@ -111,10 +129,6 @@ along with a list of all services supported "out of the box":
 For further help and advice the sanewall-users mailing list archive is
 fully searchable:
    http://lists.sanewall.org/pipermail/sanewall-users/
-
-For tutorials and guided learning the best place currently is still the
-FireHOL documentation, here:
-   http://firehol.sourceforge.net/
 
 
 Contributing
