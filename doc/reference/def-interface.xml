@@ -1,5 +1,6 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                          "../docbook/docbook-xml/docbookx.dtd">
+<!-- For license information see sanewall-manual-info.xml.in -->
 <refentry id="def-interface">
 
 <refmeta>
@@ -75,7 +76,7 @@ interface "eth0 eth1 ppp0" myname
           (10 characters maximum) without spaces or other symbols.
         </para>
         <para>
-          A name should be unique for all <application>sanewall</application>
+          A name should be unique for all <application>Sanewall</application>
           interface and router definitions.
         </para>
       </listitem>

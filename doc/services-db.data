@@ -1,6 +1,6 @@
 #
 # This service information database is combined with information extracted
-# from the sanewall script to create the services documentation.
+# from the Sanewall script to create the services documentation.
 #
 # Where information is present in this file it will override the information
 # extracted from the script (which is useful for e.g. complex protocols).
@@ -128,7 +128,7 @@ SERVICE apcupsd
 		-
 		You can define port 6544 in APCUPSD, by changing the value
 		of NETPORT in its configuration file, or overwrite this
-		sanewall service definition using the procedures described
+		Sanewall service definition using the procedures described
 		in <xref linkend="adding-services"/>
 		of <xref linkend="sanewall.conf"/>.
 
@@ -181,7 +181,7 @@ SERVICE custom
 		-
 		<command>subcommand</command> custom <replaceable>name</replaceable> <replaceable>svr-proto/ports</replaceable> <replaceable>cli-ports</replaceable> <command>action</command> <command>params</command>
 		-
-		This service is used by sanewall to allow you create rules
+		This service is used by Sanewall to allow you create rules
 		for services which do not have a definition.
 		-
 		<command>subcommand</command>, <command>action</command> and
@@ -339,7 +339,7 @@ SERVICE emule
 	NOTES
 		According to
 		<ulink url="http://www.emule-project.net/home/perl/help.cgi?l=1&rm=show_topic&topic_id=122">eMule Port Definitions</ulink>,
-		sanewall defines:
+		Sanewall defines:
 		-
 		<simplelist>
 		<member>Accept from any client port to the server at tcp/4661</member>
@@ -350,7 +350,7 @@ SERVICE emule
 		<member>Accept from any server port to the client at udp/4672</member>
 		</simplelist>
 		-
-		Use the sanewall <xref linkend="cmd-client"/>
+		Use the Sanewall <xref linkend="cmd-client"/>
 		command to match the eMule client.
 		-
 		Please note that the eMule client is an HTTP client also.
@@ -383,7 +383,7 @@ SERVICE gift
 	EXAMPLE
 		server gift accept
 	NOTES
-		The gift sanewall service supports:
+		The gift Sanewall service supports:
 		-
 		<simplelist>
 		<member>Gnutella listening at tcp/4302</member>
@@ -395,7 +395,7 @@ SERVICE gift
 		giFT modules.
 		-
 		To allow access to the user interface ports of giFT, use
-		the <xref linkend="service-giftui"/> sanewall service.
+		the <xref linkend="service-giftui"/> Sanewall service.
 
 SERVICE giftui
 	NAME giFT Internet File Transfer User Interface
@@ -406,7 +406,7 @@ SERVICE giftui
 	NOTES
 		This service refers only to the user interface ports offered
 		by giFT. To allow gift accept P2P requests, use the
-		<xref linkend="service-gift"/> sanewall service.
+		<xref linkend="service-gift"/> Sanewall service.
 
 SERVICE gkrellmd
 	NAME GKrellM Daemon
@@ -427,7 +427,7 @@ SERVICE heartbeat
 	EXAMPLE
 		server heartbeat accept
 	NOTES
-		This sanewall service has been designed such a way that it
+		This Sanewall service has been designed such a way that it
 		will allow multiple heartbeat clusters on the same LAN.
 
 SERVICE http
@@ -734,7 +734,7 @@ SERVICE nfs
 		Since NFS queries the remote RPC server, it is required to
 		also be allowed to do so, by allowing the
 		<xref linkend="service-portmap"/> service too. Take care that
-		this is allowed by the running firewall when sanewall tries
+		this is allowed by the running firewall when Sanewall tries
 		to query the RPC server. So you might have to setup NFS in
 		two steps: First add the portmap service and activate the
 		firewall, then add the NFS service and restart the firewall.
@@ -770,7 +770,7 @@ SERVICE nis
 		Since nis queries the remote RPC server, it is required to
 		also be allowed to do so, by allowing the
 		<xref linkend="service-portmap"/> service too. Take care that
-		this is allowed by the running firewall when sanewall tries
+		this is allowed by the running firewall when Sanewall tries
 		to query the RPC server. So you might have to setup nis in
 		two steps: First add the portmap service and activate the
 		firewall, then add the nis service and restart the firewall.

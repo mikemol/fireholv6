@@ -1,5 +1,6 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                          "../docbook/docbook-xml/docbookx.dtd">
+<!-- For license information see sanewall-manual-info.xml.in -->
 <refentry id="helpcmd-iptables">
 
 <refmeta>
@@ -33,8 +34,8 @@
   </para></note>
   <para>
     You should not use <command>/sbin/iptables</command> directly
-    in a <application>sanewall</application> configuration as it will
-    run before <application>sanewall</application> activates its
+    in a <application>Sanewall</application> configuration as it will
+    run before <application>Sanewall</application> activates its
     firewall. This means they it be applied to the running firewall,
     not the new firewall, so will be removed when the new firewall
     is activated.

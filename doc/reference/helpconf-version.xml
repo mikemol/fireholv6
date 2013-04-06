@@ -1,5 +1,6 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                          "../docbook/docbook-xml/docbookx.dtd">
+<!-- For license information see sanewall-manual-info.xml.in -->
 <refentry id="helpconf-version">
 
 <refmeta>
@@ -27,16 +28,16 @@
   </para>
   <para>
     If the value passed is newer than the running version of
-    <application>sanewall</application> supports,
-    <application>sanewall</application> will not run.
+    <application>Sanewall</application> supports,
+    <application>Sanewall</application> will not run.
   </para>
   <para>
     You do not have to specify a version number for a configuration
-    file, but by doing so you will prevent <application>sanewall</application>
+    file, but by doing so you will prevent <application>Sanewall</application>
     trying to process a file which it cannot handle.
   </para>
   <para>
-    The value that <application>sanewall</application> expects is increased
+    The value that <application>Sanewall</application> expects is increased
     every time that the configuration file format changes.
   </para>
 </refsect1>

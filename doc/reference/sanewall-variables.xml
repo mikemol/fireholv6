@@ -1,5 +1,6 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                          "../docbook/docbook-xml/docbookx.dtd">
+<!-- For license information see sanewall-manual-info.xml.in -->
 <refentry id="sanewall-variables">
 
 <refmeta>
@@ -16,15 +17,15 @@
 <refsect1><title>Description</title>
   <para>
     There are a number of variables that control the behaviour of
-    <application>sanewall</application>.
+    <application>Sanewall</application>.
   </para>
   <para>
-    These variables may be set in the main <application>sanewall</application>
+    These variables may be set in the main <application>Sanewall</application>
     configuration file, <filename>/etc/sanewall/sanewall.conf</filename> or
     in the application default file <filename>/etc/default/sanewall</filename>.
   </para>
   <para>
-    There are also some variables which <application>sanewall</application>
+    There are also some variables which <application>Sanewall</application>
     sets before processing the configuration file. These are described in
     <xref linkend="sanewall.conf"/>.
   </para>
@@ -136,7 +137,7 @@ UNMATCHED_FORWARD_POLICY="REJECT"
           and <option>REJECT</option>.
         </para>
         <para>
-          During activation, <application>sanewall</application> creates
+          During activation, <application>Sanewall</application> creates
           temporary rules to ALLOW already etablished traffic
           (new connections honour the appropriate variable). Set
           <envar>SANEWALL_ESTABLISHED_ACTIVATION_ACCEPT</envar> to 0 to
@@ -144,7 +145,7 @@ UNMATCHED_FORWARD_POLICY="REJECT"
         </para>
         <para>
           Unlike <command>FireHOL</command> which defaults all values to
-          <option>ACCEPT</option>, <command>sanewall</command> defaults
+          <option>ACCEPT</option>, <command>Sanewall</command> defaults
           all values to <option>DROP</option>.
         </para>
         <para>
@@ -177,7 +178,7 @@ SANEWALL_ESTABLISHED_ACTIVATION_ACCEPT="0"
       <listitem>
         <para>
           This variable controls method that
-          <application>sanewall</application>
+          <application>Sanewall</application>
           uses for logging.
         </para>
         <para>
@@ -213,7 +214,7 @@ SANEWALL_LOG_MODE="ULOG"
         <para>
           To avoid packet logs appearing on your console you should
           ensure klogd only logs traffic that is more important than that
-          produced by <application>sanewall</application>.
+          produced by <application>Sanewall</application>.
         </para>
         <para>
           Use the following option to choose an iptables log level
@@ -331,7 +332,7 @@ SANEWALL_LOG_BURST="2"
       <listitem>
         <para>
           This value is added to the contents of each logged line for
-          easy detection of <application>sanewall</application> lines
+          easy detection of <application>Sanewall</application> lines
           in the system logs. By default it is empty.
         </para>
         <para>
@@ -349,7 +350,7 @@ SANEWALL_LOG_PREFIX="SANEWALL:"
     <varlistentry><term><envar>SANEWALL_DROP_INVALID</envar></term>
       <listitem>
         <para>
-          If set to 1, this variable causes <application>sanewall</application>
+          If set to 1, this variable causes <application>Sanewall</application>
           to drop all packets matched as <option>INVALID</option>
           in the <command>iptables(8)</command> connection tracker.
           <note><para>
@@ -375,7 +376,7 @@ SANEWALL_DROP_INVALID="1"
         <para>
           This variable controls the port range that is used when a
           remote client is specified. For clients on the local host,
-          <application>sanewall</application> finds the exact client
+          <application>Sanewall</application> finds the exact client
           ports by querying the kernel options.
         </para>
         <para>
@@ -393,7 +394,7 @@ DEFAULT_CLIENT_PORTS="0:65535"
     <varlistentry><term><envar>SANEWALL_NAT</envar></term>
       <listitem>
         <para>
-          If set to 1, this variable causes <application>sanewall</application>
+          If set to 1, this variable causes <application>Sanewall</application>
           to load the NAT kernel modules. If you make use of the NAT
           helper commands, the variable will be set to 1 automatically.
         </para>
@@ -417,7 +418,7 @@ SANEWALL_NAT="1"
           argument.
         </para>
         <para>
-          If the variable is empty, <application>sanewall</application>
+          If the variable is empty, <application>Sanewall</application>
           will try to detect where to save the file. Currently
           <filename>/etc/sysconfig/iptables</filename> (RedHat) and
           <filename>/var/lib/iptables/autosave</filename> (Debian) are tried
@@ -440,10 +441,10 @@ SANEWALL_AUTOSAVE="/tmp/sanewall-saved.txt"
         <para>
         </para>
         <para>
-          If set to 0, this variable forces <application>sanewall</application>
+          If set to 0, this variable forces <application>Sanewall</application>
           to not load any kernel modules. It is needed only if the kernel
           has modules statically included and in the rare event that
-          <application>sanewall</application> cannot access the kernel
+          <application>Sanewall</application> cannot access the kernel
           configuration.
         </para>
         <para>
@@ -491,14 +492,14 @@ SANEWALL_TRUST_LOOPBACK="0"
         <para>
         </para>
         <para>
-          If set to 1, <application>sanewall</application>
+          If set to 1, <application>Sanewall</application>
           will drop all TCP connections with ACK FIN set without logging them.
         </para>
         <para>
 	  In busy environments the iptables connection
           tracker removes connection tracking list entries as soon as it
           receives a FIN. This makes the ACK FIN appear as an invalid packet
-          which will normally be logged by <application>sanewall</application>.
+          which will normally be logged by <application>Sanewall</application>.
         </para>
         <para>
           Default:

@@ -2,7 +2,7 @@
 #
 # $Id: adblock.sh,v 1.1 2003/10/07 23:42:17 ktsaou Exp $
 # A script that will fetch the IPs of popular add servers.
-#  - Updated to run sanewall on success
+#  - Updated to run Sanewall on success
 #
 # To use this, just put in your cron jobs, like this:
 #

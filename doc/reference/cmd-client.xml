@@ -1,5 +1,6 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                          "../docbook/docbook-xml/docbookx.dtd">
+<!-- For license information see sanewall-manual-info.xml.in -->
 <refentry id="cmd-client">
 
 <refmeta>
@@ -30,9 +31,9 @@
     router are inherited by the client, but are reversed.
   </para>
   <para>
-    For <application>sanewall</application> a client is the source of
+    For <application>Sanewall</application> a client is the source of
     a request. Even though this is more complex for some multi-socket
-    services, to <application>sanewall</application> a client always initiates
+    services, to <application>Sanewall</application> a client always initiates
     the connection.
   </para>
   <para>

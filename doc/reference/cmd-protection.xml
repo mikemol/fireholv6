@@ -1,5 +1,6 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                          "../docbook/docbook-xml/docbookx.dtd">
+<!-- For license information see sanewall-manual-info.xml.in -->
 <refentry id="cmd-protection">
 
 <refmeta>
@@ -57,7 +58,7 @@
     types of traffic.
   </para>
   <para>
-    The default rate <application>sanewall</application> uses is 100
+    The default rate <application>Sanewall</application> uses is 100
     operations per second with a burst of 50.
     Run <userinput>iptables -m limit --help</userinput> for more information.
   </para>
@@ -203,7 +204,7 @@ protection syn-floods 90/sec 40
 
   <para>
     When using multiple types in a single command,
-    <application>sanewall</application> will silently ignore any types that
+    <application>Sanewall</application> will silently ignore any types that
     come after a group type (<option>bad-packets</option>,
     <option>strong</option> and its aliases). Only use group types on
     their own line.

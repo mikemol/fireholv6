@@ -1,5 +1,6 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                          "../docbook/docbook-xml/docbookx.dtd">
+<!-- For license information see sanewall-manual-info.xml.in -->
 <refentry id="ref-actions">
 
 <refmeta>
@@ -68,7 +69,7 @@
     The <command>iptables(8)</command> LOG action is best used through
     the optional rule parameter <option>log</option> since the latter
     can be combined with one of these actions
-    (<application>sanewall</application> will generate multiple firewall
+    (<application>Sanewall</application> will generate multiple firewall
     rules to make this happen). For information on <option>log</option>
     and <option>loglimit</option>, see <xref linkend="rule-params"/>.
   </para></note>
@@ -178,7 +179,7 @@ server smtp accept with limit 10/sec 100 overflow drop
           </para>
           <para>
             You can use the same knock <option>name</option> in more than
-            one sanewall rule to enable/disable all the services based
+            one Sanewall rule to enable/disable all the services based
             on a single <application>knockd</application> configuration
             entry.
           </para>
@@ -280,7 +281,7 @@ server smtp deny
           </para>
           <note><para>
              As the kernel conntrack modules are always loaded by
-             <application>sanewall</application>, some per-connection
+             <application>Sanewall</application>, some per-connection
              resources will be consumed. See this
              <ulink url="http://bugs.sanewall.org/sanewall/issues/10">bug
              report</ulink> for details.
@@ -317,10 +318,10 @@ server smtp deny
         <listitem>
           <para>
              <command>redirect</command> is used internally by
-             <application>sanewall</application> helper commands.
+             <application>Sanewall</application> helper commands.
           </para>
           <para>
-             Only <application>sanewall</application> developers should
+             Only <application>Sanewall</application> developers should
              need to use this action directly.
           </para>
         </listitem>

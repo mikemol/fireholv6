@@ -1,5 +1,6 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                          "../docbook/docbook-xml/docbookx.dtd">
+<!-- For license information see sanewall-manual-info.xml.in -->
 <refentry id="rule-params">
 
 <refmeta>
@@ -142,7 +143,7 @@
   </para>
   <para>
      All matches are made against the REQUEST.
-     <application>sanewall</application> automatically sets up the necessary
+     <application>Sanewall</application> automatically sets up the necessary
      stateful rules to deal with replies in the reverse direction.
   </para>
   <para>
@@ -332,7 +333,7 @@ server smtp accept inface eth0 outface eth1
   <para>
     Use <command>log</command> or <command>loglimit</command>
     to log matching packets to syslog. Unlike iptables(8) logging, this is
-    not an action: <application>sanewall</application> will produce multiple
+    not an action: <application>Sanewall</application> will produce multiple
     iptables commands to accomplish both the action for the rule and the
     logging.
   </para>
@@ -353,7 +354,7 @@ server smtp accept inface eth0 outface eth1
 <refsect1><title>Internal use</title>
   <para>
      In addition to the commands in the synopsis,
-     <application>sanewall</application> provides <command>limit</command>,
+     <application>Sanewall</application> provides <command>limit</command>,
      <command>sport</command> and <command>dport</command> which are used
      internally. These should not normally be used in configuration files
      unless you really understand what you are doing.

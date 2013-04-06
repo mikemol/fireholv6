@@ -19,7 +19,7 @@ servers and embedded routers such as OpenWRT (http://www.openwrt.org/).
 
 Goals
 =====
-The main goals of the sanewall project are:
+The main goals of the Sanewall project are:
   - Allow experts and non-experts alike to produce secure firewalls
   - Simple configuration should be simple
   - Complex configuration should be possible (and as easy as possible)
@@ -45,32 +45,31 @@ please read the file INSTALL first. Sanewall uses the GNU Autotools so
 you can get away with:
   ./configure && make && make install
 
-When you first install the program you need to set your configuration in
-the file /etc/sanewall/sanewall.conf. You have three choices:
+When you first install the program a very basic sanewall.conf.example
+is installed, which if you rename it to sanewall.conf will allow connections
+out but not in. To get something more complete you have three choices:
 
   1. If you are replacing FireHOL you should just be able to create the
-     sanewall configuration by copying the FireHOL config:
-       sudo mkdir -p /etc/sanewall
-       sudo cp -rp /etc/firehol/* /etc/sanewall/.
-       sudo mv /etc/sanewall/firehol.conf /etc/sanewall/sanewall.conf
+     Sanewall configuration by copying firehol.conf over sanewall.conf
+     and renaming any FIREHOL_ variables to SANEWALL_ instead.
 
-     you also need to check for variable names starting FIREHOL_ and
-     change them to SANEWALL_.
+     If you have any custom services in /etc/firehol/services then you
+     will need to update those, too.
 
   2. Start from an example configuration:
-       client-all.conf     -  Simplest firewall for a standalone system
+       client-all.conf
        lan-gateway.conf
        server-dmz.conf
        office.conf
 
-  3. Have sanewall try to generate a configuration tailored to the machine
+  3. Have Sanewall try to generate a configuration tailored to the machine
      automatically by running:
        sanewall wizard
 
-Finally, you will also want to ensure that sanewall runs at boot-time. If you
+Finally, you will also want to ensure that Sanewall runs at boot-time. If you
 installed from an official package this will be configured in the usual way.
-For a source installation, the binary can be used directly in /etc/init.d
-for many systems. In addition, some example init scripts are available here:
+For a source installation, the binary can be linked directly into /etc/init.d
+on many systems. In addition, some example init scripts are available here:
   http://bugs.sanewall.org/wiki/Init_Scripts
 
 
@@ -88,17 +87,15 @@ with a special header:
 Which was originally defined within FireHOL. 1 is the API version and
 will be updated if a backwards-incompatible change is introduced. 213
 was the minimum version of FireHOL the service was expected to work with
-and is ignored in sanewall.
+and is ignored in Sanewall.
 
 The format for service definition is the same as for adding a service
-to the main configuration file. See here for details:
-  http://www.sanewall.org/
-
-An example is provided in bittorrent.conf in the documentation folder.
+to the main configuration file. See the manual for complete details.
+An example is provided in the bittorrent.conf.example file.
 
 Waiting for a network device
 ----------------------------
-If you want to have sanewall to wait until a network device is up before
+If you want to have Sanewall to wait until a network device is up before
 it creates the firewall rules you can set the name of the device in the
 environment variable WAIT_FOR_IFACE.
 
@@ -152,7 +149,7 @@ History
 Sanewall is a fork of FireHOL (http://firehol.sourceforge.net/) which was
 made when development of that project stalled. A great deal is owed to that
 project and Costa Tsaousis for originating it. All existing FireHOL
-definitions should be compatible with sanewall.
+definitions should be compatible with Sanewall.
 
 
 License

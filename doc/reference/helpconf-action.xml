@@ -1,5 +1,6 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                          "../docbook/docbook-xml/docbookx.dtd">
+<!-- For license information see sanewall-manual-info.xml.in -->
 <refentry id="helpconf-action">
 
 <refmeta>
@@ -44,7 +45,7 @@
   </para></note>
   <para>
     The <option><replaceable>action</replaceable></option> can be any
-    of those supported by <application>sanewall</application> (see
+    of those supported by <application>Sanewall</application> (see
     <xref linkend="ref-actions"/>). Only ACCEPT, REJECT, DROP, RETURN
     have any meaning in this instance.
   </para>

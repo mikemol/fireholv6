@@ -1,9 +1,10 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                          "../docbook/docbook-xml/docbookx.dtd">
+<!-- For license information see sanewall-manual-info.xml.in -->
 <refentry id="sanewall.conf">
 
 <refmeta>
-<refentrytitle>sanewall configuration: sanewall.conf</refentrytitle>
+<refentrytitle>Sanewall configuration: sanewall.conf</refentrytitle>
 <manvolnum>5</manvolnum>
 </refmeta>
 
@@ -81,7 +82,7 @@ router wan2dmz inface ${WAN_IF} outface ${DMZ_IF}
 <refsect1 id="variables-available"><title>Variables Available</title>
   <para>
     The following variables are made available in the
-    <application>sanewall</application> configuration file and
+    <application>Sanewall</application> configuration file and
     can be accessed as ${VARIABLE}.
   </para>
   <variablelist>
@@ -212,7 +213,7 @@ router lan2lan inface eth0 outface eth1
   </para>
   <para>
     Where multiple ports are provides (as per the example),
-    <application>sanewall</application> simply determines all of the
+    <application>Sanewall</application> simply determines all of the
     combinations of client and server ports and generates multiple iptables
     statements to match them.
   </para>

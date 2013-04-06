@@ -1,5 +1,6 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                          "../docbook/docbook-xml/docbookx.dtd">
+<!-- For license information see sanewall-manual-info.xml.in -->
 <refentry id="cmd-server">
 
 <refmeta>
@@ -37,9 +38,9 @@
     router are inherited by the server.
   </para>
   <para>
-    For <application>sanewall</application> a server is the destination of
+    For <application>Sanewall</application> a server is the destination of
     a request. Even though this is more complex for some multi-socket
-    services, to <application>sanewall</application> a server always accepts
+    services, to <application>Sanewall</application> a server always accepts
     requests.
   </para>
   <para>

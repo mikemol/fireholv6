@@ -1,5 +1,6 @@
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
                  "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<!-- For license information see sanewall-manual-info.xml.in -->
 <chapter><title>Introduction</title>
   <section><title>Latest version</title>
     <para>The latest version of this document will always be available
@@ -9,7 +10,7 @@
   </section>
   <section><title>Who should read this manual</title>
     <para>This manual is aimed at those who wish to create and maintain
-           firewalls with <application>sanewall</application>.
+           firewalls with <application>Sanewall</application>.
     </para>
     <para>There is a lack of basic and tutorial information currently.
           Sanewall is a fork of FireHOL and its documentation can be
@@ -19,7 +20,7 @@
   </section>
   <section><title>Where to get help</title>
     <para>
-      The <ulink url="http://www.sanewall.org/">sanewall website</ulink>.
+      The <ulink url="http://www.sanewall.org/">Sanewall website</ulink>.
     </para>
     <para>
       The <ulink url="http://lists.sanewall.org/">mailing lists and

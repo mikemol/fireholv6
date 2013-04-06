@@ -1,5 +1,6 @@
 <!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
                          "../docbook/docbook-xml/docbookx.dtd">
+<!-- For license information see sanewall-manual-info.xml.in -->
 <refentry id="helpcmd-masquerade">
 
 <refmeta>
@@ -30,7 +31,7 @@
   <para>
     The <command>masquerade</command> helper command sets up masquerading
     on the output of a real network interface (as opposed to a
-    <application>sanewall</application> interface definition).
+    <application>Sanewall</application> interface definition).
   </para>
   <para>
     If a <replaceable>real-interface</replaceable> is specified the command
@@ -54,7 +55,7 @@
     it only honour's its own. The <option>inface</option> and
     <option>outface</option> parameters should not be used
     (iptables does not support inface in the POSTROUTING chain and outface
-    will be overwritten by <application>sanewall</application> using the
+    will be overwritten by <application>Sanewall</application> using the
     rules above).
   </para>
   <note>
@@ -65,7 +66,7 @@
     <para>
       <envar>SANEWALL_NAT</envar> will be turned on automatically
       (see <xref linkend="sanewall-variables"/>) and
-      <application>sanewall</application> will enable packet-forwarding
+      <application>Sanewall</application> will enable packet-forwarding
       in the kernel.
     </para>
   </note>
