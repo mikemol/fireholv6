@@ -1,3 +1,20 @@
+sanewall (0.9.9) unstable; urgency=low
+
+  * Clean up
+    - Add copyright info to manual
+    - Capitalise Sanewall consistently
+    - Remove firehol documentation maintenance script
+    - Remove all trailing spaces from script lines
+
+  * Move to Autotools and dblatex
+    - Autotools for build and install
+    - dblatex for PDF manual creation
+
+  * Update adblock script
+    - Make it run sanewall when it has finished getting IPs
+
+ -- Phil Whineray <phil@sanewall.org>  Sat,  6 Apr 2013 14:45:00 +0000
+
 sanewall (0.9.8) unstable; urgency=low
 
   * Handle parse errors in generated script more gracefully

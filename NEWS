@@ -1,3 +1,18 @@
+2013/04/06:
+
+Release of version 0.9.9
+
+This version now uses GNU autotools so you can run:
+  ./configure && make && make install
+
+in the usual way. Note that the default is to install under /usr/local,
+so if you have previously installed from source, you may want to run
+configure more like this instead:
+  ./configure --prefix=/usr --sysconfdir=/etc
+
+Read the INSTALL file and ./configure --help for more information.
+
+
 2013/03/23:
 
 Release of version 0.9.8
