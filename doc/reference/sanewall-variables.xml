@@ -21,8 +21,7 @@
   </para>
   <para>
     These variables may be set in the main <application>Sanewall</application>
-    configuration file, <filename>/etc/sanewall/sanewall.conf</filename> or
-    in the application default file <filename>/etc/default/sanewall</filename>.
+    configuration file <filename>/etc/sanewall/sanewall.conf</filename>.
   </para>
   <para>
     There are also some variables which <application>Sanewall</application>

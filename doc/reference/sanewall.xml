@@ -311,7 +311,6 @@
 
 <refsect1><title>Files</title>
   <simplelist type="vert">
-    <member><filename>/etc/default/sanewall</filename></member>
     <member><filename>/etc/sanewall/sanewall.conf</filename></member>
   </simplelist>
 </refsect1>
