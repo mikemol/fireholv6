@@ -25,6 +25,9 @@ AC_CONFIG_FILES([doc/sanewall-manual-info.xml])
 AC_MSG_NOTICE(***************************************************)
 fi
 
+SANEWALL_CONFIG_DIR=$(eval echo "$sysconfdir/sanewall")
+AC_SUBST(SANEWALL_CONFIG_DIR)
+
 AC_CONFIG_FILES([
 	Makefile
 	sbin/Makefile

@@ -15,8 +15,6 @@
 
 # See ChangeLog for details
 VERSION=@PACKAGE_VERSION@
-prefix="@prefix@"
-SANEWALL_CONFIG_DIR="@sysconfdir@/sanewall"
 
 # Make sure only root can run us.
 if [ ! "${UID}" = 0 ]
@@ -387,6 +385,7 @@ else
 fi
 
 # The default configuration file, it can be changed on the command line
+SANEWALL_CONFIG_DIR="@SANEWALL_CONFIG_DIR@"
 SANEWALL_CONFIG="${SANEWALL_CONFIG_DIR}/sanewall.conf"
 
 # Where /etc/init.d/iptables expects its configuration?
