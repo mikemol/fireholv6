@@ -321,8 +321,8 @@ router lan2lan inface eth0 outface eth1
     <member><xref linkend="sanewall-variables"/></member>
     <member><xref linkend="ref-services"/></member>
     <member><xref linkend="ref-actions"/></member>
-    <member>Sanewall Manual: sanewall-book.pdf</member>
-    <member><ulink url="http://doc.sanewall.org/">Sanewall Online Documentation</ulink></member>
+    <member>Sanewall Manual: sanewall-manual.pdf</member>
+    <member><ulink url="http://www.sanewall.org/">Sanewall Online Documentation</ulink></member>
   </simplelist>
 </refsect1>
 
