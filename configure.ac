@@ -25,7 +25,7 @@ AC_CONFIG_FILES([doc/sanewall-manual-info.xml])
 AC_MSG_NOTICE(***************************************************)
 fi
 
-SANEWALL_CONFIG_DIR=$(eval echo "$sysconfdir/sanewall")
+SANEWALL_CONFIG_DIR=$(eval echo "$sysconfdir/sanewall" | sed -e 's/^NONE//')
 AC_SUBST(SANEWALL_CONFIG_DIR)
 
 AC_CONFIG_FILES([
