@@ -311,7 +311,7 @@ foreach my $k (@keys) {
 
   if ($example) {
     print O "    <varlistentry><term>Example</term>\n";
-    print O "      <listitem><para>\n";
+    print O "      <listitem><para>Configuration sample:";
     print O "        <programlisting>$example</programlisting>\n";
     print O "      </para></listitem>\n";
     print O "    </varlistentry>\n";
