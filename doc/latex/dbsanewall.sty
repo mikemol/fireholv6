@@ -2,7 +2,7 @@
 %% This style is derivated from the DocBook LaTeX style
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{dbsanewall}[2013/04/02 DocBook LaTeX Style for Sanewall]
+\ProvidesPackage{dbsanewall}[2013/04/11 DocBook LaTeX Style for Sanewall]
 
 %% Use the original package and pass the options
 \RequirePackageWithOptions{docbook}
@@ -60,6 +60,10 @@
 \def\releasebox{%
   \ifthenelse{\equal{\DBKreleaseinfo}{}}{}%
   {\texttt{Release \DBKreleaseinfo}}}%
+
+%% Let refine the description list
+\renewlist{description}{description}{5}
+\setlist[description]{style=nextline}
 
 \endinput
 %%
