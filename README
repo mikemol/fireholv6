@@ -66,43 +66,23 @@ out but not in. To get something more complete you have three choices:
      automatically by running:
        sanewall wizard
 
+You should review the variables that can be configured and decide if you
+want to change any. The variables are documented in the "control variables"
+reference section of sanewall-manual.pdf and the online documentation. You
+can also read the man-page:
+  man sanewall-variables
+
+If you are running a service which is not pre-defined for you it is simple
+to define your own. This is documented in the "Adding Services" part of
+the "sanewall configuration" reference section of sanewall-manual.pdf and
+the online documentation. You can also read the man-page:
+  man sanewall.conf
+
 Finally, you will also want to ensure that Sanewall runs at boot-time. If you
 installed from an official package this will be configured in the usual way.
 For a source installation, the binary can be linked directly into /etc/init.d
 on many systems. In addition, some example init scripts are available here:
   http://bugs.sanewall.org/wiki/Init_Scripts
-
-
-Adding additional services
---------------------------
-In addition to defining extra services in the sanewall.conf file, it is
-possible to define new services by putting extra config files into the
-/etc/sanewall/services directory.
-
-Every file with the ending .conf gets parsed. Config files should start
-with a special header:
-
-#FHVER: 1:213
-
-Which was originally defined within FireHOL. 1 is the API version and
-will be updated if a backwards-incompatible change is introduced. 213
-was the minimum version of FireHOL the service was expected to work with
-and is ignored in Sanewall.
-
-The format for service definition is the same as for adding a service
-to the main configuration file. See the manual for complete details.
-An example is provided in the bittorrent.conf.example file.
-
-Waiting for a network device
-----------------------------
-If you want to have Sanewall to wait until a network device is up before
-it creates the firewall rules you can set the name of the device in the
-environment variable WAIT_FOR_IFACE.
-
-Sanewall will wait until the devices is up or until 60 seconds have elapsed.
-
-Note that your device does not need to be up in order to create the firewall
-so this option should only be used if you have a specific need to wait.
 
 
 Support and documentation

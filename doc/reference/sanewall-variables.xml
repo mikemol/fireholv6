@@ -20,12 +20,20 @@
     <application>Sanewall</application>.
   </para>
   <para>
-    These variables may be set in the main <application>Sanewall</application>
+    All variables may be set in the main <application>Sanewall</application>
     configuration file <filename>/etc/sanewall/sanewall.conf</filename>.
   </para>
   <para>
-    There are also some variables which <application>Sanewall</application>
-    sets before processing the configuration file. These are described in
+    Variables which affect the runtime but not the created firewall may also
+    be set as environment variables before running
+    <command>sanewall</command>. These can change the default values but
+    will be overwritten by values set in the configuration file. If a
+    variable can be set by an environment variable it is specified below.
+  </para>
+  <para>
+    <application>Sanewall</application> also sets some variables before
+    processing the configuration file which you can use as part of
+    your configuration. These are described in
     <xref linkend="sanewall.conf"/>.
   </para>
 </refsect1>
@@ -62,7 +70,7 @@ DEFAULT_INTERFACE_POLICY="REJECT"
         <para>
           This variable controls the default action to be taken on
           traffic not matched by any rule within a router. It can
-          be overridden using <xref linkend="cmd-policy"/>/
+          be overridden using <xref linkend="cmd-policy"/>.
         </para>
         <para>
           Packets that reach the end of a router without an
@@ -119,25 +127,16 @@ UNMATCHED_FORWARD_POLICY="REJECT"
               <term><envar>SANEWALL_ESTABLISHED_ACTIVATION_ACCEPT</envar></term>
       <listitem>
         <para>
-        </para>
-        <para>
-        </para>
-        <para>
-        </para>
-        <para>
-        </para>
-        <para>
-        </para>
-        <para>
           These variables control the default action to be taken on
           traffic during firewall activation for incoming, outgoing and
           forwarding respectively. Acceptable values are
           <option>ACCEPT</option>, <option>DROP</option>
-          and <option>REJECT</option>.
+          and <option>REJECT</option>. They may be set as environment
+          variables.
         </para>
         <para>
           During activation, <application>Sanewall</application> creates
-          temporary rules to ALLOW already etablished traffic
+          temporary rules to ALLOW already established traffic
           (new connections honour the appropriate variable). Set
           <envar>SANEWALL_ESTABLISHED_ACTIVATION_ACCEPT</envar> to 0 to
           prevent this.
@@ -396,6 +395,7 @@ DEFAULT_CLIENT_PORTS="0:65535"
           If set to 1, this variable causes <application>Sanewall</application>
           to load the NAT kernel modules. If you make use of the NAT
           helper commands, the variable will be set to 1 automatically.
+          It may be set as an environment variable.
         </para>
         <para>
           Default:
@@ -409,12 +409,33 @@ SANEWALL_NAT="1"
         </para>
       </listitem>
     </varlistentry>
+    <varlistentry><term><envar>SANEWALL_ROUTING</envar></term>
+      <listitem>
+        <para>
+          If set to 1, this variable causes <application>Sanewall</application>
+          to enable routing in the kernel. If you make use of
+          <command>router</command> definitions or certain helper commands
+          the variable will be set to 1 automatically.
+          It may be set as an environment variable.
+        </para>
+        <para>
+          Default:
+          <programlisting>
+SANEWALL_ROUTING="0"
+          </programlisting>
+          Example:
+          <programlisting>
+SANEWALL_ROUTING="1"
+          </programlisting>
+        </para>
+      </listitem>
+    </varlistentry>
     <varlistentry><term><envar>SANEWALL_AUTOSAVE</envar></term>
       <listitem>
         <para>
           This variable specifies the file that will be created when
           <xref linkend="sanewall"/> is called with the <option>save</option>
-          argument.
+          argument. It may be set as an environment variable.
         </para>
         <para>
           If the variable is empty, <application>Sanewall</application>
@@ -438,13 +459,11 @@ SANEWALL_AUTOSAVE="/tmp/sanewall-saved.txt"
     <varlistentry><term><envar>SANEWALL_LOAD_KERNEL_MODULES</envar></term>
       <listitem>
         <para>
-        </para>
-        <para>
           If set to 0, this variable forces <application>Sanewall</application>
           to not load any kernel modules. It is needed only if the kernel
           has modules statically included and in the rare event that
           <application>Sanewall</application> cannot access the kernel
-          configuration.
+          configuration. It may be set as an environment variable.
         </para>
         <para>
           Default:
@@ -489,13 +508,11 @@ SANEWALL_TRUST_LOOPBACK="0"
     <varlistentry><term><envar>SANEWALL_DROP_ORPHAN_TCP_ACK_FIN</envar></term>
       <listitem>
         <para>
-        </para>
-        <para>
           If set to 1, <application>Sanewall</application>
           will drop all TCP connections with ACK FIN set without logging them.
         </para>
         <para>
-	  In busy environments the iptables connection
+          In busy environments the iptables connection
           tracker removes connection tracking list entries as soon as it
           receives a FIN. This makes the ACK FIN appear as an invalid packet
           which will normally be logged by <application>Sanewall</application>.
@@ -508,6 +525,37 @@ SANEWALL_DROP_ORPHAN_TCP_ACK_FIN="0"
           Example:
           <programlisting>
 SANEWALL_DROP_ORPHAN_TCP_ACK_FIN="1"
+          </programlisting>
+        </para>
+      </listitem>
+    </varlistentry>
+    <varlistentry><term><envar>WAIT_FOR_IFACE</envar></term>
+      <listitem>
+        <para>
+          If set to the name of a network device (e.g. eth0),
+          <application>Sanewall</application> will wait until the device
+          is up (or until 60 seconds have elapsed) before continuing.
+        </para>
+        <note>
+          <para>This variable can <emphasis>only</emphasis> be set
+          as an environment variable, since it determines when the
+          main configuration file will be processed.
+          </para>
+        </note>
+        <para>
+          A device does not need to be up in order to have firewall rules
+          created for it, so this option should only be used if you have
+          a specific need to wait (e.g. the network must be queried to
+          determine the hosts or ports which will be firewalled).
+        </para>
+        <para>
+          Default:
+          <programlisting>
+WAIT_FOR_IFACE=""
+          </programlisting>
+          Example:
+          <programlisting>
+WAIT_FOR_IFACE="eth0"
           </programlisting>
         </para>
       </listitem>
