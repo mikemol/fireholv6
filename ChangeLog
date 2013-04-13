@@ -1,3 +1,19 @@
+sanewall (0.9.10) unstable; urgency=low
+
+  * Allow some config variables to be set as environment variables
+    - SANEWALL_ESTABLISHED_ACTIVATION_ACCEPT,
+      SANEWALL_INPUT_ACTIVATION_POLICY, SANEWALL_FORWARD_ACTIVATION_POLICY,
+      SANEWALL_OUTPUT_ACTIVATION_POLICY, SANEWALL_LOAD_KERNEL_MODULES,
+      SANEWALL_NAT, SANEWALL_ROUTING, SANEWALL_AUTOSAVE
+
+  * Documentation improvements
+    - Add missing variables
+    - Fix some formatting issues
+
+  * Improve setting of config directory when using ./configure
+
+ -- Phil Whineray <phil@sanewall.org>  Sat, 13 Apr 2013 22:16:00 +0000
+
 sanewall (0.9.9) unstable; urgency=low
 
   * Clean up
