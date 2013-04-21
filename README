@@ -3,14 +3,15 @@
                        http://www.sanewall.org/
                        ************************
 
-Sanewall is a firewall builder for iptables which uses an elegant language.
-It allows you to create very readable configurations even for complex
-stateful firewalls.
+Sanewall is a firewall builder for Linux which uses an elegant language,
+abstracted to just the right level. This makes it powerful as well as easy
+to use, audit, and understand. It allows you to create very readable
+configurations even for complex stateful firewalls.
 
 Simple but useful firewalls need only a few lines of configuration. Very
-complex with flow control and external commands can be created by using
-bash (http://www.gnu.org/software/bash/) commands in-line with the standard
-configuration language.
+complex setups with flow control and external commands can be created by
+using bash (http://www.gnu.org/software/bash/) commands in-line with the
+standard configuration language.
 
 Sanewall can be used to produce local firewalls or router-based firewalls
 on any system that bash and iptables are available including full GNU/Linux
