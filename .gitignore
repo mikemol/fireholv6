@@ -1,0 +1,25 @@
+# Lines that start with '#' are comments.
+*~
+autotool/install-sh
+autotool/missing
+configure
+Makefile.in
+Makefile
+aclocal.m4
+autom4te.cache/
+config.log
+config.status
+doc/db-valid
+doc/man/man1/
+doc/man/man5/
+doc/sanewall-manual-info.xml
+doc/sanewall-manual.html
+doc/sanewall-manual.pdf
+doc/sanewall-services.html
+doc/services-list.xml
+sbin/sanewall
+*.xz
+*.gz
+*.bz2
+sanewall-*.*.*/
+INSTALL

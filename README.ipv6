@@ -1,9 +1,8 @@
-                    FireHOL IPv6 SUPPORT
-                    ********************
+                    Sanewall IPv6 Support
 
 Introduction
 ============
-This version of FireHOL has experimental IPv6 support. It will attempt
+This version of sanewall has experimental IPv6 support. It will attempt
 to load both iptables and ip6tables entries for all rules, with the
 following exceptions:
 
@@ -94,9 +93,6 @@ following exceptions:
    with:
       RESERVED_IPV4, PRIVATE_IPV4 and MULTICAST_IPV4 for IPv4
       RESERVED_IPV6, PRIVATE_IPV6 and MULTICAST_IPV6 for IPv6
-
-   The get-iana.sh script has been updated to produce RESERVED_IPV4. Currently
-   there is no equivalent for RESERVED_IPV6.
 
 There is a really basic example in examples/ipv6.conf.
 

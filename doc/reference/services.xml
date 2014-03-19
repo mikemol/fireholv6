@@ -1,0 +1,27 @@
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.5//EN"
+                 "http://www.oasis-open.org/docbook/xml/4.5/docbookx.dtd">
+<!-- For license information see sanewall-manual-info.xml.in -->
+<refentry id="ref-services">
+
+<refmeta>
+<refentrytitle>services list: sanewall-services</refentrytitle>
+<manvolnum>5</manvolnum>
+</refmeta>
+
+<refnamediv>
+<refdescriptor>sanewall-services</refdescriptor>
+<refname>sanewall-services</refname>
+<refpurpose>Sanewall service list</refpurpose>
+</refnamediv>
+
+<xi:include xmlns:xi="http://www.w3.org/2001/XInclude"
+                href="../services-list.xml" />
+
+<refsect1><title>See Also</title>
+  <simplelist type="vert">
+    <member><xref linkend="sanewall"/></member>
+    <member><xref linkend="sanewall.conf"/></member>
+  </simplelist>
+</refsect1>
+
+</refentry>
